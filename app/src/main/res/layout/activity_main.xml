@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F0F0F">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:background="#0F0F0F">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/menuButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="☰"
+                    android:textColor="#FFFFFF"
+                    android:textSize="30sp"
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="14dp"
+                    android:src="@drawable/ic_ms"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="  MediaShrinker"
+                    android:textColor="#FFFFFF"
+                    android:textSize="30sp"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Compress images to exact KB sizes"
+                android:textColor="#AAAAAA"
+                android:textSize="16sp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp"/>
+
+            <ImageView
+                android:id="@+id/imagePreview"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:background="#1A1A1A"
+                android:scaleType="centerCrop"/>
+
+            <Button
+                android:id="@+id/selectImageButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Image"
+                android:textSize="17sp"
+                android:layout_marginTop="22dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Target Size (KB)"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:layout_marginTop="26dp"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/targetSizeInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#1A1A1A"
+                android:hint="Example: 200"
+                android:padding="16dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#777777"
+                android:inputType="number"/>
+
+            <Button
+                android:id="@+id/compressButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Compress Image"
+                android:textSize="18sp"
+                android:layout_marginTop="28dp"/>
+
+            <TextView
+                android:id="@+id/originalSizeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#AAAAAA"
+                android:textSize="15sp"
+                android:layout_marginTop="24dp"/>
+
+            <TextView
+                android:id="@+id/compressedSizeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#00FF99"
+                android:textSize="15sp"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/resultText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#00FF99"
+                android:textSize="16sp"
+                android:layout_marginTop="18dp"/>
+
+            <Button
+                android:id="@+id/openFolderButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Open Compressed Folder"
+                android:layout_marginTop="20dp"/>
+
+            <Button
+                android:id="@+id/shareButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Share Compressed Image"
+                android:layout_marginTop="12dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:orientation="vertical"
+        android:background="#1A1A1A"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MediaShrinker"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="35dp"/>
+
+        <TextView
+            android:id="@+id/contactDeveloperOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contact Developer"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/instagramOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Instagram"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/buyCoffeeOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Buy Me A Coffee ☕"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>
