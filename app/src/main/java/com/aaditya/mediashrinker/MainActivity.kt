@@ -17,17 +17,22 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var menuButton: TextView
+
     private lateinit var contactDeveloperOption: TextView
     private lateinit var instagramOption: TextView
+    private lateinit var aboutAppOption: TextView
+    private lateinit var suggestionOption: TextView
     private lateinit var buyCoffeeOption: TextView
 
     private lateinit var imagePreview: ImageView
     private lateinit var selectImageButton: Button
     private lateinit var compressButton: Button
     private lateinit var targetSizeInput: EditText
+
     private lateinit var resultText: TextView
     private lateinit var originalSizeText: TextView
     private lateinit var compressedSizeText: TextView
+
     private lateinit var openFolderButton: Button
     private lateinit var shareButton: Button
 
@@ -51,6 +56,12 @@ class MainActivity : AppCompatActivity() {
 
         instagramOption =
             findViewById(R.id.instagramOption)
+
+        aboutAppOption =
+            findViewById(R.id.aboutAppOption)
+
+        suggestionOption =
+            findViewById(R.id.suggestionOption)
 
         buyCoffeeOption =
             findViewById(R.id.buyCoffeeOption)
@@ -95,7 +106,7 @@ class MainActivity : AppCompatActivity() {
                 Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(
-                        "https://www.instagram.com/carryon.aditya?igsh=bjY1ZHk1MzdibHFo"
+                        "https://www.instagram.com/carryon.aditya"
                     )
                 )
 
@@ -108,9 +119,37 @@ class MainActivity : AppCompatActivity() {
                 Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(
-                        "https://www.instagram.com/carryon.aditya?igsh=bjY1ZHk1MzdibHFo"
+                        "https://www.instagram.com/carryon.aditya"
                     )
                 )
+
+            startActivity(intent)
+        }
+
+        aboutAppOption.setOnClickListener {
+
+            startActivity(
+                Intent(
+                    this,
+                    AboutActivity::class.java
+                )
+            )
+        }
+
+        suggestionOption.setOnClickListener {
+
+            val intent =
+                Intent(Intent.ACTION_SENDTO)
+
+            intent.data =
+                Uri.parse(
+                    "mailto:blastergaming98611info@gmail.com"
+                )
+
+            intent.putExtra(
+                Intent.EXTRA_SUBJECT,
+                "MediaShrinker Suggestion"
+            )
 
             startActivity(intent)
         }
@@ -221,6 +260,9 @@ class MainActivity : AppCompatActivity() {
 
         try {
 
+            resultText.text =
+                "Compressing..."
+
             val inputStream =
                 contentResolver.openInputStream(imageUri)
 
@@ -311,13 +353,13 @@ class MainActivity : AppCompatActivity() {
             }
 
             originalSizeText.text =
-                "Original Size: ${originalKB}KB"
+                "Original Size: ${originalKB} KB"
 
             compressedSizeText.text =
-                "Compressed Size: ${finalSize}KB"
+                "Compressed Size: ${finalSize} KB"
 
             resultText.text =
-                "Saved Successfully"
+                "Compression Completed Successfully"
 
             Toast.makeText(
                 this,

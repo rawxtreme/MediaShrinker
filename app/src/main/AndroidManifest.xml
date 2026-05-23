@@ -26,11 +26,10 @@
 
         </provider>
 
-        <activity
-            android:name=".DonateActivity"/>
+        <!-- Splash Screen -->
 
         <activity
-            android:name=".MainActivity">
+            android:name=".SplashActivity">
 
             <intent-filter>
 
@@ -43,6 +42,21 @@
             </intent-filter>
 
         </activity>
+
+        <!-- Main Activity -->
+
+        <activity
+            android:name=".MainActivity"/>
+
+        <!-- About Activity -->
+
+        <activity
+            android:name=".AboutActivity"/>
+
+        <!-- Donate Activity -->
+
+        <activity
+            android:name=".DonateActivity"/>
 
     </application>
 

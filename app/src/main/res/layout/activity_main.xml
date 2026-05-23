@@ -5,160 +5,224 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F0F0F">
+    android:background="#050816">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp"
-            android:background="#0F0F0F">
+            android:padding="22dp">
+
+            <!-- TOP BAR -->
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/menuButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="☰"
-                    android:textColor="#FFFFFF"
+                    android:textColor="#3B82F6"
                     android:textSize="30sp"
                     android:textStyle="bold"/>
 
                 <ImageView
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="14dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_marginStart="16dp"
                     android:src="@drawable/ic_ms"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="  MediaShrinker"
-                    android:textColor="#FFFFFF"
-                    android:textSize="30sp"
+                    android:textColor="#3B82F6"
+                    android:textSize="28sp"
                     android:textStyle="bold"/>
-
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Compress images to exact KB sizes"
-                android:textColor="#AAAAAA"
-                android:textSize="16sp"
+                android:text="Smart image compression for modern Android"
+                android:textColor="#7C8BA1"
+                android:textSize="15sp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="30dp"/>
+                android:layout_marginBottom="26dp"/>
 
-            <ImageView
-                android:id="@+id/imagePreview"
-                android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:background="#1A1A1A"
-                android:scaleType="centerCrop"/>
+            <!-- IMAGE CARD -->
 
-            <Button
-                android:id="@+id/selectImageButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Image"
-                android:textSize="17sp"
-                android:layout_marginTop="22dp"/>
+                android:background="@drawable/card_bg"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MEDIA SHRINKER"
+                    android:textColor="#D6E4FF"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="16dp"/>
+
+                <ImageView
+                    android:id="@+id/imagePreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:scaleType="centerCrop"
+                    android:background="#0A1020"/>
+
+                <Button
+                    android:id="@+id/selectImageButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="58dp"
+                    android:text="SELECT PHOTOS"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_bg"
+                    android:layout_marginTop="18dp"/>
+            </LinearLayout>
+
+            <!-- TARGET SIZE -->
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Target Size (KB)"
+                android:text="TARGET SIZE (KB)"
                 android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:layout_marginTop="26dp"
-                android:layout_marginBottom="8dp"/>
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="10dp"/>
 
             <EditText
                 android:id="@+id/targetSizeInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#1A1A1A"
+                android:layout_height="58dp"
+                android:background="@drawable/input_bg"
                 android:hint="Example: 200"
-                android:padding="16dp"
+                android:padding="18dp"
                 android:textColor="#FFFFFF"
-                android:textColorHint="#777777"
+                android:textColorHint="#6F7D95"
+                android:textSize="16sp"
                 android:inputType="number"/>
+
+            <!-- INFO CARD -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_bg"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:layout_marginTop="24dp">
+
+                <TextView
+                    android:id="@+id/originalSizeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#B6C2D9"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/compressedSizeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#3B82F6"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginTop="10dp"/>
+
+                <TextView
+                    android:id="@+id/resultText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#00FFB7"
+                    android:textSize="16sp"
+                    android:layout_marginTop="10dp"/>
+            </LinearLayout>
+
+            <!-- BUTTONS -->
 
             <Button
                 android:id="@+id/compressButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Compress Image"
-                android:textSize="18sp"
+                android:layout_height="60dp"
+                android:text="COMPRESS NOW"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/button_bg"
                 android:layout_marginTop="28dp"/>
 
-            <TextView
-                android:id="@+id/originalSizeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#AAAAAA"
-                android:textSize="15sp"
-                android:layout_marginTop="24dp"/>
-
-            <TextView
-                android:id="@+id/compressedSizeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#00FF99"
-                android:textSize="15sp"
-                android:layout_marginTop="8dp"/>
-
-            <TextView
-                android:id="@+id/resultText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#00FF99"
-                android:textSize="16sp"
+            <Button
+                android:id="@+id/shareButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="SHARE COMPRESSED IMAGE"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/button_bg"
                 android:layout_marginTop="18dp"/>
 
             <Button
                 android:id="@+id/openFolderButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Open Compressed Folder"
-                android:layout_marginTop="20dp"/>
-
-            <Button
-                android:id="@+id/shareButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Share Compressed Image"
-                android:layout_marginTop="12dp"/>
+                android:layout_height="56dp"
+                android:text="OPEN COMPRESSED FOLDER"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/button_bg"
+                android:layout_marginTop="18dp"/>
 
         </LinearLayout>
 
     </ScrollView>
 
+    <!-- SIDEBAR -->
+
     <LinearLayout
-        android:layout_width="280dp"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:orientation="vertical"
-        android:background="#1A1A1A"
+        android:background="#0B1220"
         android:padding="24dp">
+
+        <ImageView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:src="@drawable/ic_ms"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="18dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="MediaShrinker"
-            android:textColor="#FFFFFF"
+            android:textColor="#3B82F6"
             android:textSize="30sp"
             android:textStyle="bold"
-            android:layout_marginBottom="35dp"/>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="40dp"/>
 
         <TextView
             android:id="@+id/contactDeveloperOption"
@@ -174,6 +238,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Instagram"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/aboutAppOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="About App"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/suggestionOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Give Suggestions"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:layout_marginBottom="24dp"/>
