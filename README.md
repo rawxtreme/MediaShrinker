@@ -9,7 +9,6 @@ MediaShrinker is a modern Android utility app that compresses images to exact KB
 - Share compressed images instantly
 - Modern dark UI
 - Fast image processing
-- About App Section
 - Android 11+ support
 
 ## Folder Location
@@ -33,12 +32,5 @@ https://www.instagram.com/carryon.aditya
 
 ## Future Updates
 
-- Batch compression
-- Loading animations
-- Exact KB AI compression
-- Splash screen
-- Settings page
+- Please see update log after you first open the app.
 
-## License
-
-Open-source project for learning and utility purposes.
