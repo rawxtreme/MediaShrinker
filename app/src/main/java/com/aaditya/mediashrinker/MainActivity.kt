@@ -1,6 +1,7 @@
 package com.aaditya.mediashrinker
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -8,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -36,7 +38,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var openFolderButton: Button
     private lateinit var shareButton: Button
 
-    private var selectedImageUri: Uri? = null
+    private var selectedImageUris =
+        mutableListOf<Uri>()
+
     private var compressedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +48,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+
+        showWhatsNewPopup()
 
         drawerLayout =
             findViewById(R.id.drawerLayout)
@@ -102,28 +108,26 @@ class MainActivity : AppCompatActivity() {
 
         contactDeveloperOption.setOnClickListener {
 
-            val intent =
+            startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(
                         "https://www.instagram.com/carryon.aditya"
                     )
                 )
-
-            startActivity(intent)
+            )
         }
 
         instagramOption.setOnClickListener {
 
-            val intent =
+            startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(
                         "https://www.instagram.com/carryon.aditya"
                     )
                 )
-
-            startActivity(intent)
+            )
         }
 
         aboutAppOption.setOnClickListener {
@@ -171,16 +175,23 @@ class MainActivity : AppCompatActivity() {
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             )
 
+            intent.putExtra(
+                Intent.EXTRA_ALLOW_MULTIPLE,
+                true
+            )
+
+            intent.type = "image/*"
+
             startActivityForResult(intent, 100)
         }
 
         compressButton.setOnClickListener {
 
-            if (selectedImageUri == null) {
+            if (selectedImageUris.isEmpty()) {
 
                 Toast.makeText(
                     this,
-                    "Select an image first",
+                    "Select images first",
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -201,8 +212,7 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            compressImage(
-                selectedImageUri!!,
+            compressAllImages(
                 targetKB.toInt()
             )
         }
@@ -211,7 +221,7 @@ class MainActivity : AppCompatActivity() {
 
             Toast.makeText(
                 this,
-                "Check Gallery → DCIM → MediaShrinker",
+                "Saved in Gallery → DCIM → MediaShrinker",
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -253,15 +263,79 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun compressImage(
-        imageUri: Uri,
+    private fun compressAllImages(
         targetKB: Int
     ) {
 
-        try {
+        resultText.text =
+            "Processing Images..."
 
-            resultText.text =
-                "Compressing..."
+        var completed = 0
+
+        for (uri in selectedImageUris) {
+
+            val mimeType =
+                contentResolver.getType(uri)
+
+            if (mimeType == "image/png") {
+
+                AlertDialog.Builder(this)
+
+                    .setTitle(
+                        "PNG Image Detected"
+                    )
+
+                    .setMessage(
+                        "Do you want to convert this PNG image to JPEG for better compression?"
+                    )
+
+                    .setPositiveButton(
+                        "YES"
+                    ) { _, _ ->
+
+                        compressImage(
+                            uri,
+                            targetKB,
+                            true
+                        )
+                    }
+
+                    .setNegativeButton(
+                        "NO"
+                    ) { _, _ ->
+
+                        compressImage(
+                            uri,
+                            targetKB,
+                            false
+                        )
+                    }
+
+                    .show()
+
+            } else {
+
+                compressImage(
+                    uri,
+                    targetKB,
+                    true
+                )
+            }
+
+            completed++
+        }
+
+        resultText.text =
+            "$completed Images Processed"
+    }
+
+    private fun compressImage(
+        imageUri: Uri,
+        targetKB: Int,
+        convertToJpg: Boolean
+    ) {
+
+        try {
 
             val inputStream =
                 contentResolver.openInputStream(imageUri)
@@ -277,44 +351,86 @@ class MainActivity : AppCompatActivity() {
             val originalKB =
                 (originalBytes?.size ?: 0) / 1024
 
-            var quality = 100
+            val mimeType =
+                contentResolver.getType(imageUri)
 
-            val outputStream =
-                ByteArrayOutputStream()
+            var minQuality = 5
+            var maxQuality = 100
+            var bestBytes: ByteArray? = null
 
-            bitmap.compress(
-                Bitmap.CompressFormat.JPEG,
-                quality,
-                outputStream
-            )
+            while (minQuality <= maxQuality) {
 
-            while (
-                outputStream.toByteArray().size / 1024 > targetKB &&
-                quality > 5
-            ) {
+                val quality =
+                    (minQuality + maxQuality) / 2
 
-                outputStream.reset()
+                val outputStream =
+                    ByteArrayOutputStream()
 
-                quality -= 5
+                if (convertToJpg) {
 
-                bitmap.compress(
-                    Bitmap.CompressFormat.JPEG,
-                    quality,
-                    outputStream
-                )
+                    bitmap.compress(
+                        Bitmap.CompressFormat.JPEG,
+                        quality,
+                        outputStream
+                    )
+
+                } else {
+
+                    bitmap.compress(
+                        Bitmap.CompressFormat.PNG,
+                        quality,
+                        outputStream
+                    )
+                }
+
+                val bytes =
+                    outputStream.toByteArray()
+
+                val sizeKB =
+                    bytes.size / 1024
+
+                if (sizeKB <= targetKB) {
+
+                    bestBytes = bytes
+
+                    minQuality =
+                        quality + 1
+
+                } else {
+
+                    maxQuality =
+                        quality - 1
+                }
             }
 
-            val compressedBytes =
-                outputStream.toByteArray()
+            if (bestBytes == null) {
+
+                return
+            }
 
             val finalSize =
-                compressedBytes.size / 1024
+                bestBytes.size / 1024
+
+            val reducedPercent =
+                100 - ((finalSize * 100) / originalKB)
+
+            val extension =
+                if (convertToJpg)
+                    ".jpg"
+                else
+                    ".png"
+
+            val mime =
+                if (convertToJpg)
+                    "image/jpeg"
+                else
+                    "image/png"
 
             val filename =
-                "compressed_${System.currentTimeMillis()}.jpg"
+                "compressed_${System.currentTimeMillis()}$extension"
 
             val values =
-                android.content.ContentValues().apply {
+                ContentValues().apply {
 
                     put(
                         MediaStore.Images.Media.DISPLAY_NAME,
@@ -323,7 +439,7 @@ class MainActivity : AppCompatActivity() {
 
                     put(
                         MediaStore.Images.Media.MIME_TYPE,
-                        "image/jpeg"
+                        mime
                     )
 
                     put(
@@ -332,20 +448,21 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
 
-            val uri =
+            val savedUri =
                 contentResolver.insert(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     values
                 )
 
-            if (uri != null) {
+            if (savedUri != null) {
 
-                compressedImageUri = uri
+                compressedImageUri =
+                    savedUri
 
                 val stream =
-                    contentResolver.openOutputStream(uri)
+                    contentResolver.openOutputStream(savedUri)
 
-                stream?.write(compressedBytes)
+                stream?.write(bestBytes)
 
                 stream?.flush()
 
@@ -358,19 +475,100 @@ class MainActivity : AppCompatActivity() {
             compressedSizeText.text =
                 "Compressed Size: ${finalSize} KB"
 
-            resultText.text =
-                "Compression Completed Successfully"
+            if (
+                mimeType == "image/png" &&
+                convertToJpg
+            ) {
 
-            Toast.makeText(
-                this,
-                "Saved in Gallery",
-                Toast.LENGTH_LONG
-            ).show()
+                resultText.text =
+                    "PNG Converted to JPEG • Reduced by ${reducedPercent}%"
+
+            } else {
+
+                resultText.text =
+                    "Reduced by ${reducedPercent}%"
+            }
 
         } catch (e: Exception) {
 
             resultText.text =
                 "Compression Failed"
+        }
+    }
+
+    private fun showWhatsNewPopup() {
+
+        val prefs =
+            getSharedPreferences(
+                "MediaShrinkerPrefs",
+                MODE_PRIVATE
+            )
+
+        val currentVersion =
+            "3.0"
+
+        val lastSeenVersion =
+            prefs.getString(
+                "last_seen_version",
+                ""
+            )
+
+        if (lastSeenVersion != currentVersion) {
+
+            val message = """
+
+✨ What's New in v3.0
+
+• Multiple Photo Selection
+• Smart PNG Detection
+• PNG to JPEG Converter
+• PNG Compression Support
+• Better Compression Accuracy
+• Faster Batch Processing
+• Premium Modern UI
+• Smart Compression System
+
+Supported Formats:
+
+• JPG
+• JPEG
+• PNG
+• WEBP
+
+Coming Soon:
+
+• AI Compression
+• Auto Update Checker
+• Live Compression Slider
+• Compression History
+
+Developer Aaditya Shukla 🥂
+
+            """.trimIndent()
+
+            AlertDialog.Builder(this)
+
+                .setTitle("MediaShrinker Updated")
+
+                .setMessage(message)
+
+                .setPositiveButton(
+                    "Continue"
+                ) { dialog, _ ->
+
+                    dialog.dismiss()
+                }
+
+                .show()
+
+            prefs.edit()
+
+                .putString(
+                    "last_seen_version",
+                    currentVersion
+                )
+
+                .apply()
         }
     }
 
@@ -392,12 +590,40 @@ class MainActivity : AppCompatActivity() {
             data != null
         ) {
 
-            selectedImageUri =
-                data.data
+            selectedImageUris.clear()
 
-            imagePreview.setImageURI(
-                selectedImageUri
-            )
+            if (data.clipData != null) {
+
+                val clipData =
+                    data.clipData!!
+
+                for (i in 0 until clipData.itemCount) {
+
+                    val uri =
+                        clipData.getItemAt(i).uri
+
+                    selectedImageUris.add(uri)
+                }
+
+                imagePreview.setImageURI(
+                    selectedImageUris[0]
+                )
+
+                resultText.text =
+                    "${selectedImageUris.size} Images Selected"
+
+            } else if (data.data != null) {
+
+                val uri =
+                    data.data!!
+
+                selectedImageUris.add(uri)
+
+                imagePreview.setImageURI(uri)
+
+                resultText.text =
+                    "1 Image Selected"
+            }
         }
     }
 }
