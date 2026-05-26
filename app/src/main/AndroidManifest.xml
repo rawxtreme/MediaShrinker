@@ -3,8 +3,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aaditya.mediashrinker">
 
+    <!-- STORAGE PERMISSIONS -->
+
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29"/>
 
     <application
         android:allowBackup="true"
@@ -13,6 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!-- FILE PROVIDER -->
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -26,34 +34,40 @@
 
         </provider>
 
-        <!-- Splash Screen -->
+        <!-- SPLASH SCREEN -->
 
         <activity
-            android:name=".SplashActivity">
+            android:name=".SplashActivity"
+            android:theme="@style/AppTheme">
 
             <intent-filter>
 
                 <action
-                    android:name="android.intent.action.MAIN" />
+                    android:name="android.intent.action.MAIN"/>
 
                 <category
-                    android:name="android.intent.category.LAUNCHER" />
+                    android:name="android.intent.category.LAUNCHER"/>
 
             </intent-filter>
 
         </activity>
 
-        <!-- Main Activity -->
+        <!-- MAIN ACTIVITY -->
 
         <activity
             android:name=".MainActivity"/>
 
-        <!-- About Activity -->
+        <!-- HISTORY ACTIVITY -->
+
+        <activity
+            android:name=".HistoryActivity"/>
+
+        <!-- ABOUT ACTIVITY -->
 
         <activity
             android:name=".AboutActivity"/>
 
-        <!-- Donate Activity -->
+        <!-- DONATE ACTIVITY -->
 
         <activity
             android:name=".DonateActivity"/>

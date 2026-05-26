@@ -122,6 +122,36 @@
                 android:textSize="16sp"
                 android:inputType="number"/>
 
+            <!-- QUALITY SLIDER -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="COMPRESSION QUALITY"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="10dp"/>
+
+            <SeekBar
+                android:id="@+id/qualitySeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="80"/>
+
+            <TextView
+                android:id="@+id/qualityText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quality: 80%"
+                android:textColor="#00E5FF"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="14dp"/>
+
             <!-- INFO CARD -->
 
             <LinearLayout
@@ -257,6 +287,16 @@
             android:layout_height="wrap_content"
             android:text="Give Suggestions"
             android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/historyOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Compression History"
+            android:textColor="#00E5FF"
+            android:textStyle="bold"
             android:textSize="20sp"
             android:layout_marginBottom="24dp"/>
 

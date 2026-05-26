@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="18dp"
+    android:padding="16dp"
+    android:background="@drawable/history_card_bg">
+
+    <!-- IMAGE -->
+
+    <ImageView
+        android:id="@+id/historyImage"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:scaleType="centerCrop"
+        android:background="#111827"/>
+
+    <!-- INFO -->
+
+    <TextView
+        android:id="@+id/originalSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Original: 0 KB"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="14dp"/>
+
+    <TextView
+        android:id="@+id/compressedSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Compressed: 0 KB"
+        android:textColor="#00E5FF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="6dp"/>
+
+    <TextView
+        android:id="@+id/reducedPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reduced: 0%"
+        android:textColor="#00FF9D"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="6dp"/>
+
+    <!-- BUTTONS -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="18dp">
+
+        <Button
+            android:id="@+id/shareButton"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_weight="1"
+            android:text="SHARE"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:background="@drawable/share_button_bg"/>
+
+        <Button
+            android:id="@+id/openButton"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_weight="1"
+            android:text="OPEN"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/open_button_bg"/>
+    </LinearLayout>
+
+</LinearLayout>

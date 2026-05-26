@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var instagramOption: TextView
     private lateinit var aboutAppOption: TextView
     private lateinit var suggestionOption: TextView
+    private lateinit var historyOption: TextView
     private lateinit var buyCoffeeOption: TextView
 
     private lateinit var imagePreview: ImageView
@@ -35,8 +36,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var originalSizeText: TextView
     private lateinit var compressedSizeText: TextView
 
+    private lateinit var qualitySeekBar: SeekBar
+    private lateinit var qualityText: TextView
+
     private lateinit var openFolderButton: Button
     private lateinit var shareButton: Button
+
+    private var selectedQuality = 80
 
     private var selectedImageUris =
         mutableListOf<Uri>()
@@ -69,6 +75,9 @@ class MainActivity : AppCompatActivity() {
         suggestionOption =
             findViewById(R.id.suggestionOption)
 
+        historyOption =
+            findViewById(R.id.historyOption)
+
         buyCoffeeOption =
             findViewById(R.id.buyCoffeeOption)
 
@@ -93,6 +102,12 @@ class MainActivity : AppCompatActivity() {
         compressedSizeText =
             findViewById(R.id.compressedSizeText)
 
+        qualitySeekBar =
+            findViewById(R.id.qualitySeekBar)
+
+        qualityText =
+            findViewById(R.id.qualityText)
+
         openFolderButton =
             findViewById(R.id.openFolderButton)
 
@@ -106,11 +121,44 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
+        qualitySeekBar.setOnSeekBarChangeListener(
+
+            object : SeekBar.OnSeekBarChangeListener {
+
+                override fun onProgressChanged(
+
+                    seekBar: SeekBar?,
+
+                    progress: Int,
+
+                    fromUser: Boolean
+                ) {
+
+                    selectedQuality = progress
+
+                    qualityText.text =
+                        "Quality: ${progress}%"
+                }
+
+                override fun onStartTrackingTouch(
+                    seekBar: SeekBar?
+                ) {
+                }
+
+                override fun onStopTrackingTouch(
+                    seekBar: SeekBar?
+                ) {
+                }
+            }
+        )
+
         contactDeveloperOption.setOnClickListener {
 
             startActivity(
+
                 Intent(
                     Intent.ACTION_VIEW,
+
                     Uri.parse(
                         "https://www.instagram.com/carryon.aditya"
                     )
@@ -121,8 +169,10 @@ class MainActivity : AppCompatActivity() {
         instagramOption.setOnClickListener {
 
             startActivity(
+
                 Intent(
                     Intent.ACTION_VIEW,
+
                     Uri.parse(
                         "https://www.instagram.com/carryon.aditya"
                     )
@@ -133,6 +183,7 @@ class MainActivity : AppCompatActivity() {
         aboutAppOption.setOnClickListener {
 
             startActivity(
+
                 Intent(
                     this,
                     AboutActivity::class.java
@@ -151,16 +202,30 @@ class MainActivity : AppCompatActivity() {
                 )
 
             intent.putExtra(
+
                 Intent.EXTRA_SUBJECT,
+
                 "MediaShrinker Suggestion"
             )
 
             startActivity(intent)
         }
 
+        historyOption.setOnClickListener {
+
+            startActivity(
+
+                Intent(
+                    this,
+                    HistoryActivity::class.java
+                )
+            )
+        }
+
         buyCoffeeOption.setOnClickListener {
 
             startActivity(
+
                 Intent(
                     this,
                     DonateActivity::class.java
@@ -170,10 +235,13 @@ class MainActivity : AppCompatActivity() {
 
         selectImageButton.setOnClickListener {
 
-            val intent = Intent(
-                Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            )
+            val intent =
+                Intent(
+
+                    Intent.ACTION_PICK,
+
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                )
 
             intent.putExtra(
                 Intent.EXTRA_ALLOW_MULTIPLE,
@@ -190,9 +258,13 @@ class MainActivity : AppCompatActivity() {
             if (selectedImageUris.isEmpty()) {
 
                 Toast.makeText(
+
                     this,
+
                     "Select images first",
+
                     Toast.LENGTH_SHORT
+
                 ).show()
 
                 return@setOnClickListener
@@ -204,9 +276,13 @@ class MainActivity : AppCompatActivity() {
             if (targetKB.isEmpty()) {
 
                 Toast.makeText(
+
                     this,
+
                     "Enter target KB size",
+
                     Toast.LENGTH_SHORT
+
                 ).show()
 
                 return@setOnClickListener
@@ -220,9 +296,13 @@ class MainActivity : AppCompatActivity() {
         openFolderButton.setOnClickListener {
 
             Toast.makeText(
+
                 this,
+
                 "Saved in Gallery → DCIM → MediaShrinker",
+
                 Toast.LENGTH_LONG
+
             ).show()
         }
 
@@ -231,9 +311,13 @@ class MainActivity : AppCompatActivity() {
             if (compressedImageUri == null) {
 
                 Toast.makeText(
+
                     this,
+
                     "No compressed image",
+
                     Toast.LENGTH_SHORT
+
                 ).show()
 
                 return@setOnClickListener
@@ -243,10 +327,12 @@ class MainActivity : AppCompatActivity() {
                 Intent(Intent.ACTION_SEND)
 
             shareIntent.type =
-                "image/jpeg"
+                "image/*"
 
             shareIntent.putExtra(
+
                 Intent.EXTRA_STREAM,
+
                 compressedImageUri
             )
 
@@ -255,6 +341,7 @@ class MainActivity : AppCompatActivity() {
             )
 
             startActivity(
+
                 Intent.createChooser(
                     shareIntent,
                     "Share Image"
@@ -330,8 +417,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun compressImage(
+
         imageUri: Uri,
+
         targetKB: Int,
+
         convertToJpg: Boolean
     ) {
 
@@ -354,59 +444,34 @@ class MainActivity : AppCompatActivity() {
             val mimeType =
                 contentResolver.getType(imageUri)
 
-            var minQuality = 5
-            var maxQuality = 100
-            var bestBytes: ByteArray? = null
+            val outputStream =
+                ByteArrayOutputStream()
 
-            while (minQuality <= maxQuality) {
+            if (convertToJpg) {
 
-                val quality =
-                    (minQuality + maxQuality) / 2
+                bitmap.compress(
 
-                val outputStream =
-                    ByteArrayOutputStream()
+                    Bitmap.CompressFormat.JPEG,
 
-                if (convertToJpg) {
+                    selectedQuality,
 
-                    bitmap.compress(
-                        Bitmap.CompressFormat.JPEG,
-                        quality,
-                        outputStream
-                    )
+                    outputStream
+                )
 
-                } else {
+            } else {
 
-                    bitmap.compress(
-                        Bitmap.CompressFormat.PNG,
-                        quality,
-                        outputStream
-                    )
-                }
+                bitmap.compress(
 
-                val bytes =
-                    outputStream.toByteArray()
+                    Bitmap.CompressFormat.PNG,
 
-                val sizeKB =
-                    bytes.size / 1024
+                    selectedQuality,
 
-                if (sizeKB <= targetKB) {
-
-                    bestBytes = bytes
-
-                    minQuality =
-                        quality + 1
-
-                } else {
-
-                    maxQuality =
-                        quality - 1
-                }
+                    outputStream
+                )
             }
 
-            if (bestBytes == null) {
-
-                return
-            }
+            val bestBytes =
+                outputStream.toByteArray()
 
             val finalSize =
                 bestBytes.size / 1024
@@ -415,18 +480,21 @@ class MainActivity : AppCompatActivity() {
                 100 - ((finalSize * 100) / originalKB)
 
             val extension =
+
                 if (convertToJpg)
                     ".jpg"
                 else
                     ".png"
 
             val mime =
+
                 if (convertToJpg)
                     "image/jpeg"
                 else
                     "image/png"
 
             val filename =
+
                 "compressed_${System.currentTimeMillis()}$extension"
 
             val values =
@@ -450,7 +518,9 @@ class MainActivity : AppCompatActivity() {
 
             val savedUri =
                 contentResolver.insert(
+
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+
                     values
                 )
 
@@ -467,6 +537,17 @@ class MainActivity : AppCompatActivity() {
                 stream?.flush()
 
                 stream?.close()
+
+                saveToHistory(
+
+                    savedUri.toString(),
+
+                    "${originalKB} KB",
+
+                    "${finalSize} KB",
+
+                    "${reducedPercent}%"
+                )
             }
 
             originalSizeText.text =
@@ -476,11 +557,14 @@ class MainActivity : AppCompatActivity() {
                 "Compressed Size: ${finalSize} KB"
 
             if (
-                mimeType == "image/png" &&
-                convertToJpg
+
+                mimeType == "image/png"
+
+                && convertToJpg
             ) {
 
                 resultText.text =
+
                     "PNG Converted to JPEG • Reduced by ${reducedPercent}%"
 
             } else {
@@ -494,6 +578,48 @@ class MainActivity : AppCompatActivity() {
             resultText.text =
                 "Compression Failed"
         }
+    }
+
+    private fun saveToHistory(
+
+        imageUri: String,
+
+        originalSize: String,
+
+        compressedSize: String,
+
+        reducedPercent: String
+    ) {
+
+        val prefs =
+            getSharedPreferences(
+                "MediaShrinkerHistory",
+                MODE_PRIVATE
+            )
+
+        val historySet =
+
+            prefs.getStringSet(
+                "history",
+                mutableSetOf()
+            )?.toMutableSet()
+
+                ?: mutableSetOf()
+
+        val historyItem =
+
+            "$imageUri|$originalSize|$compressedSize|$reducedPercent"
+
+        historySet.add(historyItem)
+
+        prefs.edit()
+
+            .putStringSet(
+                "history",
+                historySet
+            )
+
+            .apply()
     }
 
     private fun showWhatsNewPopup() {
@@ -520,13 +646,13 @@ class MainActivity : AppCompatActivity() {
 ✨ What's New in v3.0
 
 • Multiple Photo Selection
+• Compression History
+• Live Compression Slider
 • Smart PNG Detection
 • PNG to JPEG Converter
-• PNG Compression Support
 • Better Compression Accuracy
 • Faster Batch Processing
 • Premium Modern UI
-• Smart Compression System
 
 Supported Formats:
 
@@ -538,9 +664,10 @@ Supported Formats:
 Coming Soon:
 
 • AI Compression
-• Auto Update Checker
-• Live Compression Slider
-• Compression History
+• Multiple Photos to PDF
+• Better Batch Processing
+• Premium Compression Modes
+• More UI Animations
 
 Developer Aaditya Shukla 🥂
 
@@ -573,8 +700,11 @@ Developer Aaditya Shukla 🥂
     }
 
     override fun onActivityResult(
+
         requestCode: Int,
+
         resultCode: Int,
+
         data: Intent?
     ) {
 
@@ -585,8 +715,11 @@ Developer Aaditya Shukla 🥂
         )
 
         if (
+
             requestCode == 100 &&
+
             resultCode == Activity.RESULT_OK &&
+
             data != null
         ) {
 
