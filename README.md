@@ -32,5 +32,5 @@ https://www.instagram.com/carryon.aditya
 
 ## Future Updates
 
-- Please see update log after you first open the app.
+- No more updates expect some small updates that fix glitches and bugs if any.
 
