@@ -14,9 +14,9 @@ android {
 
         targetSdkVersion 29
 
-        versionCode 3
+        versionCode 4
 
-        versionName "3.0"
+        versionName "4.0"
 
         testInstrumentationRunner
                 "androidx.test.runner.AndroidJUnitRunner"
@@ -69,6 +69,10 @@ dependencies {
     api 'androidx.cardview:cardview:1.0.0'
 
     api 'androidx.drawerlayout:drawerlayout:1.0.0'
+
+    api 'com.itextpdf:itextg:5.5.10'
+
+    implementation 'com.arthenica:ffmpeg-kit-full:6.0-2'
 
     testImplementation 'junit:junit:4.12'
 

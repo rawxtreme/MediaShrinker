@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="18dp"
+    android:background="@drawable/card_bg"
+    android:layout_marginBottom="18dp">
+
+    <TextView
+        android:id="@+id/pdfName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PDF File"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="14dp"/>
+
+    <Button
+        android:id="@+id/openPdfButton"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:text="OPEN PDF"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_bg"
+        android:layout_marginBottom="10dp"/>
+
+    <Button
+        android:id="@+id/sharePdfButton"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:text="SHARE PDF"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/pdf_button_bg"/>
+
+</LinearLayout>

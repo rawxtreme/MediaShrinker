@@ -72,6 +72,26 @@
         <activity
             android:name=".DonateActivity"/>
 
+        <!-- COMPARE ACTIVITY -->
+
+        <activity
+            android:name=".CompareActivity"/>
+
+        <!-- RESIZE ACTIVITY -->
+
+        <activity
+            android:name=".ResizeActivity"/>
+
+        <!-- PDF HISTORY ACTIVITY -->
+
+        <activity
+            android:name=".PdfHistoryActivity"/>
+
+        <!-- VIDEO COMPRESSOR ACTIVITY -->
+
+        <activity
+            android:name=".VideoCompressorActivity"/>
+
     </application>
 
 </manifest>

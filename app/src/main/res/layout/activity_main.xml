@@ -122,7 +122,67 @@
                 android:textSize="16sp"
                 android:inputType="number"/>
 
-            <!-- QUALITY SLIDER -->
+            <!-- AI COMPRESSION MODES -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AI COMPRESSION MODES"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="14dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/ultraModeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="ULTRA"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/button_bg"
+                    android:layout_marginEnd="6dp"/>
+
+                <Button
+                    android:id="@+id/balancedModeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="BALANCED"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/pdf_button_bg"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"/>
+
+                <Button
+                    android:id="@+id/maxModeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="MAX"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/compare_button_bg"
+                    android:layout_marginStart="6dp"/>
+
+            </LinearLayout>
+
+            <!-- QUALITY -->
 
             <TextView
                 android:layout_width="wrap_content"
@@ -185,6 +245,64 @@
                     android:textColor="#00FFB7"
                     android:textSize="16sp"
                     android:layout_marginTop="10dp"/>
+
+            </LinearLayout>
+
+            <!-- ANALYTICS CARD -->
+
+            <LinearLayout
+                android:id="@+id/analyticsCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_bg"
+                android:padding="20dp"
+                android:layout_marginTop="22dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="STORAGE ANALYTICS"
+                    android:textColor="#00E5FF"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp"/>
+
+                <TextView
+                    android:id="@+id/storageSavedText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Saved Space:"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/reductionText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reduction:"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/resolutionText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Resolution:"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/formatText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Format:"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"/>
+
             </LinearLayout>
 
             <!-- BUTTONS -->
@@ -221,6 +339,30 @@
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:background="@drawable/button_bg"
+                android:layout_marginTop="18dp"/>
+
+            <Button
+                android:id="@+id/compareButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="COMPARE IMAGES"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/compare_button_bg"
+                android:layout_marginTop="18dp"/>
+
+            <Button
+                android:id="@+id/createPdfButton"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:text="CREATE PDF"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/pdf_button_bg"
                 android:layout_marginTop="18dp"/>
 
         </LinearLayout>
@@ -296,6 +438,36 @@
             android:layout_height="wrap_content"
             android:text="Compression History"
             android:textColor="#00E5FF"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/pdfHistoryOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PDF History"
+            android:textColor="#FF4D8D"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/resizeOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Image Resizer"
+            android:textColor="#FFD54F"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/videoCompressorOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Video Compressor"
+            android:textColor="#FF7043"
             android:textStyle="bold"
             android:textSize="20sp"
             android:layout_marginBottom="24dp"/>
