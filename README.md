@@ -32,5 +32,5 @@ https://www.instagram.com/carryon.aditya
 
 ## Future Updates
 
-- No more updates expect some small updates that fix glitches and bugs if any.
+- Updates were provide on regular basis (monthly)
 
