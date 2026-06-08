@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var historyOption: TextView
     private lateinit var pdfHistoryOption: TextView
     private lateinit var resizeOption: TextView
-    private lateinit var videoCompressorOption: TextView
     private lateinit var buyCoffeeOption: TextView
 
     private lateinit var imagePreview: ImageView
@@ -83,7 +82,6 @@ class MainActivity : AppCompatActivity() {
         historyOption = findViewById(R.id.historyOption)
         pdfHistoryOption = findViewById(R.id.pdfHistoryOption)
         resizeOption = findViewById(R.id.resizeOption)
-        videoCompressorOption = findViewById(R.id.videoCompressorOption)
         buyCoffeeOption = findViewById(R.id.buyCoffeeOption)
         imagePreview = findViewById(R.id.imagePreview)
         selectImageButton = findViewById(R.id.selectImageButton)
@@ -180,10 +178,6 @@ class MainActivity : AppCompatActivity() {
 
         resizeOption.setOnClickListener {
             startActivity(Intent(this, ResizeActivity::class.java))
-        }
-
-        videoCompressorOption.setOnClickListener {
-            startActivity(Intent(this, VideoCompressorActivity::class.java))
         }
 
         buyCoffeeOption.setOnClickListener {

@@ -38,6 +38,7 @@
 
         <activity
             android:name=".SplashActivity"
+            android:exported="true"
             android:theme="@style/AppTheme">
 
             <intent-filter>
@@ -86,11 +87,6 @@
 
         <activity
             android:name=".PdfHistoryActivity"/>
-
-        <!-- VIDEO COMPRESSOR ACTIVITY -->
-
-        <activity
-            android:name=".VideoCompressorActivity"/>
 
     </application>
 

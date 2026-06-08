@@ -463,16 +463,6 @@
             android:layout_marginBottom="24dp"/>
 
         <TextView
-            android:id="@+id/videoCompressorOption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Video Compressor"
-            android:textColor="#FF7043"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:layout_marginBottom="24dp"/>
-
-        <TextView
             android:id="@+id/buyCoffeeOption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
