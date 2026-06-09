@@ -15,10 +15,10 @@ android {
 
     signingConfigs {
     release {
-        storeFile file('../mediashrinker.jks')
-        storePassword "AADITYASHUKLA0212"
-        keyAlias "mediashrinker"
-        keyPassword "AADITYASHUKLA0212"
+        storeFile file("mediashrinker.jks")
+        storePassword project.findProperty("STORE_PASSWORD") ?: ""
+        keyAlias project.findProperty("KEY_ALIAS")?.toString() ?: ""
+        keyPassword project.findProperty("KEY_PASSWORD") ?: ""
     }
 }
 
