@@ -3,14 +3,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aaditya.mediashrinker">
 
-    <!-- STORAGE PERMISSIONS -->
-
     <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+        android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="29"/>
+        android:maxSdkVersion="29" />
 
     <application
         android:allowBackup="true"
@@ -20,8 +18,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- FILE PROVIDER -->
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -30,11 +26,11 @@
 
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
 
         </provider>
 
-        <!-- SPLASH SCREEN -->
+        <!-- Splash Screen -->
 
         <activity
             android:name=".SplashActivity"
@@ -44,49 +40,69 @@
             <intent-filter>
 
                 <action
-                    android:name="android.intent.action.MAIN"/>
+                    android:name="android.intent.action.MAIN" />
 
                 <category
-                    android:name="android.intent.category.LAUNCHER"/>
+                    android:name="android.intent.category.LAUNCHER" />
 
             </intent-filter>
 
         </activity>
 
-        <!-- MAIN ACTIVITY -->
+        <!-- Main -->
 
         <activity
-            android:name=".MainActivity"/>
+            android:name=".MainActivity" />
 
-        <!-- HISTORY ACTIVITY -->
-
-        <activity
-            android:name=".HistoryActivity"/>
-
-        <!-- ABOUT ACTIVITY -->
+        <!-- Update Video -->
 
         <activity
-            android:name=".AboutActivity"/>
+            android:name=".UpdateVideoActivity" />
 
-        <!-- DONATE ACTIVITY -->
-
-        <activity
-            android:name=".DonateActivity"/>
-
-        <!-- COMPARE ACTIVITY -->
+        <!-- Settings -->
 
         <activity
-            android:name=".CompareActivity"/>
+            android:name=".SettingsActivity" />
 
-        <!-- RESIZE ACTIVITY -->
-
-        <activity
-            android:name=".ResizeActivity"/>
-
-        <!-- PDF HISTORY ACTIVITY -->
+        <!-- History -->
 
         <activity
-            android:name=".PdfHistoryActivity"/>
+            android:name=".HistoryActivity" />
+
+        <!-- About -->
+
+        <activity
+            android:name=".AboutActivity" />
+
+        <!-- Donate -->
+
+        <activity
+            android:name=".DonateActivity" />
+
+        <!-- Compare -->
+
+        <activity
+            android:name=".CompareActivity" />
+
+        <!-- Resize -->
+
+        <activity
+            android:name=".ResizeActivity" />
+
+        <!-- Format Converter -->
+
+        <activity
+            android:name=".FormatConverterActivity" />
+
+        <!-- Metadata Remover -->
+
+        <activity
+            android:name=".MetadataRemoverActivity" />
+
+        <!-- PDF History -->
+
+        <activity
+            android:name=".PdfHistoryActivity" />
 
     </application>
 

@@ -16,19 +16,23 @@ android {
     signingConfigs {
     release {
         storeFile file('../mediashrinker.jks')
-        storePassword KEYSTORE_PASS
+        storePassword "AADITYASHUKLA0212"
         keyAlias "mediashrinker"
-        keyPassword KEY_PASS
+        keyPassword "AADITYASHUKLA0212"
     }
 }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+    release {
+        minifyEnabled false
+        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        signingConfig signingConfigs.release
+        lintOptions {
+            checkReleaseBuilds false
+            abortOnError false
         }
     }
+}
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

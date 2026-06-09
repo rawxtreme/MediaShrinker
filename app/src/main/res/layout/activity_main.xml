@@ -371,13 +371,18 @@
 
     <!-- SIDEBAR -->
 
-    <LinearLayout
-        android:layout_width="300dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:orientation="vertical"
-        android:background="#0B1220"
-        android:padding="24dp">
+        <ScrollView
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="#0B1220">
+			android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
 
         <ImageView
             android:layout_width="90dp"
@@ -463,6 +468,35 @@
             android:layout_marginBottom="24dp"/>
 
         <TextView
+            android:id="@+id/formatConverterOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Format Converter"
+            android:textColor="#00FFB7"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/metadataRemoverOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Metadata Remover"
+            android:textColor="#FF9800"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/settingsOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
             android:id="@+id/buyCoffeeOption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -471,5 +505,6 @@
             android:textSize="20sp"/>
 
     </LinearLayout>
+	</ScrollView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

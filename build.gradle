@@ -3,9 +3,8 @@
 buildscript {
     ext.kotlin_version = "1.7.20"
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-        maven { url 'https://maven.aliyun.com/repository/public/' }
-        maven { url 'https://maven.aliyun.com/repository/google' }
+        google()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.2'
@@ -18,10 +17,11 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-        maven { url 'https://maven.aliyun.com/repository/public/' }
-        maven { url 'https://maven.aliyun.com/repository/google' }
+        google()
+        mavenCentral()
     }
+	project.extensions.extraProperties['android.useAndroidX'] = 'true'
+	project.extensions.extraProperties['android.enableJetifier'] = 'true'
 }
 
 task clean(type: Delete) {

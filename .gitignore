@@ -1,14 +1,41 @@
+# IntelliJ / AndroidIDE
 *.iml
-.gradle
-/local.properties
-/.idea/caches/build_file_checksells.ser
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
+.idea/
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/build_file_checksums.ser
+
+# Gradle
+.gradle/
+/build/
+/app/build/
+local.properties
+gradle.properties
+.gradle.properties
+
+# Native build
+.externalNativeBuild/
+.cxx/
+
+# Captures
+/captures/
+
+# macOS
 .DS_Store
-/build
-/captures
-.externalNativeBuild
+
+# Signing files
 *.jks
 *.keystore
-gradle.properties
+
+# APK / Bundles
+*.apk
+*.aab
+
+# Logs
+*.log
+
+# AndroidIDE temporary files
+*.tmp
+*.temp

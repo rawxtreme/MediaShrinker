@@ -15,12 +15,36 @@ class SplashActivity : AppCompatActivity() {
 
         Handler().postDelayed({
 
-            startActivity(
-                Intent(
-                    this,
-                    MainActivity::class.java
+            val prefs =
+                getSharedPreferences(
+                    "MediaShrinkerSettings",
+                    MODE_PRIVATE
                 )
-            )
+
+            val showVideo =
+                prefs.getBoolean(
+                    "show_startup_video",
+                    true
+                )
+
+            if (showVideo) {
+
+                startActivity(
+                    Intent(
+                        this,
+                        UpdateVideoActivity::class.java
+                    )
+                )
+
+            } else {
+
+                startActivity(
+                    Intent(
+                        this,
+                        MainActivity::class.java
+                    )
+                )
+            }
 
             finish()
 

@@ -38,7 +38,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Version 4.0"
+            android:text="Version 5.0"
             android:textColor="#00E5FF"
             android:textStyle="bold"
             android:textSize="18sp"
@@ -66,14 +66,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MediaShrinker is a modern Android image compression app designed for fast, smart and high quality image optimization.\n\nThe app now supports batch compression, smart PNG detection, live compression slider and compression history.\n\nThe app is continuously improving with new powerful features and better optimization updates.\n\nMediaShrinker does not collect personal user data.All image processing happens locally on the device.No images are uploaded to servers.Compression history is stored only on the user's device.For more information, please contact developer on instagram.\n\nFeatures Explaination : \n\n1) Please not that in compare images button, you are able to compare only one image as the app is focused on optimization so limit this to one. You can also compare manually in your gallery.\n\n2) Please ignore the Coming Soon title in about app as the app is now finished and fully developed. In future, only the glitches will be fixed. No other features will be added. If someone want, you can still tell me on instagram so I can work on it😅.\n\n3) All features were manually tested by the developer and no glitches and bugs are found so far, if you have found one, please tell the me on Instagram. If you have suggestions then please tell me only on the Give Suggestions option in the app.\n\n4) If you want to let my work carry on, please buy me a coffee so I can develop more apps in future for you.\n\n5) Important : Video Compressor is not working, as I added this feature just for testing and in result it's failed. \n\nThank You💖"
+                android:text="Thanks for using our App in its initial phase❤️.\n\nPlease note that the viewing video when starting the app will not incur data usage. This App is completely safe and build keeping privacy in the mind. \n\nAll features of this app is explained more accurately on DEVELOPER's Instagram (Check Contact developer option). \n\nPlease note that this app will not and not collecting any files you uploaded in this app. This app entirely run on your device locally and fully protected. Please reach Developer if you have further questions. \n\nMeta data Remover feature is 90% to 95% working in most cases, additionally this feature wipes the GPS location and other content in the image to protect privacy. Developer is not responsible for any failure of this feature because the feature will work or may not work (usually in 5% cases). \n\n Thanks for Downloading this App. Please feel free to raise your queries to DEVELOPER and give suggestions. \n\n DEVELOPER  : AADITYA SHUKLA✨(@carryon.aditya), (@i.rawxtreme)."
                 android:textColor="#D1D5DB"
                 android:textSize="16sp"
                 android:layout_marginTop="16dp"/>
 
         </LinearLayout>
 
-        <!-- COMING SOON -->
+        <!-- SPECIAL THANKS TO -->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -86,7 +86,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Coming Soon"
+                android:text="SPECIAL THANKS TO"
                 android:textColor="#00FFB7"
                 android:textStyle="bold"
                 android:textSize="24sp"/>
@@ -94,7 +94,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="• Multiple Photos to PDF\n• AI Compression\n• Premium Compression Modes\n• Better Batch Processing\n• More UI Animations\n• Advanced Optimization"
+                android:text="•ARYAN♥️ (@ashhh.aryan) \n•ISHAN♥️ (@itz__ishu_4_u) \n•APURAV♥️ (HE DON'T USE INSTAGRAM ❤️)"
                 android:textColor="#D1D5DB"
                 android:textSize="16sp"
                 android:layout_marginTop="16dp"/>

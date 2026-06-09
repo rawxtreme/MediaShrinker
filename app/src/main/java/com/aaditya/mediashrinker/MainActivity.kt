@@ -30,6 +30,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var resizeOption: TextView
     private lateinit var buyCoffeeOption: TextView
 
+    private lateinit var settingsOption: TextView
+    private lateinit var formatConverterOption: TextView
+    private lateinit var metadataRemoverOption: TextView
+
     private lateinit var imagePreview: ImageView
 
     private lateinit var selectImageButton: Button
@@ -71,8 +75,6 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        showWhatsNewPopup()
-
         drawerLayout = findViewById(R.id.drawerLayout)
         menuButton = findViewById(R.id.menuButton)
         contactDeveloperOption = findViewById(R.id.contactDeveloperOption)
@@ -82,7 +84,11 @@ class MainActivity : AppCompatActivity() {
         historyOption = findViewById(R.id.historyOption)
         pdfHistoryOption = findViewById(R.id.pdfHistoryOption)
         resizeOption = findViewById(R.id.resizeOption)
+		formatConverterOption = findViewById(R.id.formatConverterOption)
         buyCoffeeOption = findViewById(R.id.buyCoffeeOption)
+        settingsOption = findViewById(R.id.settingsOption)
+        formatConverterOption = findViewById(R.id.formatConverterOption)
+        metadataRemoverOption = findViewById(R.id.metadataRemoverOption)
         imagePreview = findViewById(R.id.imagePreview)
         selectImageButton = findViewById(R.id.selectImageButton)
         compressButton = findViewById(R.id.compressButton)
@@ -178,6 +184,24 @@ class MainActivity : AppCompatActivity() {
 
         resizeOption.setOnClickListener {
             startActivity(Intent(this, ResizeActivity::class.java))
+        }
+
+        settingsOption.setOnClickListener {
+            startActivity(
+                Intent(this, SettingsActivity::class.java)
+            )
+        }
+
+        formatConverterOption.setOnClickListener {
+            startActivity(
+                Intent(this, FormatConverterActivity::class.java)
+            )
+        }
+
+        metadataRemoverOption.setOnClickListener {
+            startActivity(
+                Intent(this, MetadataRemoverActivity::class.java)
+            )
         }
 
         buyCoffeeOption.setOnClickListener {
@@ -399,51 +423,6 @@ class MainActivity : AppCompatActivity() {
         pdfSet.add(pdfUri)
 
         prefs.edit().putStringSet("pdf_history", pdfSet).apply()
-    }
-
-    // --- What's New Popup ---
-
-    private fun showWhatsNewPopup() {
-        val prefs = getSharedPreferences("MediaShrinkerPrefs", MODE_PRIVATE)
-        val currentVersion = "4.0"
-        val lastSeenVersion = prefs.getString("last_seen_version", "")
-
-        if (lastSeenVersion != currentVersion) {
-            val message = """
-✨ What's New in v4.0
-
-• Real PDF Generator
-• Compare Images
-• Compression History
-• PDF History
-• Image Resizer
-• Custom Resize Size
-• Storage Analytics
-• Live Compression Slider
-• Smart PNG Detection
-• Faster Compression
-• Premium Modern UI
-• Better Stability
-
-Supported Formats:
-
-• JPG
-• JPEG
-• PNG
-• WEBP
-• PDF
-
-Developer Aaditya Shukla 🥂
-            """.trimIndent()
-
-            AlertDialog.Builder(this)
-                .setTitle("MediaShrinker Updated")
-                .setMessage(message)
-                .setPositiveButton("Continue") { dialog, _ -> dialog.dismiss() }
-                .show()
-
-            prefs.edit().putString("last_seen_version", currentVersion).apply()
-        }
     }
 
     // --- Activity Result ---
