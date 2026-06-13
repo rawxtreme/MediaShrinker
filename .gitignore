@@ -38,4 +38,5 @@ gradle.properties
 
 # AndroidIDE temporary files
 *.tmp
-*.temp
+*.temperror.txt
+log.txt
