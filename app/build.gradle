@@ -8,31 +8,31 @@ android {
         applicationId "com.aaditya.mediashrinker"
         minSdkVersion 26
         targetSdkVersion 33
-        versionCode 4
-        versionName "4.0"
+        versionCode 6
+        versionName "6.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
-    release {
-        storeFile file("mediashrinker.jks")
-        storePassword project.findProperty("STORE_PASSWORD") ?: ""
-        keyAlias project.findProperty("KEY_ALIAS")?.toString() ?: ""
-        keyPassword project.findProperty("KEY_PASSWORD") ?: ""
-    }
-}
-
-    buildTypes {
-    release {
-        minifyEnabled false
-        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        signingConfig signingConfigs.release
-        lintOptions {
-            checkReleaseBuilds false
-            abortOnError false
+        release {
+            storeFile file("mediashrinker.jks")
+            storePassword project.findProperty("STORE_PASSWORD") ?: ""
+            keyAlias project.findProperty("KEY_ALIAS")?.toString() ?: ""
+            keyPassword project.findProperty("KEY_PASSWORD") ?: ""
         }
     }
-}
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            lintOptions {
+                checkReleaseBuilds false
+                abortOnError false
+            }
+        }
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -55,6 +55,8 @@ dependencies {
     api 'androidx.cardview:cardview:1.0.0'
     api 'androidx.drawerlayout:drawerlayout:1.2.0'
     api 'com.itextpdf:itextg:5.5.10'
+    // Coroutines for background network calls (update checker)
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

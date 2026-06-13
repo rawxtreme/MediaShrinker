@@ -38,7 +38,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Version 5.0"
+            android:text="Version 6.0"
             android:textColor="#00E5FF"
             android:textStyle="bold"
             android:textSize="18sp"
@@ -66,7 +66,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Thanks for using our App in its initial phase❤️.\n\nPlease note that the viewing video when starting the app will not incur data usage. This App is completely safe and build keeping privacy in the mind. \n\nAll features of this app is explained more accurately on DEVELOPER's Instagram (Check Contact developer option). \n\nPlease note that this app will not and not collecting any files you uploaded in this app. This app entirely run on your device locally and fully protected. Please reach Developer if you have further questions. \n\nMeta data Remover feature is 90% to 95% working in most cases, additionally this feature wipes the GPS location and other content in the image to protect privacy. Developer is not responsible for any failure of this feature because the feature will work or may not work (usually in 5% cases). \n\n Thanks for Downloading this App. Please feel free to raise your queries to DEVELOPER and give suggestions. \n\n DEVELOPER  : AADITYA SHUKLA✨(@carryon.aditya), (@i.rawxtreme)."
+                android:text="Thanks for using our App in its initial phase❤️.\n\nPlease note that the viewing video when starting the app will not incur data usage. This App is completely safe and build keeping privacy in the mind. \n\nIf you want to contribute in this app with us, contact Developer Please! \nI truly appreciate you. \n\nCheck How to Use App Option to be familiar with this app."
                 android:textColor="#D1D5DB"
                 android:textSize="16sp"
                 android:layout_marginTop="16dp"/>

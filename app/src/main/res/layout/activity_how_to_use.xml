@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#050816">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="48dp"
+        android:paddingBottom="16dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_media_previous"
+            android:tint="#FFFFFF"
+            android:padding="6dp"
+            android:background="@drawable/card_bg" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:text="How to Use"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#1AFFFFFF"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Intro -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MediaShrinker v6.0 — Complete Guide"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This app lets you compress images, convert formats, resize photos, create PDFs, and remove metadata — all offline, right on your phone."
+                android:textColor="#AAFFFFFF"
+                android:textSize="13sp"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Feature 1: Compress -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🗜️  Compress Images"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Step 1 → Tap 'Select Images' on the main screen.\nStep 2 → Choose one or multiple images from your gallery.\nStep 3 → Enter your target size in KB (e.g. 200).\nStep 4 → Choose a compression mode:\n     • Ultra Quality — Best quality, light compression (95%)\n     • Balanced — Good balance of size and quality (75%)\n     • Max Compression — Smallest file size (40%)\nStep 5 → Or drag the Quality slider manually.\nStep 6 → Tap 'Compress' button.\nStep 7 → Done! Image saved in Gallery → DCIM → MediaShrinker."
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
+            <!-- Feature 2: PDF -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📄  Create PDF from Images"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Step 1 → Select one or more images using 'Select Images'.\nStep 2 → Tap 'Create PDF' button.\nStep 3 → The PDF will be saved in Documents → MediaShrinker.\nStep 4 → A PDF viewer will open automatically if available.\n\nTip: You can select multiple photos to combine them into a single PDF."
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
+            <!-- Feature 3: Resize -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📐  Resize Image"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Step 1 → Open the side drawer menu (tap ☰ top-left).\nStep 2 → Tap 'Resize Image'.\nStep 3 → Select an image from your gallery.\nStep 4 → Choose a preset size:\n     • 1080 × 1080 — Full HD square\n     • 720 × 720 — HD square\n     • 512 × 512 — Small square\nStep 5 → Resized image saved in Gallery → DCIM → MediaShrinker."
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
+            <!-- Feature 4: Format Converter -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔄  Format Converter"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Step 1 → Open the drawer menu and tap 'Format Converter'.\nStep 2 → Select an image.\nStep 3 → Choose your conversion:\n     • PNG → JPG\n     • JPG → PNG\n     • WEBP → JPG\n     • WEBP → PNG\nStep 4 → Tap 'Convert'.\nStep 5 → File saved in Gallery → DCIM → MediaShrinker → Converted."
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
+            <!-- Feature 5: Metadata Remover -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔏  Metadata Remover"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="This removes hidden EXIF data from your images (location, device info, date, camera settings etc.).\n\nStep 1 → Open drawer → tap 'Metadata Remover'.\nStep 2 → Select an image.\nStep 3 → Tap 'Remove Metadata'.\nStep 4 → Clean image saved in Gallery → DCIM → MediaShrinker → CleanImages.\n\nTip: Always remove metadata before sharing photos publicly to protect your privacy."
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
+            <!-- Feature 6: Compare -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚖️  Compare Before / After"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Step 1 → First compress an image.\nStep 2 → Tap 'Compare' button on the main screen.\nStep 3 → You will see the original and compressed image side by side.\n\nThis helps you visually judge quality vs size tradeoff."
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
+            <!-- Feature 7: History -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📋  History"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• Compression History → Shows all previously compressed images with original size, compressed size, and reduction %.\n\n• PDF History → Shows all PDFs created using the app.\n\nBoth are accessible from the side drawer menu."
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

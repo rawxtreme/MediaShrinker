@@ -3,12 +3,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aaditya.mediashrinker">
 
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="29" />
+
+    <!-- For Check for Updates feature -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -31,78 +34,56 @@
         </provider>
 
         <!-- Splash Screen -->
-
         <activity
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/AppTheme">
 
             <intent-filter>
-
-                <action
-                    android:name="android.intent.action.MAIN" />
-
-                <category
-                    android:name="android.intent.category.LAUNCHER" />
-
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
         </activity>
 
         <!-- Main -->
-
-        <activity
-            android:name=".MainActivity" />
+        <activity android:name=".MainActivity" />
 
         <!-- Update Video -->
-
-        <activity
-            android:name=".UpdateVideoActivity" />
+        <activity android:name=".UpdateVideoActivity" />
 
         <!-- Settings -->
+        <activity android:name=".SettingsActivity" />
 
-        <activity
-            android:name=".SettingsActivity" />
+        <!-- Privacy Policy -->
+        <activity android:name=".PrivacyPolicyActivity" />
+
+        <!-- How to Use -->
+        <activity android:name=".HowToUseActivity" />
 
         <!-- History -->
-
-        <activity
-            android:name=".HistoryActivity" />
+        <activity android:name=".HistoryActivity" />
 
         <!-- About -->
-
-        <activity
-            android:name=".AboutActivity" />
+        <activity android:name=".AboutActivity" />
 
         <!-- Donate -->
-
-        <activity
-            android:name=".DonateActivity" />
+        <activity android:name=".DonateActivity" />
 
         <!-- Compare -->
-
-        <activity
-            android:name=".CompareActivity" />
+        <activity android:name=".CompareActivity" />
 
         <!-- Resize -->
-
-        <activity
-            android:name=".ResizeActivity" />
+        <activity android:name=".ResizeActivity" />
 
         <!-- Format Converter -->
-
-        <activity
-            android:name=".FormatConverterActivity" />
+        <activity android:name=".FormatConverterActivity" />
 
         <!-- Metadata Remover -->
-
-        <activity
-            android:name=".MetadataRemoverActivity" />
+        <activity android:name=".MetadataRemoverActivity" />
 
         <!-- PDF History -->
-
-        <activity
-            android:name=".PdfHistoryActivity" />
+        <activity android:name=".PdfHistoryActivity" />
 
     </application>
 
