@@ -40,3 +40,4 @@ gradle.properties
 *.tmp
 *.temperror.txt
 log.txt
+error.txt

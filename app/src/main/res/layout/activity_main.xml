@@ -57,7 +57,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="v6.0"
+                    android:text="v7.0"
                     android:textColor="#3B82F6"
                     android:textSize="12sp"
                     android:background="@drawable/card_bg"
@@ -96,6 +96,19 @@
                     android:background="@drawable/button_bg"
                     android:layout_marginTop="12dp"
                     android:stateListAnimator="@null" />
+
+                <!-- Custom Save Location -->
+                <TextView
+                    android:id="@+id/saveFolderText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📁 Save to: DCIM/MediaShrinker  (tap to change)"
+                    android:textColor="#88FFFFFF"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/input_bg" />
 
             </LinearLayout>
 
@@ -408,6 +421,20 @@
 
             </LinearLayout>
 
+            <!-- Preview Quality Button -->
+            <Button
+                android:id="@+id/previewQualityButton"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:text="🔍  Preview Estimated Size"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="#3B82F6"
+                android:background="@drawable/input_bg"
+                android:layout_marginBottom="10dp"
+                android:stateListAnimator="@null" />
+
             <!-- ACTION BUTTONS — COMPRESS full width -->
             <Button
                 android:id="@+id/compressButton"
@@ -466,8 +493,7 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="24dp">
 
-                
-			   <Button
+                <Button
                     android:id="@+id/compareButton"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
@@ -539,7 +565,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="v6.0"
+                android:text="v7.0"
                 android:textColor="#4DFFFFFF"
                 android:textSize="12sp"
                 android:layout_gravity="center_horizontal"
@@ -668,6 +694,28 @@
                 android:layout_height="wrap_content"
                 android:text="🔏  Metadata Remover"
                 android:textColor="#FF9800"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/analyticsOption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📊  Storage Analytics"
+                android:textColor="#A78BFA"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/imageInfoOption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ℹ️  Image Info"
+                android:textColor="#60A5FA"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:padding="10dp"

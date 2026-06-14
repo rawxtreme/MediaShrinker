@@ -66,7 +66,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Thanks for using our App in its initial phase❤️.\n\nPlease note that the viewing video when starting the app will not incur data usage. This App is completely safe and build keeping privacy in the mind. \n\nIf you want to contribute in this app with us, contact Developer Please! \nI truly appreciate you. \n\nCheck How to Use App Option to be familiar with this app."
+                android:text="Thanks for using our App in its initial phase❤️.\n\nPlease note that the viewing video when starting the app will not incur data usage. This App is completely safe and build keeping privacy in the mind. \n\nIf you want to contribute in this app with us, contact Developer Please! \nI truly appreciate you. \n\nCheck How to Use App Option to be familiar with this app. \n\nPlease feel free to ask or report any bugs and glitches happening (if any) in this app to Developer. \n\nGOOD DAY!"
                 android:textColor="#D1D5DB"
                 android:textSize="16sp"
                 android:layout_marginTop="16dp"/>

@@ -3,16 +3,14 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 33
-
     defaultConfig {
         applicationId "com.aaditya.mediashrinker"
         minSdkVersion 26
         targetSdkVersion 33
-        versionCode 6
-        versionName "6.0"
+        versionCode 7
+        versionName "7.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     signingConfigs {
         release {
             storeFile file("mediashrinker.jks")
@@ -21,7 +19,6 @@ android {
             keyPassword project.findProperty("KEY_PASSWORD") ?: ""
         }
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -33,12 +30,10 @@ android {
             }
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -54,8 +49,8 @@ dependencies {
     api 'androidx.recyclerview:recyclerview:1.3.0'
     api 'androidx.cardview:cardview:1.0.0'
     api 'androidx.drawerlayout:drawerlayout:1.2.0'
+    api 'androidx.exifinterface:exifinterface:1.3.6'
     api 'com.itextpdf:itextg:5.5.10'
-    // Coroutines for background network calls (update checker)
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

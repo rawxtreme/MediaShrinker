@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#050816"
+    android:gravity="center">
+
+    <!-- Big emoji icon -->
+    <TextView
+        android:id="@+id/onboardEmoji"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🗜️"
+        android:textSize="72sp"
+        android:gravity="center"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/onboardTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Smart Compression"
+        android:textColor="#FFFFFF"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp" />
+
+    <!-- Description -->
+    <TextView
+        android:id="@+id/onboardDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reduce image size without losing quality."
+        android:textColor="#AAFFFFFF"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        android:layout_marginBottom="56dp" />
+
+    <!-- Dots indicator -->
+    <LinearLayout
+        android:id="@+id/dotsLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="40dp" />
+
+    <!-- Next button -->
+    <Button
+        android:id="@+id/nextButton"
+        android:layout_width="280dp"
+        android:layout_height="54dp"
+        android:text="Next"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@drawable/button_bg"
+        android:stateListAnimator="@null"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Skip -->
+    <TextView
+        android:id="@+id/skipText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Skip"
+        android:textColor="#44FFFFFF"
+        android:textSize="14sp"
+        android:padding="12dp" />
+
+</LinearLayout>
