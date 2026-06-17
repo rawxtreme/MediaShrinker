@@ -57,7 +57,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="v7.0"
+                    android:text="v7.1"
                     android:textColor="#3B82F6"
                     android:textSize="12sp"
                     android:background="@drawable/card_bg"
@@ -565,7 +565,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="v7.0"
+                android:text="v7.1"
                 android:textColor="#4DFFFFFF"
                 android:textSize="12sp"
                 android:layout_gravity="center_horizontal"

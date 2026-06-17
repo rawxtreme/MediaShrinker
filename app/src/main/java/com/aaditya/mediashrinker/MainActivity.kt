@@ -9,8 +9,9 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.AnimationSet
 import android.view.animation.ScaleAnimation
@@ -77,7 +78,9 @@ class MainActivity : AppCompatActivity() {
     private var lastSavedFilename: String? = null
     private var vibrator: Vibrator? = null
 
-    // Feature: Custom Save Location
+    // Slider lock — true means user typed manually, slider blocked
+    private var isManualInput = false
+
     private var customSavePath = "DCIM/MediaShrinker"
     private val saveLocationOptions = arrayOf(
         "Gallery → DCIM/MediaShrinker",
@@ -95,8 +98,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
-
-        // Load saved location
         val prefs = getSharedPreferences("MediaShrinkerSettings", MODE_PRIVATE)
         customSavePath = prefs.getString("save_location", "DCIM/MediaShrinker") ?: "DCIM/MediaShrinker"
 
@@ -147,7 +148,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateSaveLocationLabel() {
-        saveFolderText.text = "Save to: $customSavePath"
+        saveFolderText.text = "📁 Save to: $customSavePath  (tap to change)"
     }
 
     private fun setupListeners() {
@@ -156,18 +157,52 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
+        // =============================================
+        // SLIDER LOCK — only works when input is empty
+        // =============================================
+        targetSizeInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                isManualInput = !s.isNullOrEmpty()
+                if (isManualInput) {
+                    qualitySeekBar.isEnabled = false
+                    qualityText.alpha = 0.4f
+                } else {
+                    qualitySeekBar.isEnabled = true
+                    qualityText.alpha = 1f
+                }
+            }
+        })
+
         qualitySeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                selectedQuality = progress
-                qualityText.text = "${progress}%"
+                if (!isManualInput) {
+                    selectedQuality = progress
+                    qualityText.text = "$progress%"
+                }
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        ultraModeButton.setOnClickListener { hapticLight(); setMode(95, "Ultra • 95%") }
-        balancedModeButton.setOnClickListener { hapticLight(); setMode(75, "Balanced • 75%") }
-        maxModeButton.setOnClickListener { hapticLight(); setMode(40, "Max • 40%") }
+        ultraModeButton.setOnClickListener {
+            hapticLight()
+            targetSizeInput.setText("")
+            setMode(95, "Ultra • 95%")
+        }
+
+        balancedModeButton.setOnClickListener {
+            hapticLight()
+            targetSizeInput.setText("")
+            setMode(75, "Balanced • 75%")
+        }
+
+        maxModeButton.setOnClickListener {
+            hapticLight()
+            targetSizeInput.setText("")
+            setMode(40, "Max • 40%")
+        }
 
         // Drawer
         contactDeveloperOption.setOnClickListener { openUrl("https://www.instagram.com/carryon.aditya") }
@@ -199,7 +234,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Main buttons
         selectImageButton.setOnClickListener {
             hapticLight()
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -208,7 +242,6 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, 100)
         }
 
-        // Feature 4: Quality Preview before compress
         previewQualityButton.setOnClickListener {
             hapticLight()
             if (selectedImageUris.isEmpty()) {
@@ -218,7 +251,6 @@ class MainActivity : AppCompatActivity() {
             showQualityPreview()
         }
 
-        // Feature 5: Custom Save Location
         saveFolderText.setOnClickListener {
             hapticLight()
             showSaveLocationPicker()
@@ -230,12 +262,33 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Select images first", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val targetKB = targetSizeInput.text.toString()
-            if (targetKB.isEmpty()) {
-                Toast.makeText(this, "Enter target KB size", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+
+            val targetText = targetSizeInput.text.toString()
+
+            if (targetText.isNotEmpty()) {
+                // User entered target KB — use accurate binary search
+                val targetKB = targetText.toIntOrNull()
+                if (targetKB == null || targetKB <= 0) {
+                    Toast.makeText(this, "Enter a valid KB value", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                // Validate against original size
+                val uri = selectedImageUris[0]
+                CoroutineScope(Dispatchers.IO).launch {
+                    val bytes = contentResolver.openInputStream(uri)?.readBytes()
+                    val originalKB = (bytes?.size ?: 0) / 1024
+                    withContext(Dispatchers.Main) {
+                        if (targetKB >= originalKB) {
+                            showSizeError(originalKB, targetKB)
+                        } else {
+                            compressAllImages(targetKB, useTargetMode = true)
+                        }
+                    }
+                }
+            } else {
+                // Slider mode — use selectedQuality directly
+                compressAllImages(0, useTargetMode = false)
             }
-            compressAllImages(targetKB.toInt())
         }
 
         compareButton.setOnClickListener {
@@ -295,217 +348,71 @@ class MainActivity : AppCompatActivity() {
     }
 
     // =============================================
-    // FEATURE 4: QUALITY PREVIEW
+    // ACCURATE COMPRESSION ENGINE
     // =============================================
 
-    private fun showQualityPreview() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val uri = selectedImageUris[0]
-                val bytes = contentResolver.openInputStream(uri)?.readBytes()
-                val originalKB = (bytes?.size ?: 0) / 1024
+    private fun compressToTargetKB(bitmap: Bitmap, targetKB: Int): ByteArray {
+        var low = 1
+        var high = 100
+        var bestBytes = ByteArrayOutputStream().also {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, it)
+        }.toByteArray()
 
-                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes?.size ?: 0)
-                val out = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, selectedQuality, out)
-                val estimatedKB = out.size() / 1024
-                val reduction = if (originalKB > 0) 100 - ((estimatedKB * 100) / originalKB) else 0
+        repeat(14) {
+            val mid = (low + high) / 2
+            val out = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, mid, out)
+            val bytes = out.toByteArray()
+            val sizeKB = bytes.size / 1024
 
-                withContext(Dispatchers.Main) {
-                    val dialogView = LayoutInflater.from(this@MainActivity)
-                        .inflate(R.layout.dialog_quality_preview, null)
-
-                    dialogView.findViewById<TextView>(R.id.previewOriginalSize).text = "$originalKB KB"
-                    dialogView.findViewById<TextView>(R.id.previewEstSize).text = "~$estimatedKB KB"
-                    dialogView.findViewById<TextView>(R.id.previewReduction).text = "~$reduction%"
-
-                    AlertDialog.Builder(this@MainActivity)
-                        .setView(dialogView)
-                        .setPositiveButton("Compress Now") { _, _ -> compressAllImages(estimatedKB) }
-                        .setNegativeButton("Adjust Quality", null)
-                        .create()
-                        .also { it.window?.setBackgroundDrawableResource(android.R.color.transparent) }
-                        .show()
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@MainActivity, "Could not preview", Toast.LENGTH_SHORT).show()
-                }
+            if (sizeKB <= targetKB) {
+                bestBytes = bytes
+                low = mid + 1
+            } else {
+                high = mid - 1
             }
         }
+
+        return bestBytes
     }
 
-    // =============================================
-    // FEATURE 5: CUSTOM SAVE LOCATION
-    // =============================================
+    private fun showSizeError(originalKB: Int, enteredKB: Int) {
+        val suggest25 = (originalKB * 0.75).toInt()
+        val suggest50 = (originalKB * 0.50).toInt()
+        val suggest75 = (originalKB * 0.25).toInt()
 
-    private fun showSaveLocationPicker() {
-        var selectedIndex = saveLocationPaths.indexOf(customSavePath).coerceAtLeast(0)
+        val message = "Target size (${enteredKB} KB) is equal to or larger than the original (${originalKB} KB).\n\n" +
+            "Compressing would make the file LARGER, not smaller!\n\n" +
+            "Suggested targets:\n" +
+            "• Light → ${suggest25} KB\n" +
+            "• Medium → ${suggest50} KB\n" +
+            "• Heavy → ${suggest75} KB"
 
         AlertDialog.Builder(this)
-            .setTitle("Save Location")
-            .setSingleChoiceItems(saveLocationOptions, selectedIndex) { _, which ->
-                selectedIndex = which
-            }
-            .setPositiveButton("Save") { _, _ ->
-                customSavePath = saveLocationPaths[selectedIndex]
-                getSharedPreferences("MediaShrinkerSettings", MODE_PRIVATE)
-                    .edit().putString("save_location", customSavePath).apply()
-                updateSaveLocationLabel()
-                Toast.makeText(this, "Save location updated!", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("Cancel", null)
+            .setTitle("Invalid Target Size")
+            .setMessage(message)
+            .setPositiveButton("OK", null)
             .show()
+        hapticMedium()
     }
 
-    // =============================================
-    // HELPERS
-    // =============================================
-
-    private fun setMode(quality: Int, label: String) {
-        selectedQuality = quality
-        qualitySeekBar.progress = quality
-        qualityText.text = label
-    }
-
-    private fun openUrl(url: String) {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        drawerLayout.closeDrawer(GravityCompat.START)
-    }
-
-    private fun startAndClose(cls: Class<*>) {
-        startActivity(Intent(this, cls))
-        drawerLayout.closeDrawer(GravityCompat.START)
-    }
-
-    // =============================================
-    // PROGRESS + SUCCESS
-    // =============================================
-
-    private fun showProgressDialog(total: Int) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_progress, null)
-        progressBar = dialogView.findViewById(R.id.progressBar)
-        progressText = dialogView.findViewById(R.id.progressText)
-        progressSubText = dialogView.findViewById(R.id.progressSubText)
-        progressBar.max = total
-        progressBar.progress = 0
-        progressText.text = "Starting..."
-        progressSubText.text = "0 of $total images"
-        progressDialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setCancelable(false)
-            .create()
-        progressDialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        progressDialog?.show()
-    }
-
-    private fun updateProgress(current: Int, total: Int, msg: String) {
-        progressBar.progress = current
-        progressText.text = "Compressing $current of $total"
-        progressSubText.text = msg
-    }
-
-    private fun dismissProgressDialog() {
-        progressDialog?.dismiss()
-        progressDialog = null
-    }
-
-    private fun showSuccessAnimation(savedKB: Int, reducedPercent: Int) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_success, null)
-        dialogView.findViewById<TextView>(R.id.successTitle).text = "Compression Complete!"
-        dialogView.findViewById<TextView>(R.id.successSaved).text = "Saved ${savedKB} KB"
-        dialogView.findViewById<TextView>(R.id.successReduction).text = "Reduced by ${reducedPercent}%"
-
-        val icon = dialogView.findViewById<TextView>(R.id.successIcon)
-        val scaleAnim = ScaleAnimation(0f, 1.2f, 0f, 1.2f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f).apply { duration = 300; fillAfter = true }
-        val scaleBack = ScaleAnimation(1.2f, 1f, 1.2f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f).apply { duration = 150; startOffset = 300; fillAfter = true }
-        val animSet = AnimationSet(false).apply { addAnimation(scaleAnim); addAnimation(scaleBack) }
-        icon.startAnimation(animSet)
-
-        val successDialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setCancelable(true)
-            .create()
-        successDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        dialogView.findViewById<Button>(R.id.successShareBtn).setOnClickListener {
-            hapticLight()
-            successDialog.dismiss()
-            compressedImageUri?.let { uri ->
-                val shareIntent = Intent(Intent.ACTION_SEND)
-                shareIntent.type = "image/*"
-                shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
-                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                startActivity(Intent.createChooser(shareIntent, "Share Compressed Image"))
-            }
-        }
-
-        dialogView.findViewById<Button>(R.id.successRenameBtn).setOnClickListener {
-            hapticLight()
-            successDialog.dismiss()
-            showRenameDialog()
-        }
-
-        dialogView.findViewById<Button>(R.id.successDoneBtn).setOnClickListener {
-            hapticLight()
-            successDialog.dismiss()
-        }
-
-        successDialog.show()
-        hapticSuccess()
-    }
-
-    private fun showRenameDialog() {
-        val input = EditText(this)
-        input.hint = "Enter new filename"
-        input.setText(lastSavedFilename?.removeSuffix(".jpg")?.removeSuffix(".png") ?: "compressed_image")
-        input.setTextColor(0xFFFFFFFF.toInt())
-        input.setHintTextColor(0x88FFFFFF.toInt())
-        input.setPadding(32, 24, 32, 24)
-        input.background = null
-
-        AlertDialog.Builder(this)
-            .setTitle("Rename File")
-            .setView(input)
-            .setPositiveButton("Rename") { _, _ ->
-                val newName = input.text.toString().trim()
-                if (newName.isNotEmpty() && lastSavedUri != null) {
-                    val ext = if (lastSavedFilename?.endsWith(".png") == true) ".png" else ".jpg"
-                    val finalName = if (newName.endsWith(".jpg") || newName.endsWith(".png")) newName else "$newName$ext"
-                    try {
-                        val values = ContentValues().apply { put(MediaStore.Images.Media.DISPLAY_NAME, finalName) }
-                        contentResolver.update(lastSavedUri!!, values, null, null)
-                        Toast.makeText(this, "Renamed to $finalName", Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
-                        Toast.makeText(this, "Rename failed", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
-
-    // =============================================
-    // COMPRESSION
-    // =============================================
-
-    private fun compressAllImages(targetKB: Int) {
+    private fun compressAllImages(targetKB: Int, useTargetMode: Boolean) {
         val total = selectedImageUris.size
         val hasPng = selectedImageUris.any { contentResolver.getType(it) == "image/png" }
 
-        if (hasPng && total == 1) {
+        if (hasPng && total == 1 && !useTargetMode) {
             AlertDialog.Builder(this)
                 .setTitle("PNG Detected")
                 .setMessage("Convert to JPEG for better compression?")
-                .setPositiveButton("YES") { _, _ -> startBatchCompress(targetKB, true) }
-                .setNegativeButton("NO") { _, _ -> startBatchCompress(targetKB, false) }
+                .setPositiveButton("YES") { _, _ -> startBatchCompress(targetKB, convertToJpg = true, useTargetMode) }
+                .setNegativeButton("NO") { _, _ -> startBatchCompress(targetKB, convertToJpg = false, useTargetMode) }
                 .show()
         } else {
-            startBatchCompress(targetKB, true)
+            startBatchCompress(targetKB, convertToJpg = true, useTargetMode)
         }
     }
 
-    private fun startBatchCompress(targetKB: Int, convertToJpg: Boolean) {
+    private fun startBatchCompress(targetKB: Int, convertToJpg: Boolean, useTargetMode: Boolean) {
         val total = selectedImageUris.size
         showProgressDialog(total)
 
@@ -516,7 +423,7 @@ class MainActivity : AppCompatActivity() {
             for ((index, uri) in selectedImageUris.withIndex()) {
                 val current = index + 1
                 withContext(Dispatchers.Main) { updateProgress(current, total, "Processing image $current...") }
-                val result = compressImageAsync(uri, targetKB, convertToJpg)
+                val result = compressImageAsync(uri, targetKB, convertToJpg, useTargetMode)
                 lastSavedKB = result.first
                 lastReducedPercent = result.second
                 withContext(Dispatchers.Main) { updateProgress(current, total, "Image $current done") }
@@ -531,18 +438,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun compressImageAsync(imageUri: Uri, targetKB: Int, convertToJpg: Boolean): Pair<Int, Int> {
+    private fun compressImageAsync(
+        imageUri: Uri,
+        targetKB: Int,
+        convertToJpg: Boolean,
+        useTargetMode: Boolean
+    ): Pair<Int, Int> {
         return try {
             val bytes = contentResolver.openInputStream(imageUri)?.readBytes() ?: return Pair(0, 0)
             val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
             val originalKB = bytes.size / 1024
             val mimeType = contentResolver.getType(imageUri)
 
-            val out = ByteArrayOutputStream()
-            if (convertToJpg) bitmap.compress(Bitmap.CompressFormat.JPEG, selectedQuality, out)
-            else bitmap.compress(Bitmap.CompressFormat.PNG, selectedQuality, out)
+            val finalBytes: ByteArray
 
-            val finalBytes = out.toByteArray()
+            if (useTargetMode) {
+                // Accurate binary search to hit target KB
+                val effectiveTarget = if (originalKB > 200) targetKB.coerceAtLeast(200) else targetKB
+                finalBytes = compressToTargetKB(bitmap, effectiveTarget)
+            } else {
+                // Slider quality mode
+                val out = ByteArrayOutputStream()
+                if (convertToJpg) bitmap.compress(Bitmap.CompressFormat.JPEG, selectedQuality, out)
+                else bitmap.compress(Bitmap.CompressFormat.PNG, selectedQuality, out)
+                finalBytes = out.toByteArray()
+            }
+
             val finalKB = finalBytes.size / 1024
             val reduction = if (originalKB > 0) 100 - ((finalKB * 100) / originalKB) else 0
             val savedKB = originalKB - finalKB
@@ -580,8 +501,183 @@ class MainActivity : AppCompatActivity() {
     }
 
     // =============================================
-    // HAPTIC
+    // QUALITY PREVIEW
     // =============================================
+
+    private fun showQualityPreview() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val uri = selectedImageUris[0]
+                val bytes = contentResolver.openInputStream(uri)?.readBytes()
+                val originalKB = (bytes?.size ?: 0) / 1024
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes?.size ?: 0)
+                val out = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, selectedQuality, out)
+                val estimatedKB = out.size() / 1024
+                val reduction = if (originalKB > 0) 100 - ((estimatedKB * 100) / originalKB) else 0
+
+                withContext(Dispatchers.Main) {
+                    val dialogView = LayoutInflater.from(this@MainActivity)
+                        .inflate(R.layout.dialog_quality_preview, null)
+                    dialogView.findViewById<TextView>(R.id.previewOriginalSize).text = "$originalKB KB"
+                    dialogView.findViewById<TextView>(R.id.previewEstSize).text = "~$estimatedKB KB"
+                    dialogView.findViewById<TextView>(R.id.previewReduction).text = "~$reduction%"
+
+                    AlertDialog.Builder(this@MainActivity)
+                        .setView(dialogView)
+                        .setPositiveButton("Compress Now") { _, _ ->
+                            compressAllImages(estimatedKB, useTargetMode = true)
+                        }
+                        .setNegativeButton("Adjust Quality", null)
+                        .create()
+                        .also { it.window?.setBackgroundDrawableResource(android.R.color.transparent) }
+                        .show()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, "Could not preview", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    // =============================================
+    // CUSTOM SAVE LOCATION
+    // =============================================
+
+    private fun showSaveLocationPicker() {
+        var selectedIndex = saveLocationPaths.indexOf(customSavePath).coerceAtLeast(0)
+        AlertDialog.Builder(this)
+            .setTitle("Save Location")
+            .setSingleChoiceItems(saveLocationOptions, selectedIndex) { _, which -> selectedIndex = which }
+            .setPositiveButton("Save") { _, _ ->
+                customSavePath = saveLocationPaths[selectedIndex]
+                getSharedPreferences("MediaShrinkerSettings", MODE_PRIVATE)
+                    .edit().putString("save_location", customSavePath).apply()
+                updateSaveLocationLabel()
+                Toast.makeText(this, "Save location updated!", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    // =============================================
+    // PROGRESS + SUCCESS DIALOGS
+    // =============================================
+
+    private fun showProgressDialog(total: Int) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_progress, null)
+        progressBar = dialogView.findViewById(R.id.progressBar)
+        progressText = dialogView.findViewById(R.id.progressText)
+        progressSubText = dialogView.findViewById(R.id.progressSubText)
+        progressBar.max = total
+        progressBar.progress = 0
+        progressText.text = "Starting..."
+        progressSubText.text = "0 of $total images"
+        progressDialog = AlertDialog.Builder(this)
+            .setView(dialogView).setCancelable(false).create()
+        progressDialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        progressDialog?.show()
+    }
+
+    private fun updateProgress(current: Int, total: Int, msg: String) {
+        progressBar.progress = current
+        progressText.text = "Compressing $current of $total"
+        progressSubText.text = msg
+    }
+
+    private fun dismissProgressDialog() {
+        progressDialog?.dismiss()
+        progressDialog = null
+    }
+
+    private fun showSuccessAnimation(savedKB: Int, reducedPercent: Int) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_success, null)
+        dialogView.findViewById<TextView>(R.id.successTitle).text = "Compression Complete!"
+        dialogView.findViewById<TextView>(R.id.successSaved).text = "Saved $savedKB KB"
+        dialogView.findViewById<TextView>(R.id.successReduction).text = "Reduced by $reducedPercent%"
+
+        val icon = dialogView.findViewById<TextView>(R.id.successIcon)
+        val scaleAnim = ScaleAnimation(0f, 1.2f, 0f, 1.2f,
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f)
+            .apply { duration = 300; fillAfter = true }
+        val scaleBack = ScaleAnimation(1.2f, 1f, 1.2f, 1f,
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f)
+            .apply { duration = 150; startOffset = 300; fillAfter = true }
+        val animSet = AnimationSet(false).apply { addAnimation(scaleAnim); addAnimation(scaleBack) }
+        icon.startAnimation(animSet)
+
+        val successDialog = AlertDialog.Builder(this).setView(dialogView).setCancelable(true).create()
+        successDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<Button>(R.id.successShareBtn).setOnClickListener {
+            hapticLight(); successDialog.dismiss()
+            compressedImageUri?.let { uri ->
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.type = "image/*"
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                startActivity(Intent.createChooser(shareIntent, "Share Compressed Image"))
+            }
+        }
+        dialogView.findViewById<Button>(R.id.successRenameBtn).setOnClickListener {
+            hapticLight(); successDialog.dismiss(); showRenameDialog()
+        }
+        dialogView.findViewById<Button>(R.id.successDoneBtn).setOnClickListener {
+            hapticLight(); successDialog.dismiss()
+        }
+
+        successDialog.show()
+        hapticSuccess()
+    }
+
+    private fun showRenameDialog() {
+        val input = EditText(this)
+        input.hint = "Enter new filename"
+        input.setText(lastSavedFilename?.removeSuffix(".jpg")?.removeSuffix(".png") ?: "compressed_image")
+        input.setTextColor(0xFFFFFFFF.toInt())
+        input.setHintTextColor(0x88FFFFFF.toInt())
+        input.setPadding(32, 24, 32, 24)
+        input.background = null
+
+        AlertDialog.Builder(this)
+            .setTitle("Rename File").setView(input)
+            .setPositiveButton("Rename") { _, _ ->
+                val newName = input.text.toString().trim()
+                if (newName.isNotEmpty() && lastSavedUri != null) {
+                    val ext = if (lastSavedFilename?.endsWith(".png") == true) ".png" else ".jpg"
+                    val finalName = if (newName.endsWith(".jpg") || newName.endsWith(".png")) newName else "$newName$ext"
+                    try {
+                        val values = ContentValues().apply { put(MediaStore.Images.Media.DISPLAY_NAME, finalName) }
+                        contentResolver.update(lastSavedUri!!, values, null, null)
+                        Toast.makeText(this, "Renamed to $finalName", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(this, "Rename failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null).show()
+    }
+
+    // =============================================
+    // HELPERS
+    // =============================================
+
+    private fun setMode(quality: Int, label: String) {
+        selectedQuality = quality
+        qualitySeekBar.progress = quality
+        qualityText.text = label
+    }
+
+    private fun openUrl(url: String) {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        drawerLayout.closeDrawer(GravityCompat.START)
+    }
+
+    private fun startAndClose(cls: Class<*>) {
+        startActivity(Intent(this, cls))
+        drawerLayout.closeDrawer(GravityCompat.START)
+    }
 
     private fun hapticLight() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -597,13 +693,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun hapticSuccess() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            vibrator?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 50, 50, 100), intArrayOf(0, 100, 0, 200), -1))
-        else @Suppress("DEPRECATION") vibrator?.vibrate(longArrayOf(0, 50, 50, 100), -1)
+            vibrator?.vibrate(VibrationEffect.createWaveform(longArrayOf(0,50,50,100), intArrayOf(0,100,0,200), -1))
+        else @Suppress("DEPRECATION") vibrator?.vibrate(longArrayOf(0,50,50,100), -1)
     }
-
-    // =============================================
-    // HISTORY
-    // =============================================
 
     private fun saveToHistory(imageUri: String, originalSize: String, compressedSize: String, reducedPercent: String) {
         val prefs = getSharedPreferences("MediaShrinkerHistory", MODE_PRIVATE)
@@ -618,10 +710,6 @@ class MainActivity : AppCompatActivity() {
         set.add(pdfUri)
         prefs.edit().putStringSet("pdf_history", set).apply()
     }
-
-    // =============================================
-    // ACTIVITY RESULT
-    // =============================================
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
