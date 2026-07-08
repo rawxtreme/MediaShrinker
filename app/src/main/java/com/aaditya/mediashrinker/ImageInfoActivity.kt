@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.exifinterface.media.ExifInterface
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -47,28 +46,24 @@ class ImageInfoActivity : AppCompatActivity() {
 
             val projection = arrayOf(
                 MediaStore.Images.Media.DISPLAY_NAME,
-                MediaStore.Images.Media.DATE_ADDED,
-                MediaStore.Images.Media.DATA
+                MediaStore.Images.Media.DATE_ADDED
             )
             val cursor = contentResolver.query(uri, projection, null, null, null)
             var fileName = "Unknown"
             var dateAdded = "Unknown"
-            var filePath = ""
 
             cursor?.use {
                 if (it.moveToFirst()) {
                     fileName = it.getString(it.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)) ?: "Unknown"
                     val dateMillis = it.getLong(it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)) * 1000L
                     dateAdded = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault()).format(Date(dateMillis))
-                    filePath = it.getString(it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)) ?: ""
                 }
             }
 
-            // EXIF
+            // EXIF - seedha normal URI se padhte hain, koi permission nahi chahiye
+            // (sirf GPS ke liye special permission chahiye hoti hai, baaki sab yahi se mil jata hai)
             var cameraMake = "N/A"
             var cameraModel = "N/A"
-            var gpsLat = "N/A"
-            var gpsLon = "N/A"
             var flashUsed = "N/A"
             var focalLength = "N/A"
 
@@ -78,11 +73,6 @@ class ImageInfoActivity : AppCompatActivity() {
                     val exif = ExifInterface(exifStream)
                     cameraMake = exif.getAttribute(ExifInterface.TAG_MAKE) ?: "N/A"
                     cameraModel = exif.getAttribute(ExifInterface.TAG_MODEL) ?: "N/A"
-                    val latLon = FloatArray(2)
-                    if (exif.getLatLong(latLon)) {
-                        gpsLat = String.format("%.4f", latLon[0])
-                        gpsLon = String.format("%.4f", latLon[1])
-                    }
                     val flash = exif.getAttributeInt(ExifInterface.TAG_FLASH, -1)
                     flashUsed = if (flash != -1) (if (flash and 1 != 0) "Yes" else "No") else "N/A"
                     focalLength = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH) ?: "N/A"
@@ -98,8 +88,6 @@ class ImageInfoActivity : AppCompatActivity() {
             setVal(R.id.infoDateAdded, dateAdded)
             setVal(R.id.infoCameraMake, cameraMake)
             setVal(R.id.infoCameraModel, cameraModel)
-            setVal(R.id.infoGpsLat, gpsLat)
-            setVal(R.id.infoGpsLon, gpsLon)
             setVal(R.id.infoFlash, flashUsed)
             setVal(R.id.infoFocalLength, focalLength)
 

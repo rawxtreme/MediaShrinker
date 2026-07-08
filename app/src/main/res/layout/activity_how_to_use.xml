@@ -58,11 +58,28 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- New Features Highlight -->
+            <TextView
+                android:id="@+id/newFeaturesBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="✨ New Features Explained ✨"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:background="@drawable/new_features_badge_bg"
+                android:layout_marginBottom="14dp" />
+
             <!-- Intro -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MediaShrinker v7.1 — Complete Guide"
+                android:text="MediaShrinker v8.0 — Complete Guide"
                 android:textColor="#FFFFFF"
                 android:textSize="17sp"
                 android:textStyle="bold"
@@ -105,6 +122,62 @@
 
             </LinearLayout>
 
+            <!-- Feature 1.5: Smart Photo Selection -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📸  Smart Photo Selection"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Step 1 → Tap 'Select Photos' — this opens the app's own built-in photo picker (no other app opens).\nStep 2 → Tap any photo to select it. A blue checkmark badge appears on it.\nStep 3 → You can select up to 100 photos at once. Once 100 are selected, the remaining photos dim out and can't be tapped until you remove one first.\nStep 4 → Tap 'Done' to confirm your selection.\n\nFirst time you open this screen, Android will ask for a Photos permission — please allow it so the app can show your gallery. If you accidentally deny it, a popup will guide you to enable it from Settings."
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
+            <!-- Feature 1.6: Preview & Remove Photos -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🖼️  Preview &amp; Remove Selected Photos"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="If you selected only 1 photo → a small ✕ button appears on the photo preview. Tap it to remove that photo and pick a different one.\n\nIf you selected 2 or more photos → a 'Preview' button appears instead. Tap it to open a full screen showing all your selected photos in a grid, each with its own ✕ button.\n\nRemove any photo you don't want, then tap 'Continue to Home Screen' to return and proceed with compression or PDF creation."
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
             <!-- Feature 2: PDF -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -126,11 +199,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Step 1 → Select one or more images using 'Select Images'.\nStep 2 → Tap 'Create PDF' button.\nStep 3 → The PDF will be saved in Documents → MediaShrinker.\nStep 4 → A PDF viewer will open automatically if available.\n\nTip: You can select multiple photos to combine them into a single PDF."
+                    android:text="Step 1 → Select one or more images using 'Select Photos'.\nStep 2 → Tap 'Create PDF' button.\nStep 3 → A progress popup with a progress bar appears, showing how many photos have been processed.\nStep 4 → The PDF will be saved in Documents → MediaShrinker.\nStep 5 → A PDF viewer will open automatically if available.\n\nTip: You can select up to 50 photos at once to combine them into a single PDF."
                     android:textColor="#CCFFFFFF"
                     android:textSize="13sp"
                     android:lineSpacingExtra="5dp" />
-
+					
             </LinearLayout>
 
             <!-- Feature 3: Resize -->
@@ -245,7 +318,36 @@
 
             </LinearLayout>
 
+            <!-- Feature 6.5: Image Info -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ℹ️  Image Info (EXIF Details)"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Step 1 → Select an image and tap 'Image Info'.\nStep 2 → App will show file name, size, resolution, format, camera make/model, flash and focal length — all read directly from the photo's hidden EXIF data.\n\nThis works fully offline, no internet is used, and no personal location data is read or shown."
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
             <!-- Feature 7: History -->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -267,6 +369,34 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="• Compression History → Shows all previously compressed images with original size, compressed size, and reduction %.\n\n• PDF History → Shows all PDFs created using the app.\n\nBoth are accessible from the side drawer menu."
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
+            <!-- Feature 8: Email to Developer -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📧 Email to Developer"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please Note:\n\nWhen you tap the &quot;Give Suggestions&quot; option from the three-line menu, some basic device information will be added to your email automatically. This may include your Device Model, Device Manufacturer, Android Version, App Version, Date, and Time. This information helps me understand your device better and allows me to solve your issue, improve the app, or understand your suggestions more accurately.\n\nPlease do not remove this information, as it is very helpful during troubleshooting and development.\n\nYour privacy is important. The automatically added information is used only to understand your device and provide better support. No sensitive or personal data is collected through this feature.\n\nIf you would like to know more or contact me directly, you can use the &quot;Contact Developer&quot; option or visit my Instagram profile from the &quot;About App&quot; section.\n\nPlease note: At the moment, I can only be contacted through Instagram. If I am unable to reply to your message immediately, please don't worry. I read every message and will respond as soon as I am available.\n\nThank you very much for your support and cooperation! ❤️"
                     android:textColor="#CCFFFFFF"
                     android:textSize="13sp"
                     android:lineSpacingExtra="5dp" />

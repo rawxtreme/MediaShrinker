@@ -62,7 +62,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Last updated: 12th June 2026"
+                android:text="Last updated: 2nd July 2026"
                 android:textColor="#88FFFFFF"
                 android:textSize="12sp"
                 android:layout_marginBottom="20dp" />
@@ -194,7 +194,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="If you have any questions about this Privacy Policy, you can contact the developer:\n\n• Instagram: @carryon.aditya\n• Email: blastergaming98611info@gmail.com\n• GitHub: github.com/rawxtreme"
+                android:text="If you have any questions about this Privacy Policy, you can contact the developer:\n\n• Instagram: @carryon.aditya\n• scope8xaditya@gmail.com\n• GitHub: github.com/rawxtreme"
                 android:textColor="#CCFFFFFF"
                 android:textSize="14sp"
                 android:lineSpacingExtra="4dp"

@@ -360,7 +360,7 @@
             android:layout_marginBottom="32dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="MediaShrinker v7.1 • Made with ❤️ by Aaditya Shukla"
+            android:text="MediaShrinker v8.0 • Made with ❤️ by Aaditya Shukla"
             android:textColor="#44FFFFFF"
             android:textSize="11sp"
             android:gravity="center" />

@@ -57,7 +57,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="v7.1"
+                    android:text="v8.0"
                     android:textColor="#3B82F6"
                     android:textSize="12sp"
                     android:background="@drawable/card_bg"
@@ -77,12 +77,49 @@
                 android:padding="14dp"
                 android:layout_marginBottom="12dp">
 
-                <ImageView
-                    android:id="@+id/imagePreview"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    android:scaleType="centerCrop"
-                    android:background="#0A1020" />
+                    android:layout_height="180dp">
+
+                    <ImageView
+                        android:id="@+id/imagePreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:background="#0A1020" />
+
+                    <TextView
+                        android:id="@+id/removeImageBtn"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="top|right"
+                        android:layout_margin="8dp"
+                        android:text="✕"
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:background="@drawable/cross_btn_bg"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/previewImagesBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|right"
+                        android:layout_margin="8dp"
+                        android:text="Preview"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:paddingTop="7dp"
+                        android:paddingBottom="7dp"
+                        android:background="@drawable/preview_btn_bg"
+                        android:visibility="gone" />
+
+                </FrameLayout>
 
                 <Button
                     android:id="@+id/selectImageButton"
@@ -565,7 +602,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="v7.1"
+                android:text="v8.0"
                 android:textColor="#4DFFFFFF"
                 android:textSize="12sp"
                 android:layout_gravity="center_horizontal"

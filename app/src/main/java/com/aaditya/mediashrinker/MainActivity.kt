@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.AnimationSet
 import android.view.animation.ScaleAnimation
@@ -22,6 +23,10 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import kotlinx.coroutines.*
 import java.io.ByteArrayOutputStream
+import android.os.Build
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,6 +47,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imageInfoOption: TextView
 
     private lateinit var imagePreview: ImageView
+    private lateinit var removeImageBtn: TextView
+    private lateinit var previewImagesBtn: TextView
     private lateinit var selectImageButton: Button
     private lateinit var compressButton: Button
     private lateinit var shareButton: Button
@@ -122,6 +129,8 @@ class MainActivity : AppCompatActivity() {
         analyticsOption = findViewById(R.id.analyticsOption)
         imageInfoOption = findViewById(R.id.imageInfoOption)
         imagePreview = findViewById(R.id.imagePreview)
+        removeImageBtn = findViewById(R.id.removeImageBtn)
+        previewImagesBtn = findViewById(R.id.previewImagesBtn)
         selectImageButton = findViewById(R.id.selectImageButton)
         compressButton = findViewById(R.id.compressButton)
         shareButton = findViewById(R.id.shareButton)
@@ -209,12 +218,12 @@ class MainActivity : AppCompatActivity() {
         instagramOption.setOnClickListener { openUrl("https://www.instagram.com/carryon.aditya") }
         aboutAppOption.setOnClickListener { startAndClose(AboutActivity::class.java) }
         suggestionOption.setOnClickListener {
-            val i = Intent(Intent.ACTION_SENDTO)
-            i.data = Uri.parse("mailto:mediashrinker.app@gmail.com")
-            i.putExtra(Intent.EXTRA_SUBJECT, "MediaShrinker Suggestion")
-            startActivity(i)
+            hapticLight()
             drawerLayout.closeDrawer(GravityCompat.START)
+            showEmailConfirmationDialog()
         }
+
+
         historyOption.setOnClickListener { startAndClose(HistoryActivity::class.java) }
         pdfHistoryOption.setOnClickListener { startAndClose(PdfHistoryActivity::class.java) }
         resizeOption.setOnClickListener { startAndClose(ResizeActivity::class.java) }
@@ -236,10 +245,22 @@ class MainActivity : AppCompatActivity() {
 
         selectImageButton.setOnClickListener {
             hapticLight()
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            intent.type = "image/*"
+            val intent = Intent(this, CustomPhotoPickerActivity::class.java)
             startActivityForResult(intent, 100)
+        }
+
+        removeImageBtn.setOnClickListener {
+            hapticLight()
+            selectedImageUris.clear()
+            originalImageUri = null
+            updateImageSelectionUI()
+        }
+
+        previewImagesBtn.setOnClickListener {
+            hapticLight()
+            val intent = Intent(this, PhotoPreviewActivity::class.java)
+            intent.putParcelableArrayListExtra("photo_uris", ArrayList(selectedImageUris))
+            startActivityForResult(intent, 200)
         }
 
         previewQualityButton.setOnClickListener {
@@ -309,23 +330,14 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Select photos first", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            resultText.text = "Creating PDF..."
-            val pdfUri = PdfUtils.createPdf(this, selectedImageUris)
-            if (pdfUri != null) {
-                savePdfHistory(pdfUri.toString())
-                resultText.text = "PDF Created!"
-                Toast.makeText(this, "Saved in Documents/MediaShrinker", Toast.LENGTH_LONG).show()
-                try {
-                    val i = Intent(Intent.ACTION_VIEW)
-                    i.setDataAndType(pdfUri, "application/pdf")
-                    i.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    startActivity(i)
-                } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(this, "No PDF viewer found", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                resultText.text = "PDF creation failed"
+
+            val maxPdfPages = 50
+            if (selectedImageUris.size > maxPdfPages) {
+                Toast.makeText(this, "You can convert up to $maxPdfPages photos into a PDF at once", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
             }
+
+            showPdfProgressDialogAndCreate()
         }
 
         openFolderButton.setOnClickListener {
@@ -679,6 +691,63 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.closeDrawer(GravityCompat.START)
     }
 
+    // =============================================
+    // EMAIL CONFIRMATION DIALOG (Suggestions / Bug Report)
+    // =============================================
+
+    private fun showEmailConfirmationDialog() {
+        val message = "Please Note: The email you send will usually be read directly by the developer or a member of the development team. This helps us understand your suggestion or report and provide you with a faster and more accurate response. By continuing, you agree that the developer may contact you by email regarding your suggestion, feedback, or issue. It is recommended that you read the •Email to Developer• section in Settings → How to Use the App before sending your email.We recommend reading the •Email to Developer• section in Settings → How to Use the App before sending your email."
+
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_email_confirm, null)
+        dialogView.findViewById<TextView>(R.id.emailDialogMessage).text = message
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<Button>(R.id.emailDialogCancelBtn).setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<Button>(R.id.emailDialogContinueBtn).setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+            sendSuggestionEmail()
+        }
+
+        dialog.show()
+    }
+
+
+    private fun sendSuggestionEmail() {
+        val deviceInfo = """
+            Device Name: ${Build.DEVICE}
+            Device Model: ${Build.MODEL}
+            Android Version: ${Build.VERSION.RELEASE}
+            Operating System: Android
+            Date: ${SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date())}
+            Time: ${SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date())}
+        """.trimIndent()
+
+        val body = "$deviceInfo\n\n"
+
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf("scope8xaditya@gmail.com"))
+            putExtra(Intent.EXTRA_SUBJECT, "MediaShrinker - Suggestions / Bug Report")
+            putExtra(Intent.EXTRA_TEXT, body)
+        }
+
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(this, "No email app found", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun hapticLight() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             vibrator?.vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE))
@@ -711,25 +780,96 @@ class MainActivity : AppCompatActivity() {
         prefs.edit().putStringSet("pdf_history", set).apply()
     }
 
+    // =============================================
+    // PDF PROGRESS DIALOG (Convert to PDF)
+    // =============================================
+
+    private fun showPdfProgressDialogAndCreate() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_pdf_progress, null)
+        val progressBar = dialogView.findViewById<ProgressBar>(R.id.pdfProgressBar)
+        val progressText = dialogView.findViewById<TextView>(R.id.pdfProgressText)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+
+        val total = selectedImageUris.size
+        progressText.text = "0 / $total photos processed"
+
+        // Runs the heavy PDF-building work on a background thread (Dispatchers.IO)
+        // so the UI stays smooth. The onProgress callback below fires from that
+        // background thread, so we hop back with runOnUiThread to safely touch views.
+        CoroutineScope(Dispatchers.Main).launch {
+            val pdfUri = withContext(Dispatchers.IO) {
+                PdfUtils.createPdf(this@MainActivity, selectedImageUris) { current, totalCount ->
+                    runOnUiThread {
+                        val percent = (current * 100) / totalCount
+                        progressBar.progress = percent
+                        progressText.text = "$current / $totalCount photos processed"
+                    }
+                }
+            }
+
+            dialog.dismiss()
+
+            if (pdfUri != null) {
+                savePdfHistory(pdfUri.toString())
+                resultText.text = "PDF Created!"
+                Toast.makeText(this@MainActivity, "Saved in Documents/MediaShrinker", Toast.LENGTH_LONG).show()
+                try {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.setDataAndType(pdfUri, "application/pdf")
+                    i.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    startActivity(i)
+                } catch (e: ActivityNotFoundException) {
+                    Toast.makeText(this@MainActivity, "No PDF viewer found", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                resultText.text = "PDF creation failed"
+                Toast.makeText(this@MainActivity, "PDF creation failed", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 100 && resultCode == Activity.RESULT_OK && data != null) {
+            val pickedUris = data.getParcelableArrayListExtra<Uri>("selected_uris") ?: arrayListOf()
             selectedImageUris.clear()
-            if (data.clipData != null) {
-                val clip = data.clipData!!
-                for (i in 0 until clip.itemCount) {
-                    val uri = clip.getItemAt(i).uri
-                    selectedImageUris.add(uri)
-                    if (i == 0) originalImageUri = uri
-                }
+            selectedImageUris.addAll(pickedUris)
+            originalImageUri = selectedImageUris.firstOrNull()
+            updateImageSelectionUI()
+        } else if (requestCode == 200 && resultCode == Activity.RESULT_OK && data != null) {
+            val updatedUris = data.getParcelableArrayListExtra<Uri>("updated_uris") ?: arrayListOf()
+            selectedImageUris.clear()
+            selectedImageUris.addAll(updatedUris)
+            originalImageUri = selectedImageUris.firstOrNull()
+            updateImageSelectionUI()
+        }
+    }
+
+    private fun updateImageSelectionUI() {
+        when {
+            selectedImageUris.isEmpty() -> {
+                imagePreview.setImageDrawable(null)
+                resultText.text = "No Image Selected"
+                removeImageBtn.visibility = View.GONE
+                previewImagesBtn.visibility = View.GONE
+            }
+            selectedImageUris.size == 1 -> {
+                imagePreview.setImageURI(selectedImageUris[0])
+                resultText.text = "1 Image Selected"
+                removeImageBtn.visibility = View.VISIBLE
+                previewImagesBtn.visibility = View.GONE
+            }
+            else -> {
                 imagePreview.setImageURI(selectedImageUris[0])
                 resultText.text = "${selectedImageUris.size} Images Selected"
-            } else if (data.data != null) {
-                val uri = data.data!!
-                selectedImageUris.add(uri)
-                originalImageUri = uri
-                imagePreview.setImageURI(uri)
-                resultText.text = "1 Image Selected"
+                removeImageBtn.visibility = View.GONE
+                previewImagesBtn.visibility = View.VISIBLE
             }
         }
     }

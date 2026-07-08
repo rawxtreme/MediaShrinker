@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="112dp"
+    android:layout_margin="6dp">
+
+    <ImageView
+        android:id="@+id/previewItemImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:background="#0A1020" />
+
+    <TextView
+        android:id="@+id/previewItemRemoveBtn"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_gravity="top|right"
+        android:layout_margin="4dp"
+        android:text="✕"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:background="@drawable/cross_btn_bg" />
+
+</FrameLayout>
