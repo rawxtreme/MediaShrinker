@@ -150,12 +150,15 @@ class CustomPhotoPickerActivity : AppCompatActivity() {
         }
 
         pickerRecyclerView.layoutManager = GridLayoutManager(this, 3)
-        adapter = PhotoPickerAdapter(allPhotoUris, maxSelection) { selectedCount ->
+
+        val preSelectedUris: ArrayList<Uri> = intent.getParcelableArrayListExtra("pre_selected_uris") ?: arrayListOf()
+
+        adapter = PhotoPickerAdapter(allPhotoUris, maxSelection, preSelectedUris) { selectedCount ->
             updateSelectedCountText(selectedCount)
         }
         pickerRecyclerView.adapter = adapter
 
-        updateSelectedCountText(0)
+        updateSelectedCountText(preSelectedUris.size)
     }
 
     private fun updateSelectedCountText(count: Int) {

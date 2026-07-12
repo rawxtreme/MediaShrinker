@@ -101,7 +101,12 @@ class SettingsActivity : AppCompatActivity() {
                     val json = org.json.JSONObject(response)
                     val latestTag = json.getString("tag_name").trimStart('v', 'V')
                     val currentVersion = packageManager.getPackageInfo(packageName, 0).versionName
-                    val releaseUrl = json.getString("html_url")
+                    // Points directly at the APK file inside the latest release —
+                    // GitHub always resolves this to whatever asset is currently
+                    // attached to the newest release, as long as the filename
+                    // stays "MediaShrinker.apk" on every upload. No release page,
+                    // no scrolling, no Assets section — tap and it downloads.
+                    val directDownloadUrl = "https://github.com/rawxtreme/MediaShrinker/releases/latest/download/MediaShrinker.apk"
 
                     withContext(Dispatchers.Main) {
                         val latestParts = latestTag.split(".").map { it.toIntOrNull() ?: 0 }
@@ -120,7 +125,7 @@ class SettingsActivity : AppCompatActivity() {
                             statusIcon.setImageResource(android.R.drawable.stat_sys_download)
                             statusText.text = "Update available! v$latestTag is out.\nTap here to download."
                             statusLayout.setOnClickListener {
-                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(releaseUrl)))
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(directDownloadUrl)))
                             }
                         } else {
                             statusLayout.setBackgroundResource(R.drawable.update_status_bg_ok)

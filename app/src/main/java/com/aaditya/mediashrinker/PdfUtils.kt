@@ -29,7 +29,8 @@ object PdfUtils {
         onProgress: ((current: Int, total: Int) -> Unit)? = null
     ): Uri? {
         try {
-            val filename = "MediaShrinker_${System.currentTimeMillis()}.pdf"
+            val timeStamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault()).format(java.util.Date())
+            val filename = "MediaShrinker_$timeStamp.pdf"
 
             val values = ContentValues().apply {
                 put(MediaStore.Files.FileColumns.DISPLAY_NAME, filename)

@@ -49,6 +49,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imagePreview: ImageView
     private lateinit var removeImageBtn: TextView
     private lateinit var previewImagesBtn: TextView
+    private lateinit var taskCompleteBanner: LinearLayout
+    private lateinit var taskCompleteBannerTitle: TextView
+    private lateinit var taskCompleteBannerSubtitle: TextView
+    private lateinit var taskCompleteBannerClearBtn: TextView
     private lateinit var selectImageButton: Button
     private lateinit var compressButton: Button
     private lateinit var shareButton: Button
@@ -79,6 +83,7 @@ class MainActivity : AppCompatActivity() {
 
     private var selectedQuality = 80
     private var selectedImageUris = mutableListOf<Uri>()
+    private var selectPhotosTapCount = 0
     private var compressedImageUri: Uri? = null
     private var originalImageUri: Uri? = null
     private var lastSavedUri: Uri? = null
@@ -89,11 +94,6 @@ class MainActivity : AppCompatActivity() {
     private var isManualInput = false
 
     private var customSavePath = "DCIM/MediaShrinker"
-    private val saveLocationOptions = arrayOf(
-        "Gallery → DCIM/MediaShrinker",
-        "Pictures/MediaShrinker",
-        "Downloads/MediaShrinker"
-    )
     private val saveLocationPaths = arrayOf(
         "DCIM/MediaShrinker",
         "Pictures/MediaShrinker",
@@ -110,6 +110,22 @@ class MainActivity : AppCompatActivity() {
 
         bindViews()
         setupListeners()
+        requestNotificationPermissionIfNeeded()
+        handleIncomingShareIntent(intent)
+        checkCompletedTaskIntent(intent)
+    }
+
+    // Fires when the app is ALREADY open and the user taps the completion
+    // notification — Android reuses the existing MainActivity instance
+    // (because of FLAG_ACTIVITY_SINGLE_TOP) and delivers the new intent here
+    // instead of calling onCreate() again. Without this override, the banner
+    // would only show on a cold start, not when the app was already open.
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) {
+            setIntent(intent)
+            checkCompletedTaskIntent(intent)
+        }
     }
 
     private fun bindViews() {
@@ -131,6 +147,10 @@ class MainActivity : AppCompatActivity() {
         imagePreview = findViewById(R.id.imagePreview)
         removeImageBtn = findViewById(R.id.removeImageBtn)
         previewImagesBtn = findViewById(R.id.previewImagesBtn)
+        taskCompleteBanner = findViewById(R.id.taskCompleteBanner)
+        taskCompleteBannerTitle = findViewById(R.id.taskCompleteBannerTitle)
+        taskCompleteBannerSubtitle = findViewById(R.id.taskCompleteBannerSubtitle)
+        taskCompleteBannerClearBtn = findViewById(R.id.taskCompleteBannerClearBtn)
         selectImageButton = findViewById(R.id.selectImageButton)
         compressButton = findViewById(R.id.compressButton)
         shareButton = findViewById(R.id.shareButton)
@@ -245,7 +265,20 @@ class MainActivity : AppCompatActivity() {
 
         selectImageButton.setOnClickListener {
             hapticLight()
+
+            val maxReselections = 3
+            if (selectPhotosTapCount >= maxReselections) {
+                Toast.makeText(
+                    this,
+                    "You can only reselect photos up to $maxReselections times. Please continue with your current selection.",
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
+            selectPhotosTapCount++
+
             val intent = Intent(this, CustomPhotoPickerActivity::class.java)
+            intent.putParcelableArrayListExtra("pre_selected_uris", ArrayList(selectedImageUris))
             startActivityForResult(intent, 100)
         }
 
@@ -253,6 +286,7 @@ class MainActivity : AppCompatActivity() {
             hapticLight()
             selectedImageUris.clear()
             originalImageUri = null
+            selectPhotosTapCount = 0
             updateImageSelectionUI()
         }
 
@@ -427,6 +461,7 @@ class MainActivity : AppCompatActivity() {
     private fun startBatchCompress(targetKB: Int, convertToJpg: Boolean, useTargetMode: Boolean) {
         val total = selectedImageUris.size
         showProgressDialog(total)
+        ProcessingService.start(this, "Compressing Photos")
 
         CoroutineScope(Dispatchers.IO).launch {
             var lastSavedKB = 0
@@ -435,6 +470,7 @@ class MainActivity : AppCompatActivity() {
             for ((index, uri) in selectedImageUris.withIndex()) {
                 val current = index + 1
                 withContext(Dispatchers.Main) { updateProgress(current, total, "Processing image $current...") }
+                ProcessingService.updateProgress(current, total, "Compressing $current of $total")
                 val result = compressImageAsync(uri, targetKB, convertToJpg, useTargetMode)
                 lastSavedKB = result.first
                 lastReducedPercent = result.second
@@ -444,7 +480,15 @@ class MainActivity : AppCompatActivity() {
 
             withContext(Dispatchers.Main) {
                 dismissProgressDialog()
+                ProcessingService.stop(this@MainActivity)
+                ProcessingService.showCompletionNotification(
+                    this@MainActivity,
+                    "Compression Complete",
+                    "Tap to view your compressed photo(s)",
+                    "compress"
+                )
                 resultText.text = "$total image(s) compressed"
+                selectPhotosTapCount = 0
                 if (total > 0) showSuccessAnimation(lastSavedKB, lastReducedPercent)
             }
         }
@@ -482,7 +526,11 @@ class MainActivity : AppCompatActivity() {
 
             val ext = if (convertToJpg) ".jpg" else ".png"
             val mime = if (convertToJpg) "image/jpeg" else "image/png"
-            val filename = "compressed_${System.currentTimeMillis()}$ext"
+            // Readable date/time name instead of a raw 13-digit timestamp —
+            // still unique enough for a batch (down to the millisecond) but
+            // no longer looks like meaningless numbers to the user.
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.getDefault()).format(Date())
+            val filename = "MediaShrinker_$timeStamp$ext"
 
             val values = ContentValues().apply {
                 put(MediaStore.Images.Media.DISPLAY_NAME, filename)
@@ -558,19 +606,66 @@ class MainActivity : AppCompatActivity() {
     // =============================================
 
     private fun showSaveLocationPicker() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_save_location, null)
+
+        val optionRows = listOf(
+            dialogView.findViewById<LinearLayout>(R.id.saveLocOption0),
+            dialogView.findViewById<LinearLayout>(R.id.saveLocOption1),
+            dialogView.findViewById<LinearLayout>(R.id.saveLocOption2)
+        )
+        val checkMarks = listOf(
+            dialogView.findViewById<TextView>(R.id.saveLocCheck0),
+            dialogView.findViewById<TextView>(R.id.saveLocCheck1),
+            dialogView.findViewById<TextView>(R.id.saveLocCheck2)
+        )
+
         var selectedIndex = saveLocationPaths.indexOf(customSavePath).coerceAtLeast(0)
-        AlertDialog.Builder(this)
-            .setTitle("Save Location")
-            .setSingleChoiceItems(saveLocationOptions, selectedIndex) { _, which -> selectedIndex = which }
-            .setPositiveButton("Save") { _, _ ->
-                customSavePath = saveLocationPaths[selectedIndex]
-                getSharedPreferences("MediaShrinkerSettings", MODE_PRIVATE)
-                    .edit().putString("save_location", customSavePath).apply()
-                updateSaveLocationLabel()
-                Toast.makeText(this, "Save location updated!", Toast.LENGTH_SHORT).show()
+
+        fun refreshSelection() {
+            for (i in optionRows.indices) {
+                if (i == selectedIndex) {
+                    optionRows[i].setBackgroundResource(R.drawable.save_option_bg_selected)
+                    checkMarks[i].text = "✓"
+                    checkMarks[i].setBackgroundResource(R.drawable.check_badge_bg)
+                } else {
+                    optionRows[i].setBackgroundResource(R.drawable.save_option_bg)
+                    checkMarks[i].text = ""
+                    checkMarks[i].setBackgroundResource(R.drawable.radio_unselected_bg)
+                }
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        }
+        refreshSelection()
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        for (i in optionRows.indices) {
+            optionRows[i].setOnClickListener {
+                hapticLight()
+                selectedIndex = i
+                refreshSelection()
+            }
+        }
+
+        dialogView.findViewById<Button>(R.id.saveLocCancelBtn).setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<Button>(R.id.saveLocSaveBtn).setOnClickListener {
+            hapticLight()
+            customSavePath = saveLocationPaths[selectedIndex]
+            getSharedPreferences("MediaShrinkerSettings", MODE_PRIVATE)
+                .edit().putString("save_location", customSavePath).apply()
+            updateSaveLocationLabel()
+            Toast.makeText(this, "Save location updated!", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     // =============================================
@@ -631,12 +726,14 @@ class MainActivity : AppCompatActivity() {
                 shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 startActivity(Intent.createChooser(shareIntent, "Share Compressed Image"))
             }
+            showTaskCompleteBanner("Compression Complete", "View in History")
         }
         dialogView.findViewById<Button>(R.id.successRenameBtn).setOnClickListener {
             hapticLight(); successDialog.dismiss(); showRenameDialog()
         }
         dialogView.findViewById<Button>(R.id.successDoneBtn).setOnClickListener {
             hapticLight(); successDialog.dismiss()
+            showTaskCompleteBanner("Compression Complete", "View in History")
         }
 
         successDialog.show()
@@ -644,31 +741,48 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showRenameDialog() {
-        val input = EditText(this)
-        input.hint = "Enter new filename"
-        input.setText(lastSavedFilename?.removeSuffix(".jpg")?.removeSuffix(".png") ?: "compressed_image")
-        input.setTextColor(0xFFFFFFFF.toInt())
-        input.setHintTextColor(0x88FFFFFF.toInt())
-        input.setPadding(32, 24, 32, 24)
-        input.background = null
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_rename, null)
+        val input = dialogView.findViewById<EditText>(R.id.renameInput)
+        // Deliberately left blank instead of pre-filling with the internal
+        // timestamp-based filename — that name is only for uniqueness on disk,
+        // not something the user should see or need to edit around.
+        input.setText("")
 
-        AlertDialog.Builder(this)
-            .setTitle("Rename File").setView(input)
-            .setPositiveButton("Rename") { _, _ ->
-                val newName = input.text.toString().trim()
-                if (newName.isNotEmpty() && lastSavedUri != null) {
-                    val ext = if (lastSavedFilename?.endsWith(".png") == true) ".png" else ".jpg"
-                    val finalName = if (newName.endsWith(".jpg") || newName.endsWith(".png")) newName else "$newName$ext"
-                    try {
-                        val values = ContentValues().apply { put(MediaStore.Images.Media.DISPLAY_NAME, finalName) }
-                        contentResolver.update(lastSavedUri!!, values, null, null)
-                        Toast.makeText(this, "Renamed to $finalName", Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
-                        Toast.makeText(this, "Rename failed", Toast.LENGTH_SHORT).show()
-                    }
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<Button>(R.id.renameCancelBtn).setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+            showTaskCompleteBanner("Compression Complete", "View in History")
+        }
+
+        dialogView.findViewById<Button>(R.id.renameConfirmBtn).setOnClickListener {
+            hapticLight()
+            val newName = input.text.toString().trim()
+            if (newName.isEmpty()) {
+                Toast.makeText(this, "Enter a filename", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (lastSavedUri != null) {
+                val ext = if (lastSavedFilename?.endsWith(".png") == true) ".png" else ".jpg"
+                val finalName = if (newName.endsWith(".jpg") || newName.endsWith(".png")) newName else "$newName$ext"
+                try {
+                    val values = ContentValues().apply { put(MediaStore.Images.Media.DISPLAY_NAME, finalName) }
+                    contentResolver.update(lastSavedUri!!, values, null, null)
+                    Toast.makeText(this, "Renamed to $finalName", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Rename failed", Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null).show()
+            dialog.dismiss()
+            showTaskCompleteBanner("Compression Complete", "View in History")
+        }
+
+        dialog.show()
     }
 
     // =============================================
@@ -781,6 +895,80 @@ class MainActivity : AppCompatActivity() {
     }
 
     // =============================================
+    // TASK COMPLETE SLIDING BANNER
+    // Replaces the old blocking "Start New Activity?" dialog. This banner
+    // slides down from the top, shows for 3 seconds, then slides back out —
+    // no tap required. It's triggered from two places:
+    //   1) Directly after compress/PDF finishes, if the app is in foreground.
+    //   2) From onCreate, if the app was opened by tapping the completion
+    //      notification — see checkCompletedTaskIntent().
+    // =============================================
+
+    private fun showTaskCompleteBanner(title: String, subtitle: String) {
+        taskCompleteBannerTitle.text = title
+        taskCompleteBannerSubtitle.text = subtitle
+
+        taskCompleteBanner.visibility = View.VISIBLE
+        taskCompleteBanner.translationY = -300f
+        taskCompleteBanner.alpha = 1f
+        taskCompleteBanner.animate()
+            .translationY(0f)
+            .setDuration(300)
+            .start()
+
+        taskCompleteBanner.setOnClickListener {
+            hapticLight()
+            if (subtitle.contains("PDF")) {
+                startActivity(Intent(this, PdfHistoryActivity::class.java))
+            } else {
+                startActivity(Intent(this, HistoryActivity::class.java))
+            }
+        }
+
+        // One-tap way to reset for a fresh task — replaces the old blocking
+        // "Start New Activity?" Yes/No dialog with a quicker inline action.
+        taskCompleteBannerClearBtn.setOnClickListener {
+            hapticLight()
+            selectedImageUris.clear()
+            originalImageUri = null
+            compressedImageUri = null
+            selectPhotosTapCount = 0
+            updateImageSelectionUI()
+            Toast.makeText(this, "Selection cleared", Toast.LENGTH_SHORT).show()
+
+            taskCompleteBanner.animate()
+                .translationY(-300f)
+                .setDuration(300)
+                .withEndAction {
+                    taskCompleteBanner.visibility = View.GONE
+                }
+                .start()
+        }
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (taskCompleteBanner.visibility == View.VISIBLE) {
+                taskCompleteBanner.animate()
+                    .translationY(-300f)
+                    .setDuration(300)
+                    .withEndAction {
+                        taskCompleteBanner.visibility = View.GONE
+                    }
+                    .start()
+            }
+        }, 3000)
+    }
+
+    // Called from onCreate — if this launch came from tapping the completion
+    // notification, show the banner fresh right now (instead of relying on
+    // whatever happened while the app was in the background).
+    private fun checkCompletedTaskIntent(incomingIntent: Intent) {
+        when (incomingIntent.getStringExtra("completed_task")) {
+            "compress" -> showTaskCompleteBanner("Compression Complete", "View in History")
+            "pdf" -> showTaskCompleteBanner("PDF Creation Complete", "View in PDF History")
+        }
+    }
+
+    // =============================================
     // PDF PROGRESS DIALOG (Convert to PDF)
     // =============================================
 
@@ -798,6 +986,7 @@ class MainActivity : AppCompatActivity() {
 
         val total = selectedImageUris.size
         progressText.text = "0 / $total photos processed"
+        ProcessingService.start(this, "Creating PDF")
 
         // Runs the heavy PDF-building work on a background thread (Dispatchers.IO)
         // so the UI stays smooth. The onProgress callback below fires from that
@@ -810,14 +999,23 @@ class MainActivity : AppCompatActivity() {
                         progressBar.progress = percent
                         progressText.text = "$current / $totalCount photos processed"
                     }
+                    ProcessingService.updateProgress(current, totalCount, "$current / $totalCount photos processed")
                 }
             }
 
             dialog.dismiss()
+            ProcessingService.stop(this@MainActivity)
 
             if (pdfUri != null) {
                 savePdfHistory(pdfUri.toString())
                 resultText.text = "PDF Created!"
+                selectPhotosTapCount = 0
+                ProcessingService.showCompletionNotification(
+                    this@MainActivity,
+                    "PDF Creation Complete",
+                    "Tap to view your PDF",
+                    "pdf"
+                )
                 Toast.makeText(this@MainActivity, "Saved in Documents/MediaShrinker", Toast.LENGTH_LONG).show()
                 try {
                     val i = Intent(Intent.ACTION_VIEW)
@@ -827,6 +1025,7 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: ActivityNotFoundException) {
                     Toast.makeText(this@MainActivity, "No PDF viewer found", Toast.LENGTH_SHORT).show()
                 }
+                showTaskCompleteBanner("PDF Creation Complete", "View in PDF History")
             } else {
                 resultText.text = "PDF creation failed"
                 Toast.makeText(this@MainActivity, "PDF creation failed", Toast.LENGTH_SHORT).show()
@@ -872,5 +1071,124 @@ class MainActivity : AppCompatActivity() {
                 previewImagesBtn.visibility = View.VISIBLE
             }
         }
+    }
+
+    // =============================================
+    // SHARE-TO-COMPRESS (receiving photos shared from other apps)
+    // =============================================
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permission = android.Manifest.permission.POST_NOTIFICATIONS
+            if (androidx.core.content.ContextCompat.checkSelfPermission(this, permission)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                androidx.core.app.ActivityCompat.requestPermissions(this, arrayOf(permission), 601)
+            }
+        }
+    }
+
+    private fun handleIncomingShareIntent(incomingIntent: Intent) {
+        when (incomingIntent.action) {
+            Intent.ACTION_SEND -> {
+                if (incomingIntent.type?.startsWith("image/") == true) {
+                    val uri = incomingIntent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+                    if (uri != null) {
+                        applyImportedPhotos(listOf(uri))
+                    }
+                }
+            }
+            Intent.ACTION_SEND_MULTIPLE -> {
+                if (incomingIntent.type?.startsWith("image/") == true) {
+                    val uris = incomingIntent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
+                    if (uris != null) {
+                        applyImportedPhotos(uris)
+                    }
+                }
+            }
+        }
+    }
+
+    // Applies photos shared in from another app (WhatsApp, Gallery, etc.) directly
+    // as the current selection — no loading step, they appear selected instantly.
+    private fun applyImportedPhotos(uris: List<Uri>) {
+        val maxImportLimit = 100
+
+        if (uris.size > maxImportLimit) {
+            // Entire batch is rejected, not just the extra ones — avoids silently
+            // dropping photos the user expected to be included.
+            Toast.makeText(
+                this,
+                "Maximum $maxImportLimit photos allowed. Please share fewer photos.",
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+
+        selectedImageUris.clear()
+        selectedImageUris.addAll(uris)
+        originalImageUri = selectedImageUris.firstOrNull()
+        selectPhotosTapCount = 0
+        updateImageSelectionUI()
+
+        showImportSuccessDialog(uris.size)
+    }
+
+    private fun showImportSuccessDialog(count: Int) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_import_success, null)
+        val message = if (count == 1) "1 Photo Imported Successfully" else "$count Photos Imported Successfully"
+        dialogView.findViewById<TextView>(R.id.importSuccessMessage).text = message
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+
+        // Auto-dismiss after a short moment — no button needed for a simple confirmation.
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (dialog.isShowing) dialog.dismiss()
+        }, 1500)
+    }
+
+    // =============================================
+    // EXIT CONFIRMATION (Back button only — Home button is untouched
+    // and follows normal Android behavior automatically)
+    // =============================================
+
+    override fun onBackPressed() {
+        showExitConfirmDialog()
+    }
+
+    private fun showExitConfirmDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_exit_confirm, null)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<Button>(R.id.exitNoBtn).setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+            // Stay in the app — nothing changes.
+        }
+
+        dialogView.findViewById<Button>(R.id.exitYesBtn).setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+            selectedImageUris.clear()
+            originalImageUri = null
+            compressedImageUri = null
+            selectPhotosTapCount = 0
+            // finishAffinity() closes the ENTIRE task (all activities in the back
+            // stack), not just this screen — so the app truly exits. Next launch
+            // creates brand new Activity instances with fresh, empty fields.
+            finishAffinity()
+        }
+
+        dialog.show()
     }
 }
