@@ -32,5 +32,5 @@ https://www.instagram.com/carryon.aditya
 
 ## Future Updates
 
-- Updates were provide on regular basis (monthly)
+- Yes
 
