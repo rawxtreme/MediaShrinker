@@ -22,12 +22,29 @@
             android:src="@drawable/ic_ms"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="  Preview Photos"
             android:textColor="#3B82F6"
             android:textStyle="bold"
             android:textSize="24sp"/>
+
+        <TextView
+            android:id="@+id/deleteAllBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete All"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:background="@drawable/btn_cancel_bg" />
+
     </LinearLayout>
 
     <!-- SUBTITLE -->
@@ -36,11 +53,69 @@
         android:id="@+id/previewCountText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tap the ✕ on a photo to remove it"
+        android:text="Tap the ✕ to remove • 🔍 to enlarge"
         android:textColor="#8A94A6"
         android:textSize="15sp"
         android:layout_marginLeft="18dp"
         android:layout_marginBottom="14dp"/>
+
+    <!-- INDIVIDUAL-DELETE SELECTION BAR (hidden by default) -->
+
+    <LinearLayout
+        android:id="@+id/deleteSelectionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/save_option_bg_selected"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/deleteSelectionText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Delete selected images?"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/deleteSelectionNoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:background="@drawable/btn_cancel_bg"
+            android:layout_marginRight="8dp" />
+
+        <TextView
+            android:id="@+id/deleteSelectionYesBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yes"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:background="@drawable/button_bg" />
+
+    </LinearLayout>
 
     <!-- RECYCLER VIEW -->
 

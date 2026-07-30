@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="compress"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_compress"
+        android:shortcutShortLabel="@string/shortcut_compress_short"
+        android:shortcutLongLabel="@string/shortcut_compress_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.aaditya.mediashrinker"
+            android:targetClass="com.aaditya.mediashrinker.MainActivity">
+            <extra android:name="shortcut_action" android:value="compress" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="pdf"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_pdf"
+        android:shortcutShortLabel="@string/shortcut_pdf_short"
+        android:shortcutLongLabel="@string/shortcut_pdf_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.aaditya.mediashrinker"
+            android:targetClass="com.aaditya.mediashrinker.MainActivity">
+            <extra android:name="shortcut_action" android:value="pdf" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="history"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_history"
+        android:shortcutShortLabel="@string/shortcut_history_short"
+        android:shortcutLongLabel="@string/shortcut_history_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.aaditya.mediashrinker"
+            android:targetClass="com.aaditya.mediashrinker.HistoryActivity" />
+    </shortcut>
+
+</shortcuts>

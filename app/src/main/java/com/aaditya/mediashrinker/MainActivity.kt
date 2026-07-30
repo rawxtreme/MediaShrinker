@@ -27,15 +27,16 @@ import android.os.Build
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.core.content.FileProvider
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var menuButton: TextView
-    private lateinit var contactDeveloperOption: TextView
-    private lateinit var instagramOption: TextView
-    private lateinit var aboutAppOption: TextView
-    private lateinit var suggestionOption: TextView
+    private lateinit var contactDeveloperOption: LinearLayout
+    private lateinit var aboutAppOption: LinearLayout
+    private lateinit var suggestionOption: LinearLayout
     private lateinit var historyOption: TextView
     private lateinit var pdfHistoryOption: TextView
     private lateinit var resizeOption: TextView
@@ -53,6 +54,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var taskCompleteBannerTitle: TextView
     private lateinit var taskCompleteBannerSubtitle: TextView
     private lateinit var taskCompleteBannerClearBtn: TextView
+    private lateinit var firecrackerBackground: FirecrackerView
+    private lateinit var independenceDayFlagBadge: TextView
+    private lateinit var independenceDayStrip: LinearLayout
     private lateinit var selectImageButton: Button
     private lateinit var compressButton: Button
     private lateinit var shareButton: Button
@@ -84,6 +88,8 @@ class MainActivity : AppCompatActivity() {
     private var selectedQuality = 80
     private var selectedImageUris = mutableListOf<Uri>()
     private var selectPhotosTapCount = 0
+    private var pendingCameraUri: Uri? = null
+    private var pendingShortcutAction: String? = null
     private var compressedImageUri: Uri? = null
     private var originalImageUri: Uri? = null
     private var lastSavedUri: Uri? = null
@@ -113,6 +119,11 @@ class MainActivity : AppCompatActivity() {
         requestNotificationPermissionIfNeeded()
         handleIncomingShareIntent(intent)
         checkCompletedTaskIntent(intent)
+        handleShortcutIntent(intent)
+        // TEMPORARY — remove this line in a future update, see IndependenceDayReceiver.kt
+        IndependenceDayReceiver.scheduleIndependenceDayNotifications(this)
+        // TEMPORARY (cosmetic) — self-deactivates automatically after 15th August
+        applyIndependenceDayThemeIfNeeded()
     }
 
     // Fires when the app is ALREADY open and the user taps the completion
@@ -125,6 +136,7 @@ class MainActivity : AppCompatActivity() {
         if (intent != null) {
             setIntent(intent)
             checkCompletedTaskIntent(intent)
+            handleShortcutIntent(intent)
         }
     }
 
@@ -132,7 +144,6 @@ class MainActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawerLayout)
         menuButton = findViewById(R.id.menuButton)
         contactDeveloperOption = findViewById(R.id.contactDeveloperOption)
-        instagramOption = findViewById(R.id.instagramOption)
         aboutAppOption = findViewById(R.id.aboutAppOption)
         suggestionOption = findViewById(R.id.suggestionOption)
         historyOption = findViewById(R.id.historyOption)
@@ -151,6 +162,9 @@ class MainActivity : AppCompatActivity() {
         taskCompleteBannerTitle = findViewById(R.id.taskCompleteBannerTitle)
         taskCompleteBannerSubtitle = findViewById(R.id.taskCompleteBannerSubtitle)
         taskCompleteBannerClearBtn = findViewById(R.id.taskCompleteBannerClearBtn)
+        firecrackerBackground = findViewById(R.id.firecrackerBackground)
+        independenceDayFlagBadge = findViewById(R.id.independenceDayFlagBadge)
+        independenceDayStrip = findViewById(R.id.independenceDayStrip)
         selectImageButton = findViewById(R.id.selectImageButton)
         compressButton = findViewById(R.id.compressButton)
         shareButton = findViewById(R.id.shareButton)
@@ -178,6 +192,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateSaveLocationLabel() {
         saveFolderText.text = "📁 Save to: $customSavePath  (tap to change)"
+    }
+
+    // TEMPORARY (cosmetic Independence Day theme) — only runs its effects if
+    // today is 15th August; otherwise this is a no-op every other day of the
+    // year, so nothing needs to be manually removed later for it to "turn off".
+    private fun applyIndependenceDayThemeIfNeeded() {
+        if (!IndependenceDayTheme.isIndependenceDay()) return
+
+        independenceDayFlagBadge.visibility = View.VISIBLE
+        independenceDayStrip.visibility = View.VISIBLE
+        firecrackerBackground.start()
     }
 
     private fun setupListeners() {
@@ -235,7 +260,6 @@ class MainActivity : AppCompatActivity() {
 
         // Drawer
         contactDeveloperOption.setOnClickListener { openUrl("https://www.instagram.com/carryon.aditya") }
-        instagramOption.setOnClickListener { openUrl("https://www.instagram.com/carryon.aditya") }
         aboutAppOption.setOnClickListener { startAndClose(AboutActivity::class.java) }
         suggestionOption.setOnClickListener {
             hapticLight()
@@ -265,21 +289,7 @@ class MainActivity : AppCompatActivity() {
 
         selectImageButton.setOnClickListener {
             hapticLight()
-
-            val maxReselections = 3
-            if (selectPhotosTapCount >= maxReselections) {
-                Toast.makeText(
-                    this,
-                    "You can only reselect photos up to $maxReselections times. Please continue with your current selection.",
-                    Toast.LENGTH_LONG
-                ).show()
-                return@setOnClickListener
-            }
-            selectPhotosTapCount++
-
-            val intent = Intent(this, CustomPhotoPickerActivity::class.java)
-            intent.putParcelableArrayListExtra("pre_selected_uris", ArrayList(selectedImageUris))
-            startActivityForResult(intent, 100)
+            showPhotoSourceChooser()
         }
 
         removeImageBtn.setOnClickListener {
@@ -327,6 +337,10 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Enter a valid KB value", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
+                if (targetKB < 25) {
+                    showTooSmallTargetDialog(targetKB)
+                    return@setOnClickListener
+                }
                 // Validate against original size
                 val uri = selectedImageUris[0]
                 CoroutineScope(Dispatchers.IO).launch {
@@ -360,18 +374,7 @@ class MainActivity : AppCompatActivity() {
 
         createPdfButton.setOnClickListener {
             hapticLight()
-            if (selectedImageUris.isEmpty()) {
-                Toast.makeText(this, "Select photos first", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val maxPdfPages = 50
-            if (selectedImageUris.size > maxPdfPages) {
-                Toast.makeText(this, "You can convert up to $maxPdfPages photos into a PDF at once", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-
-            showPdfProgressDialogAndCreate()
+            attemptCreatePdf()
         }
 
         openFolderButton.setOnClickListener {
@@ -427,18 +430,57 @@ class MainActivity : AppCompatActivity() {
         val suggest50 = (originalKB * 0.50).toInt()
         val suggest75 = (originalKB * 0.25).toInt()
 
-        val message = "Target size (${enteredKB} KB) is equal to or larger than the original (${originalKB} KB).\n\n" +
-            "Compressing would make the file LARGER, not smaller!\n\n" +
-            "Suggested targets:\n" +
-            "• Light → ${suggest25} KB\n" +
-            "• Medium → ${suggest50} KB\n" +
-            "• Heavy → ${suggest75} KB"
+        val message = "Target size ($enteredKB KB) is equal to or larger than the original ($originalKB KB).\n\nCompressing would make the file LARGER, not smaller! Tap a suggestion below to use it."
 
-        AlertDialog.Builder(this)
-            .setTitle("Invalid Target Size")
-            .setMessage(message)
-            .setPositiveButton("OK", null)
-            .show()
+        showTargetSizeIssueDialog("Invalid Target Size", message, listOf(suggest25, suggest50, suggest75))
+    }
+
+    private fun showTooSmallTargetDialog(enteredKB: Int) {
+        val suggestion = 30
+        val message = "Minimum allowed target size is 25 KB. You entered $enteredKB KB, which is too small and can badly damage image quality.\n\nTap below to use the suggested size instead."
+        showTargetSizeIssueDialog("Target Size Too Small", message, listOf(suggestion))
+    }
+
+    // Shared themed dialog for both "too small" and "too large" target-size problems.
+    // Suggestions are shown as tappable chips — tapping one overwrites the input box.
+    private fun showTargetSizeIssueDialog(title: String, message: String, suggestions: List<Int>) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_target_size_issue, null)
+        dialogView.findViewById<TextView>(R.id.targetSizeIssueTitle).text = title
+        dialogView.findViewById<TextView>(R.id.targetSizeIssueMessage).text = message
+
+        val suggestionRow = dialogView.findViewById<LinearLayout>(R.id.targetSizeSuggestionRow)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        for ((i, kb) in suggestions.withIndex()) {
+            val chip = TextView(this)
+            chip.text = "$kb KB"
+            chip.textSize = 13f
+            chip.setTextColor(0xFFFFFFFF.toInt())
+            chip.setPadding(20, 22, 20, 22)
+            chip.gravity = android.view.Gravity.CENTER
+            chip.setBackgroundResource(R.drawable.suggestion_chip_bg)
+            val params = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            params.setMargins(if (i == 0) 0 else 8, 0, 0, 0)
+            chip.layoutParams = params
+            chip.setOnClickListener {
+                hapticLight()
+                targetSizeInput.setText(kb.toString())
+                dialog.dismiss()
+            }
+            suggestionRow.addView(chip)
+        }
+
+        dialogView.findViewById<Button>(R.id.targetSizeIssueCloseBtn).setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+        }
+
+        dialog.show()
         hapticMedium()
     }
 
@@ -510,7 +552,7 @@ class MainActivity : AppCompatActivity() {
 
             if (useTargetMode) {
                 // Accurate binary search to hit target KB
-                val effectiveTarget = if (originalKB > 200) targetKB.coerceAtLeast(200) else targetKB
+                val effectiveTarget = if (originalKB > 25) targetKB.coerceAtLeast(25) else targetKB
                 finalBytes = compressToTargetKB(bitmap, effectiveTarget)
             } else {
                 // Slider quality mode
@@ -548,9 +590,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             Handler(Looper.getMainLooper()).post {
-                originalSizeText.text = "$originalKB KB"
-                compressedSizeText.text = "$finalKB KB"
-                storageSavedText.text = "$savedKB KB saved"
+                originalSizeText.text = formatSize(originalKB)
+                compressedSizeText.text = formatSize(finalKB)
+                storageSavedText.text = "${formatSize(savedKB)} saved"
                 reductionText.text = "$reduction% less"
                 resolutionText.text = "${bitmap.width}x${bitmap.height}"
                 formatText.text = if (mimeType == "image/png" && convertToJpg) "PNG→JPG" else "JPG"
@@ -701,7 +743,7 @@ class MainActivity : AppCompatActivity() {
     private fun showSuccessAnimation(savedKB: Int, reducedPercent: Int) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_success, null)
         dialogView.findViewById<TextView>(R.id.successTitle).text = "Compression Complete!"
-        dialogView.findViewById<TextView>(R.id.successSaved).text = "Saved $savedKB KB"
+        dialogView.findViewById<TextView>(R.id.successSaved).text = "Saved ${formatSize(savedKB)}"
         dialogView.findViewById<TextView>(R.id.successReduction).text = "Reduced by $reducedPercent%"
 
         val icon = dialogView.findViewById<TextView>(R.id.successIcon)
@@ -788,6 +830,17 @@ class MainActivity : AppCompatActivity() {
     // =============================================
     // HELPERS
     // =============================================
+
+    // Shows KB for anything under 1 MB, switches to MB (1 decimal place) above that —
+    // so a 2.4MB photo shows "2.4 MB" instead of a confusing "2458 KB".
+    private fun formatSize(kb: Int): String {
+        return if (kb >= 1024) {
+            val mb = kb / 1024.0
+            String.format(Locale.getDefault(), "%.1f MB", mb)
+        } else {
+            "$kb KB"
+        }
+    }
 
     private fun setMode(quality: Int, label: String) {
         selectedQuality = quality
@@ -1041,12 +1094,20 @@ class MainActivity : AppCompatActivity() {
             selectedImageUris.addAll(pickedUris)
             originalImageUri = selectedImageUris.firstOrNull()
             updateImageSelectionUI()
+            if (pendingShortcutAction == "pdf") {
+                pendingShortcutAction = null
+                attemptCreatePdf()
+            }
         } else if (requestCode == 200 && resultCode == Activity.RESULT_OK && data != null) {
             val updatedUris = data.getParcelableArrayListExtra<Uri>("updated_uris") ?: arrayListOf()
             selectedImageUris.clear()
             selectedImageUris.addAll(updatedUris)
             originalImageUri = selectedImageUris.firstOrNull()
             updateImageSelectionUI()
+        } else if (requestCode == 300 && resultCode == Activity.RESULT_OK) {
+            pendingCameraUri?.let { uri ->
+                showAddCapturedPhotoDialog(uri)
+            }
         }
     }
 
@@ -1071,6 +1132,130 @@ class MainActivity : AppCompatActivity() {
                 previewImagesBtn.visibility = View.VISIBLE
             }
         }
+    }
+
+    // =============================================
+    // CAMERA / GALLERY CHOOSER (Select Photos entry point)
+    // =============================================
+
+    private fun attemptCreatePdf() {
+        if (selectedImageUris.isEmpty()) {
+            Toast.makeText(this, "Select photos first", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val maxPdfPages = 50
+        if (selectedImageUris.size > maxPdfPages) {
+            Toast.makeText(this, "You can convert up to $maxPdfPages photos into a PDF at once", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        showPdfProgressDialogAndCreate()
+    }
+
+    // =============================================
+    // APP SHORTCUTS (long-press app icon → Compress / Create PDF / History)
+    // =============================================
+
+    private fun handleShortcutIntent(incomingIntent: Intent) {
+        when (incomingIntent.getStringExtra("shortcut_action")) {
+            "compress" -> {
+                pendingShortcutAction = null
+                showPhotoSourceChooser()
+            }
+            "pdf" -> {
+                pendingShortcutAction = "pdf"
+                showPhotoSourceChooser()
+            }
+        }
+    }
+
+    private fun showPhotoSourceChooser() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_photo_source_chooser, null)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<LinearLayout>(R.id.sourceCameraOption).setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+            openCameraCapture()
+        }
+
+        dialogView.findViewById<LinearLayout>(R.id.sourceGalleryOption).setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+            openGalleryPicker()
+        }
+
+        dialog.show()
+    }
+
+    private fun openGalleryPicker() {
+        val maxReselections = 3
+        if (selectPhotosTapCount >= maxReselections) {
+            Toast.makeText(
+                this,
+                "You can only reselect photos up to $maxReselections times. Please continue with your current selection.",
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+        selectPhotosTapCount++
+
+        val intent = Intent(this, CustomPhotoPickerActivity::class.java)
+        intent.putParcelableArrayListExtra("pre_selected_uris", ArrayList(selectedImageUris))
+        startActivityForResult(intent, 100)
+    }
+
+    private fun openCameraCapture() {
+        try {
+            val photoFile = File(getExternalFilesDir(null), "camera_${System.currentTimeMillis()}.jpg")
+            val photoUri = FileProvider.getUriForFile(this, "$packageName.provider", photoFile)
+            pendingCameraUri = photoUri
+
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            startActivityForResult(intent, 300)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Could not open camera", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showAddCapturedPhotoDialog(uri: Uri) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_captured_photo, null)
+        dialogView.findViewById<ImageView>(R.id.capturedPhotoPreview).setImageURI(uri)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<Button>(R.id.capturedPhotoNoBtn).setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+            try { contentResolver.delete(uri, null, null) } catch (e: Exception) { }
+        }
+
+        dialogView.findViewById<Button>(R.id.capturedPhotoYesBtn).setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+            selectedImageUris.add(uri)
+            if (originalImageUri == null) originalImageUri = uri
+            updateImageSelectionUI()
+            Toast.makeText(this, "Photo added", Toast.LENGTH_SHORT).show()
+            if (pendingShortcutAction == "pdf") {
+                pendingShortcutAction = null
+                attemptCreatePdf()
+            }
+        }
+
+        dialog.show()
     }
 
     // =============================================
@@ -1190,5 +1375,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::firecrackerBackground.isInitialized) {
+            firecrackerBackground.stop()
+        }
     }
 }

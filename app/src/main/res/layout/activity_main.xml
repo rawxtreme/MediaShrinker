@@ -12,6 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+    <!-- Independence Day firecracker background — hidden unless 15th August -->
+    <com.aaditya.mediashrinker.FirecrackerView
+        android:id="@+id/firecrackerBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -59,9 +66,18 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/independenceDayFlagBadge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="v8.0"
+                    android:text="🇮🇳"
+                    android:textSize="20sp"
+                    android:layout_marginRight="8dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="v9.0"
                     android:textColor="#3B82F6"
                     android:textSize="12sp"
                     android:background="@drawable/card_bg"
@@ -69,6 +85,38 @@
                     android:paddingRight="8dp"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp" />
+
+            </LinearLayout>
+
+            <!-- Independence Day tricolor strip — hidden unless 15th August -->
+            <LinearLayout
+                android:id="@+id/independenceDayStrip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="14dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"
+                    android:orientation="horizontal">
+
+                    <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="#FF9933" />
+                    <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="#FFFFFF" />
+                    <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="#138808" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="🎉 Happy Independence Day! 🎉"
+                    android:textColor="#FF9933"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp" />
 
             </LinearLayout>
 
@@ -173,7 +221,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TARGET SIZE (KB)"
+                        android:text="TARGET SIZE (KB) • Min 25 KB"
                         android:textColor="#3B82F6"
                         android:textSize="10sp"
                         android:textStyle="bold"
@@ -185,7 +233,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="44dp"
                         android:background="@drawable/input_bg"
-                        android:hint="e.g. 200"
+                        android:hint="e.g. 50"
                         android:padding="10dp"
                         android:textColor="#FFFFFF"
                         android:textColorHint="#6F7D95"
@@ -676,7 +724,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="v8.0"
+                android:text="v9.0"
                 android:textColor="#4DFFFFFF"
                 android:textSize="12sp"
                 android:layout_gravity="center_horizontal"
@@ -699,45 +747,116 @@
                 android:letterSpacing="0.12"
                 android:layout_marginBottom="12dp" />
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/contactDeveloperOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="✉  Contact Developer"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="4dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:layout_marginBottom="8dp">
 
-            <TextView
-                android:id="@+id/instagramOption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📸  Instagram"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="4dp" />
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="✉️"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_blue" />
 
-            <TextView
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="Contact Developer"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/aboutAppOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ℹ  About App"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="4dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:layout_marginBottom="8dp">
 
-            <TextView
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="ℹ️"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_green" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="About App"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/suggestionOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="💡  Give Suggestions"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="16dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="💡"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_purple" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="Give Suggestions"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
 
             <!-- Divider -->
             <View

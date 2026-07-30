@@ -61,6 +61,15 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tap to select • Long-press a photo to preview it enlarged"
+        android:textColor="#6F7D95"
+        android:textSize="11sp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="6dp" />
+
     <!-- PHOTO GRID -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pickerRecyclerView"

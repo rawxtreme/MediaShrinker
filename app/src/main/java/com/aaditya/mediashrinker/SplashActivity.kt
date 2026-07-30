@@ -26,10 +26,46 @@ class SplashActivity : AppCompatActivity() {
         val dot3 = findViewById<View>(R.id.dot3)
         val versionLabel = findViewById<View>(R.id.splashVersion)
 
+        // TEMPORARY (cosmetic Independence Day theme) — only activates on 15th
+        // August, self-deactivates automatically every other day.
+        val isIndependenceDay = IndependenceDayTheme.isIndependenceDay()
+        val splashRoot = findViewById<View>(R.id.splashRoot)
+        val flagEmoji = findViewById<View>(R.id.independenceFlagEmoji)
+        val wishText = findViewById<View>(R.id.independenceWishText)
+
+        var navigateDelay = 1800L
+
+        if (isIndependenceDay) {
+            splashRoot.setBackgroundResource(R.drawable.independence_day_splash_bg)
+            flagEmoji.visibility = View.VISIBLE
+            wishText.visibility = View.VISIBLE
+            navigateDelay = 2600L
+        }
+
         // Start everything invisible except logo
         appName.alpha = 0f
         tagline.alpha = 0f
         versionLabel.alpha = 0f
+        if (isIndependenceDay) {
+            flagEmoji.alpha = 0f
+            wishText.alpha = 0f
+        }
+
+        // Flag emoji scale-in first, if applicable
+        if (isIndependenceDay) {
+            val flagScaleIn = ScaleAnimation(
+                0.3f, 1f, 0.3f, 1f,
+                ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+                ScaleAnimation.RELATIVE_TO_SELF, 0.5f
+            ).apply { duration = 500; fillAfter = true }
+            val flagFadeIn = AlphaAnimation(0f, 1f).apply { duration = 500; fillAfter = true }
+            val flagAnimSet = AnimationSet(false).apply {
+                addAnimation(flagScaleIn)
+                addAnimation(flagFadeIn)
+            }
+            flagEmoji.startAnimation(flagAnimSet)
+            flagEmoji.alpha = 1f
+        }
 
         // Logo scale-in + glow pulse
         val logoScaleIn = ScaleAnimation(
@@ -64,6 +100,15 @@ class SplashActivity : AppCompatActivity() {
             tagline.alpha = 1f
         }, 600)
 
+        // Independence Day wish fade in (after tagline)
+        if (isIndependenceDay) {
+            wishText.postDelayed({
+                val fade = AlphaAnimation(0f, 1f).apply { duration = 500; fillAfter = true }
+                wishText.startAnimation(fade)
+                wishText.alpha = 1f
+            }, 1000)
+        }
+
         // Version label fade in
         versionLabel.postDelayed({
             val fade = AlphaAnimation(0f, 0.6f).apply { duration = 400; fillAfter = true }
@@ -74,10 +119,10 @@ class SplashActivity : AppCompatActivity() {
         // Start dot loading animation
         startDotAnimation(dot1, dot2, dot3)
 
-        // Navigate after delay
+        // Navigate after delay (a bit longer on Independence Day so the wish is visible)
         Handler(Looper.getMainLooper()).postDelayed({
             navigateNext()
-        }, 1800)
+        }, navigateDelay)
     }
 
     private fun startGlowPulse(view: View) {

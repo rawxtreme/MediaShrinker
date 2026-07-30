@@ -8,7 +8,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 33
         versionCode 9
-        versionName "8.0"
+        versionName "9.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -41,7 +41,7 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
-    api "org.jetbrains.kotlin:kotlin-stdlib:1.7.20"
+    api "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
     api 'androidx.core:core-ktx:1.9.0'
     api 'androidx.appcompat:appcompat:1.6.1'
     api 'com.google.android.material:material:1.6.1'

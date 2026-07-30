@@ -79,7 +79,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MediaShrinker v8.0 — Complete Guide"
+                android:text="MediaShrinker v9.0 — Complete Guide"
                 android:textColor="#FFFFFF"
                 android:textSize="17sp"
                 android:textStyle="bold"
@@ -203,7 +203,7 @@
                     android:textColor="#CCFFFFFF"
                     android:textSize="13sp"
                     android:lineSpacingExtra="5dp" />
-					
+
             </LinearLayout>
 
             <!-- Feature 3: Resize -->
@@ -398,6 +398,34 @@
                     android:layout_height="wrap_content"
                     android:text="Please Note:\n\nWhen you tap the &quot;Give Suggestions&quot; option from the three-line menu, some basic device information will be added to your email automatically. This may include your Device Model, Device Manufacturer, Android Version, App Version, Date, and Time. This information helps me understand your device better and allows me to solve your issue, improve the app, or understand your suggestions more accurately.\n\nPlease do not remove this information, as it is very helpful during troubleshooting and development.\n\nYour privacy is important. The automatically added information is used only to understand your device and provide better support. No sensitive or personal data is collected through this feature.\n\nIf you would like to know more or contact me directly, you can use the &quot;Contact Developer&quot; option or visit my Instagram profile from the &quot;About App&quot; section.\n\nPlease note: At the moment, I can only be contacted through Instagram. If I am unable to reply to your message immediately, please don't worry. I read every message and will respond as soon as I am available.\n\nThank you very much for your support and cooperation! ❤️"
                     android:textColor="#CCFFFFFF"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+
+            <!-- Feature 9: Update Reminder (Red Warning) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/card_bg"
+                android:layout_marginBottom="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚠️  Important Update Notice"
+                    android:textColor="#3B82F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="I'm confident you won't face any problems while installing updates to this app. But in case you do, please delete/uninstall the existing MediaShrinker app and reinstall the APK through my GitHub link, provided in the &quot;About App&quot; option inside the hamburger (☰) menu on the home screen. I provide the latest APK with every update, so you don't need to worry.\n\nPlease be assured that if you delete/uninstall this app, your compression history, PDF history, and all other saved data of your tasks with this app will be permanently deleted and cannot be retrieved. So it's best to simply update the app if you don't encounter any issues while doing so. If you do encounter an issue, please follow the instructions above, and feel free to contact the developer if you still have questions about anything.\n\nYour understanding makes me more motivated. Thanks for your cooperation."
+                    android:textColor="#FF6B6B"
                     android:textSize="13sp"
                     android:lineSpacingExtra="5dp" />
 

@@ -48,6 +48,7 @@ object PdfUtils {
             if (password.isNullOrBlank()) {
                 // ===== No password — write directly =====
                 val document = Document()
+                document.setMargins(0f, 0f, 0f, 0f)
                 PdfWriter.getInstance(document, finalOutputStream)
                 document.open()
                 addImagesToDocument(context, document, imageUris, onProgress)
@@ -59,6 +60,7 @@ object PdfUtils {
                 // Step 1: build the unencrypted PDF in memory
                 val tempBytes = ByteArrayOutputStream()
                 val document = Document()
+                document.setMargins(0f, 0f, 0f, 0f)
                 PdfWriter.getInstance(document, tempBytes)
                 document.open()
                 addImagesToDocument(context, document, imageUris, onProgress)
@@ -123,6 +125,12 @@ object PdfUtils {
     ) {
         val total = imageUris.size
 
+        // Cap used only when an image is bigger than a normal page — keeps very
+        // large photos from producing an oversized PDF page, while smaller/normal
+        // photos keep their exact size so there's no leftover white space.
+        val maxPageWidth = 595f  // A4 width in points
+        val maxPageHeight = 842f // A4 height in points
+
         for ((index, uri) in imageUris.withIndex()) {
             try {
                 val bitmap = decodeSampledBitmap(context, uri)
@@ -132,8 +140,16 @@ object PdfUtils {
                     bitmap.recycle() // free memory immediately instead of waiting for garbage collector
 
                     val image = Image.getInstance(stream.toByteArray())
-                    image.scaleToFit(500f, 700f)
-                    image.spacingAfter = 20f
+
+                    if (image.width > maxPageWidth || image.height > maxPageHeight) {
+                        image.scaleToFit(maxPageWidth, maxPageHeight)
+                    }
+
+                    // Page size = image's own (scaled) size, so the photo fills
+                    // the entire page with no white margin/border around it.
+                    document.setPageSize(com.itextpdf.text.Rectangle(image.scaledWidth, image.scaledHeight))
+                    document.newPage()
+                    image.setAbsolutePosition(0f, 0f)
 
                     document.add(image)
                 }

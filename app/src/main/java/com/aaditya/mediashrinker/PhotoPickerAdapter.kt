@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.LruCache
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +13,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
+import java.util.concurrent.Executors
 
 class PhotoPickerAdapter(
     private val allPhotos: MutableList<Uri>,
@@ -32,6 +37,14 @@ class PhotoPickerAdapter(
     // the multi-second lag when tapping photos.
     private val thumbnailCache = LruCache<Uri, Bitmap>(150)
 
+    // Small fixed thread pool for decoding thumbnails off the main thread —
+    // this is what actually fixes scroll lag, since decoding (even a small
+    // downsized one) still takes a few milliseconds each, and doing that
+    // synchronously inside onBindViewHolder was blocking the UI thread during
+    // fast scrolling.
+    private val decodeExecutor = Executors.newFixedThreadPool(3)
+    private val mainHandler = Handler(Looper.getMainLooper())
+
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.pickerItemImage)
         val checkOverlay: TextView = itemView.findViewById(R.id.pickerItemCheck)
@@ -48,16 +61,27 @@ class PhotoPickerAdapter(
         val uri = allPhotos[position]
 
         // Load a small downsized thumbnail instead of the full-resolution photo.
-        // Cache hit = instant. Cache miss = fast small decode (not full 12MP decode).
+        // Cache hit = instant. Cache miss = decode happens on a background thread
+        // so fast scrolling never blocks waiting for disk/decode work.
+        holder.imageView.tag = uri
         val cached = thumbnailCache.get(uri)
         if (cached != null) {
             holder.imageView.setImageBitmap(cached)
         } else {
             holder.imageView.setImageBitmap(null)
-            val bitmap = decodeThumbnail(holder.itemView.context, uri, 200)
-            if (bitmap != null) {
-                thumbnailCache.put(uri, bitmap)
-                holder.imageView.setImageBitmap(bitmap)
+            decodeExecutor.execute {
+                val bitmap = decodeThumbnail(holder.itemView.context, uri, 200)
+                if (bitmap != null) {
+                    thumbnailCache.put(uri, bitmap)
+                    mainHandler.post {
+                        // This ViewHolder may have been recycled for a different
+                        // photo by the time decoding finishes (fast scroll) — only
+                        // apply the result if it's still showing the same uri.
+                        if (holder.imageView.tag == uri) {
+                            holder.imageView.setImageBitmap(bitmap)
+                        }
+                    }
+                }
             }
         }
 
@@ -70,6 +94,11 @@ class PhotoPickerAdapter(
         // dim it out so the user visually understands it can't be tapped right now.
         val limitReached = selectedUris.size >= maxSelection
         holder.dimOverlay.visibility = if (limitReached && !isSelected) View.VISIBLE else View.GONE
+
+        holder.itemView.setOnLongClickListener {
+            showEnlargedPreview(holder.itemView.context, uri)
+            true
+        }
 
         holder.itemView.setOnClickListener {
             val wasLimitReached = selectedUris.size >= maxSelection
@@ -132,6 +161,26 @@ class PhotoPickerAdapter(
         } catch (e: Exception) {
             null
         }
+    }
+
+    // Long-press preview — shows the tapped photo at full size so the user can
+    // confirm it's the right one. Each long-press refreshes it to whichever
+    // photo was just pressed (it's not tied to one fixed image).
+    private fun showEnlargedPreview(context: Context, uri: Uri) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_enlarge_photo, null)
+        dialogView.findViewById<ImageView>(R.id.enlargedImageView).setImageURI(uri)
+
+        val dialog = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<Button>(R.id.enlargeCloseBtn).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     fun getSelectedUris(): List<Uri> = selectedUris

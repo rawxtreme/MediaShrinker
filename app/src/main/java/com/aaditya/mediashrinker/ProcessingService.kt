@@ -25,7 +25,7 @@ import androidx.core.app.NotificationCompat
 class ProcessingService : Service() {
 
     companion object {
-        private const val CHANNEL_ID = "media_shrinker_processing_channel"
+        private const val CHANNEL_ID = "media_shrinker_alerts_channel"
         private const val NOTIFICATION_ID = 9001
 
         // Holds a reference to the currently running service instance (if any),
@@ -54,12 +54,13 @@ class ProcessingService : Service() {
         // Posts a separate, dismissible notification once work finishes.
         // Unlike the ongoing progress notification, this one survives after
         // the service stops and stays until the user taps or swipes it away.
+        // Tapping it goes DIRECTLY to the relevant History screen — no need
+        // to land on the main screen first.
         fun showCompletionNotification(context: Context, title: String, message: String, taskType: String) {
-            val intent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or
-                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                        Intent.FLAG_ACTIVITY_NEW_TASK
-                putExtra("completed_task", taskType)
+            val targetClass = if (taskType == "pdf") PdfHistoryActivity::class.java else HistoryActivity::class.java
+
+            val intent = Intent(context, targetClass).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
             val pendingIntent = PendingIntent.getActivity(
                 context, 1, intent,
@@ -69,8 +70,10 @@ class ProcessingService : Service() {
             val notification = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(0xFF3B82F6.toInt())
                 .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .build()
 
@@ -115,7 +118,8 @@ class ProcessingService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(notificationTitle)
             .setContentText(subText)
-            .setSmallIcon(android.R.drawable.stat_sys_download)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setColor(0xFF3B82F6.toInt())
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setProgress(total.coerceAtLeast(1), current, false)
@@ -127,10 +131,10 @@ class ProcessingService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "MediaShrinker Processing",
-                NotificationManager.IMPORTANCE_LOW
+                "MediaShrinker Alerts",
+                NotificationManager.IMPORTANCE_HIGH
             )
-            channel.description = "Shows progress while compressing images or creating PDFs"
+            channel.description = "Progress, completion, and app notifications — shown as a slide-down banner"
             val manager = getSystemService(NotificationManager::class.java)
             manager?.createNotificationChannel(channel)
         }

@@ -35,6 +35,9 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
         <activity android:name=".OnboardingActivity" />
@@ -70,6 +73,11 @@
         <service
             android:name=".ProcessingService"
             android:foregroundServiceType="dataSync"
+            android:exported="false" />
+
+        <!-- TEMPORARY — remove along with IndependenceDayReceiver.kt in a future update -->
+        <receiver
+            android:name=".IndependenceDayReceiver"
             android:exported="false" />
 
     </application>

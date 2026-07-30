@@ -19,6 +19,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CustomPhotoPickerActivity : AppCompatActivity() {
 
@@ -173,9 +177,45 @@ class CustomPhotoPickerActivity : AppCompatActivity() {
             return
         }
 
-        val resultIntent = Intent()
-        resultIntent.putParcelableArrayListExtra("selected_uris", ArrayList(selectedUris))
-        setResult(RESULT_OK, resultIntent)
-        finish()
+        doneButton.isEnabled = false
+        CoroutineScope(Dispatchers.IO).launch {
+            val totalBytes = calculateTotalSize(selectedUris)
+            val maxBytes = 2L * 1024 * 1024 * 1024
+
+            withContext(Dispatchers.Main) {
+                doneButton.isEnabled = true
+                if (totalBytes > maxBytes) {
+                    val totalMB = totalBytes / (1024 * 1024)
+                    Toast.makeText(
+                        this@CustomPhotoPickerActivity,
+                        "Selected photos total ${totalMB}MB, which exceeds the 2GB limit. Please remove some photos.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    val resultIntent = Intent()
+                    resultIntent.putParcelableArrayListExtra("selected_uris", ArrayList(selectedUris))
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
+                }
+            }
+        }
+    }
+
+    // Reads file size metadata only (not the actual file bytes) — fast even for 100 photos.
+    private fun calculateTotalSize(uris: List<Uri>): Long {
+        var total = 0L
+        for (uri in uris) {
+            try {
+                contentResolver.query(uri, arrayOf(MediaStore.MediaColumns.SIZE), null, null, null)?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val sizeIndex = cursor.getColumnIndex(MediaStore.MediaColumns.SIZE)
+                        if (sizeIndex != -1) total += cursor.getLong(sizeIndex)
+                    }
+                }
+            } catch (e: Exception) {
+                // Skip photos whose size can't be read rather than failing the whole check
+            }
+        }
+        return total
     }
 }

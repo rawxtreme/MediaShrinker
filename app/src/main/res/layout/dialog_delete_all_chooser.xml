@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/card_bg">
+
+    <TextView
+        android:id="@+id/deleteAllIcon"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center_horizontal"
+        android:text="🗑️"
+        android:textSize="26sp"
+        android:gravity="center"
+        android:background="@drawable/icon_bg_blue"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Delete Photos"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="18dp" />
+
+    <LinearLayout
+        android:id="@+id/deleteAllOption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="14dp"
+        android:background="@drawable/save_option_bg"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete All"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remove every selected photo at once"
+            android:textColor="#8A94A6"
+            android:textSize="11sp"
+            android:layout_marginTop="2dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/deleteIndividuallyOption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="14dp"
+        android:background="@drawable/save_option_bg"
+        android:layout_marginBottom="18dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete Individually"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pick exactly which photos to delete"
+            android:textColor="#8A94A6"
+            android:textSize="11sp"
+            android:layout_marginTop="2dp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/deleteAllChooserCancelBtn"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Cancel"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:background="@drawable/btn_cancel_bg" />
+
+</LinearLayout>
