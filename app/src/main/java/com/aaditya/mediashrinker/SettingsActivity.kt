@@ -29,6 +29,7 @@ class SettingsActivity : AppCompatActivity() {
         val startupVideoSwitch = findViewById<SwitchCompat>(R.id.startupVideoSwitch)
         val privacyPolicyRow = findViewById<LinearLayout>(R.id.privacyPolicyRow)
         val howToUseRow = findViewById<LinearLayout>(R.id.howToUseRow)
+        val starGithubRow = findViewById<LinearLayout>(R.id.starGithubRow)
         val checkUpdatesRow = findViewById<LinearLayout>(R.id.checkUpdatesRow)
         val updateStatusText = findViewById<TextView>(R.id.updateStatusText)
         val updateStatusIcon = findViewById<ImageView>(R.id.updateStatusIcon)
@@ -53,6 +54,11 @@ class SettingsActivity : AppCompatActivity() {
         // --- How to Use ---
         howToUseRow.setOnClickListener {
             startActivity(Intent(this, HowToUseActivity::class.java))
+        }
+
+        // --- Star on GitHub ---
+        starGithubRow.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/rawxtreme/MediaShrinker/tree/master")))
         }
 
         // --- Check for Updates ---

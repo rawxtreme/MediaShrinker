@@ -25,6 +25,8 @@ class SplashActivity : AppCompatActivity() {
         val dot2 = findViewById<View>(R.id.dot2)
         val dot3 = findViewById<View>(R.id.dot3)
         val versionLabel = findViewById<View>(R.id.splashVersion)
+        val loadingText = findViewById<View>(R.id.splashLoadingText)
+        val progressBar = findViewById<View>(R.id.splashProgressBar)
 
         // TEMPORARY (cosmetic Independence Day theme) — only activates on 15th
         // August, self-deactivates automatically every other day.
@@ -46,6 +48,8 @@ class SplashActivity : AppCompatActivity() {
         appName.alpha = 0f
         tagline.alpha = 0f
         versionLabel.alpha = 0f
+        loadingText.alpha = 0f
+        progressBar.alpha = 0f
         if (isIndependenceDay) {
             flagEmoji.alpha = 0f
             wishText.alpha = 0f
@@ -115,6 +119,19 @@ class SplashActivity : AppCompatActivity() {
             versionLabel.startAnimation(fade)
             versionLabel.alpha = 0.6f
         }, 800)
+
+        // Loading text + progress bar fade in
+        loadingText.postDelayed({
+            val fade = AlphaAnimation(0f, 1f).apply { duration = 400; fillAfter = true }
+            loadingText.startAnimation(fade)
+            loadingText.alpha = 1f
+        }, 700)
+
+        progressBar.postDelayed({
+            val fade = AlphaAnimation(0f, 1f).apply { duration = 400; fillAfter = true }
+            progressBar.startAnimation(fade)
+            progressBar.alpha = 1f
+        }, 750)
 
         // Start dot loading animation
         startDotAnimation(dot1, dot2, dot3)

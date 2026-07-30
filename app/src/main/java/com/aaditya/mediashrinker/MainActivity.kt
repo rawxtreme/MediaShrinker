@@ -37,14 +37,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var contactDeveloperOption: LinearLayout
     private lateinit var aboutAppOption: LinearLayout
     private lateinit var suggestionOption: LinearLayout
-    private lateinit var historyOption: TextView
-    private lateinit var pdfHistoryOption: TextView
-    private lateinit var resizeOption: TextView
-    private lateinit var buyCoffeeOption: TextView
-    private lateinit var settingsOption: TextView
-    private lateinit var formatConverterOption: TextView
-    private lateinit var metadataRemoverOption: TextView
-    private lateinit var analyticsOption: TextView
+    private lateinit var historyOption: LinearLayout
+    private lateinit var pdfHistoryOption: LinearLayout
+    private lateinit var resizeOption: LinearLayout
+    private lateinit var buyCoffeeOption: LinearLayout
+    private lateinit var settingsOption: LinearLayout
+    private lateinit var formatConverterOption: LinearLayout
+    private lateinit var metadataRemoverOption: LinearLayout
+    private lateinit var analyticsOption: LinearLayout
     private lateinit var imageInfoOption: TextView
 
     private lateinit var imagePreview: ImageView
@@ -57,6 +57,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var firecrackerBackground: FirecrackerView
     private lateinit var independenceDayFlagBadge: TextView
     private lateinit var independenceDayStrip: LinearLayout
+    private lateinit var updateBanner: LinearLayout
+    private lateinit var updateBannerCloseBtn: TextView
     private lateinit var selectImageButton: Button
     private lateinit var compressButton: Button
     private lateinit var shareButton: Button
@@ -124,6 +126,8 @@ class MainActivity : AppCompatActivity() {
         IndependenceDayReceiver.scheduleIndependenceDayNotifications(this)
         // TEMPORARY (cosmetic) — self-deactivates automatically after 15th August
         applyIndependenceDayThemeIfNeeded()
+        // TEMPORARY (update banner) — self-deactivates automatically after 15th August 2026
+        applyUpdateBannerIfNeeded()
     }
 
     // Fires when the app is ALREADY open and the user taps the completion
@@ -165,6 +169,8 @@ class MainActivity : AppCompatActivity() {
         firecrackerBackground = findViewById(R.id.firecrackerBackground)
         independenceDayFlagBadge = findViewById(R.id.independenceDayFlagBadge)
         independenceDayStrip = findViewById(R.id.independenceDayStrip)
+        updateBanner = findViewById(R.id.updateBanner)
+        updateBannerCloseBtn = findViewById(R.id.updateBannerCloseBtn)
         selectImageButton = findViewById(R.id.selectImageButton)
         compressButton = findViewById(R.id.compressButton)
         shareButton = findViewById(R.id.shareButton)
@@ -203,6 +209,25 @@ class MainActivity : AppCompatActivity() {
         independenceDayFlagBadge.visibility = View.VISIBLE
         independenceDayStrip.visibility = View.VISIBLE
         firecrackerBackground.start()
+    }
+
+    // TEMPORARY (update announcement banner) — auto-hides automatically once
+    // 15th August 2026 passes (see UpdateAnnouncementBanner.shouldShow());
+    // user can also dismiss it manually before that via the ✕ button.
+    private fun applyUpdateBannerIfNeeded() {
+        val prefs = getSharedPreferences("MediaShrinkerSettings", MODE_PRIVATE)
+        val dismissed = prefs.getBoolean("update_banner_dismissed", false)
+
+        if (!UpdateAnnouncementBanner.shouldShow() || dismissed) {
+            updateBanner.visibility = View.GONE
+            return
+        }
+
+        updateBanner.visibility = View.VISIBLE
+        updateBannerCloseBtn.setOnClickListener {
+            updateBanner.visibility = View.GONE
+            prefs.edit().putBoolean("update_banner_dismissed", true).apply()
+        }
     }
 
     private fun setupListeners() {

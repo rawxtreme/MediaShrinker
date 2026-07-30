@@ -88,6 +88,47 @@
 
             </LinearLayout>
 
+            <!-- Update announcement banner — auto-hides after 15 August 2026 -->
+            <LinearLayout
+                android:id="@+id/updateBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/update_banner_bg"
+                android:layout_marginBottom="14dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="🚀"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_blue" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="Big update coming on 15 August — stay tuned!"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/updateBannerCloseBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✕"
+                    android:textColor="#6F7D95"
+                    android:textSize="16sp"
+                    android:padding="6dp" />
+
+            </LinearLayout>
+
             <!-- Independence Day tricolor strip — hidden unless 15th August -->
             <LinearLayout
                 android:id="@+id/independenceDayStrip"
@@ -874,71 +915,227 @@
                 android:letterSpacing="0.12"
                 android:layout_marginBottom="12dp" />
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/historyOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🗜  Compression History"
-                android:textColor="#00E5FF"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="4dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:layout_marginBottom="8dp">
 
-            <TextView
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="🗜"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_cyan" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="Compression History"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/pdfHistoryOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="📄  PDF History"
-                android:textColor="#FF4D8D"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="4dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:layout_marginBottom="8dp">
 
-            <TextView
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="📄"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_pink" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="PDF History"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/resizeOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="📐  Image Resizer"
-                android:textColor="#FFD54F"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="4dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:layout_marginBottom="8dp">
 
-            <TextView
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="📐"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_yellow" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="Image Resizer"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/formatConverterOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🔄  Format Converter"
-                android:textColor="#00FFB7"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="4dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:layout_marginBottom="8dp">
 
-            <TextView
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="🔄"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_teal" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="Format Converter"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/metadataRemoverOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🔏  Metadata Remover"
-                android:textColor="#FF9800"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="4dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:layout_marginBottom="8dp">
 
-            <TextView
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="🔏"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_orange" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="Metadata Remover"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/analyticsOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="📊  Storage Analytics"
-                android:textColor="#A78BFA"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="4dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="📊"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_lavender" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="Storage Analytics"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/imageInfoOption"
@@ -967,24 +1164,78 @@
                 android:letterSpacing="0.12"
                 android:layout_marginBottom="12dp" />
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/settingsOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="⚙  Settings"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="4dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:layout_marginBottom="8dp">
 
-            <TextView
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="⚙"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_gray" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="Settings"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/buyCoffeeOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="☕  Buy Me A Coffee"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:padding="10dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg">
+
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="☕"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_amber" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="Buy Me A Coffee"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
