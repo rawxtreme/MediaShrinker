@@ -231,14 +231,14 @@
                 <TextView
                     android:id="@+id/saveFolderText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="📁 Save to: DCIM/MediaShrinker  (tap to change)"
-                    android:textColor="#88FFFFFF"
-                    android:textSize="12sp"
+                    android:layout_height="18dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/input_bg"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/input_bg" />
+                    android:text="📁 Save to: DCIM/MediaShrinker  (tap to change)"
+                    android:textColor="#88FFFFFF"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 

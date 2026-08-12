@@ -1,16 +1,14 @@
-
-
 buildscript {
     ext.kotlin_version = "1.7.20"
+
     repositories {
         google()
         mavenCentral()
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
-        
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -19,8 +17,9 @@ allprojects {
         google()
         mavenCentral()
     }
-	project.extensions.extraProperties['android.useAndroidX'] = 'true'
-	project.extensions.extraProperties['android.enableJetifier'] = 'true'
+
+    project.extensions.extraProperties['android.useAndroidX'] = 'true'
+    project.extensions.extraProperties['android.enableJetifier'] = 'true'
 }
 
 task clean(type: Delete) {
