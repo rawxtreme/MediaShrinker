@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark">
+
+    <View
+        android:id="@+id/splashOverlay"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/water_splash_circle"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="48dp"
+            android:paddingBottom="16dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <ImageView
+                android:id="@+id/cleanerBackButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_media_previous"
+                app:tint="#FFFFFF"
+                android:padding="6dp"
+                android:background="@drawable/card_bg" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="16dp"
+                android:text="@string/magic_cleaner"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/cleanerProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:indeterminate="false"
+            android:visibility="gone"
+            android:indeterminateTint="@color/accent_emerald"
+            android:progressTint="@color/accent_emerald" />
+
+        <!-- Initial State -->
+        <LinearLayout
+            android:id="@+id/cleanerInitialState"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="30dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✨"
+                android:textSize="64sp"
+                android:layout_marginBottom="24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Magic Cleaner finds duplicate or similar photos and helps you delete them instantly."
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:lineSpacingExtra="5dp"
+                android:layout_marginBottom="32dp" />
+
+            <Button
+                android:id="@+id/startScanButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/button_bg"
+                android:text="START MAGIC SCAN"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:stateListAnimator="@null" />
+
+        </LinearLayout>
+
+        <!-- Scanning State -->
+        <LinearLayout
+            android:id="@+id/cleanerScanningState"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:indeterminateTint="@color/accent_emerald"
+                android:layout_marginBottom="20dp" />
+
+            <TextView
+                android:id="@+id/scanningProgressText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Analyzing your gallery..."
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/scanningSubText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="0 photos scanned"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <!-- Result State -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cleanerRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:padding="8dp"
+            android:clipToPadding="false"/>
+
+        <!-- Bottom Action -->
+        <LinearLayout
+            android:id="@+id/cleanerActionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="#111111"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/cleanerSelectedCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 duplicates selected"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp"/>
+
+            <Button
+                android:id="@+id/deleteDuplicatesButton"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:text="DELETE SELECTED PHOTOS"
+                android:textStyle="bold"
+                android:background="@drawable/compare_button_bg"
+                android:textColor="#FFFFFF"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

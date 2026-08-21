@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/card_bg">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/name_your_file"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_name_desc"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp"
+        android:layout_marginBottom="20dp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/filenameInput"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/input_bg"
+            android:hint="@string/filename_hint"
+            android:paddingStart="14dp"
+            android:paddingEnd="60dp"
+            android:autofillHints="name"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#44FFFFFF"
+            android:textSize="15sp"
+            android:maxLength="20"
+            android:singleLine="true"
+            android:inputType="text" />
+
+        <TextView
+            android:id="@+id/charCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="14dp"
+            android:text="@string/char_counter_initial"
+            android:textColor="@color/accent_emerald"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <CheckBox
+        android:id="@+id/dontShowAgainCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/dont_show_again"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:buttonTint="@color/accent_emerald" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
+        android:gravity="right">
+
+        <Button
+            android:id="@+id/filenameCancelBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="@string/cancel"
+            style="?android:attr/buttonBarButtonStyle"
+            android:textAllCaps="false"
+            android:textColor="#88FFFFFF"
+            android:background="@android:color/transparent"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
+        <Button
+            android:id="@+id/filenameConfirmBtn"
+            android:layout_width="120dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/proceed"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_bg" />
+
+    </LinearLayout>
+
+</LinearLayout>

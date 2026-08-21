@@ -85,48 +85,39 @@ class HistoryAdapter(
             "Reduced: ${item.reducedPercent}"
 
         holder.shareButton.setOnClickListener {
+            val uri = Uri.parse(item.imageUri)
+            if (!doesUriExist(holder.itemView.context, uri)) {
+                ErrorHelper.showFileMissingDialog(holder.itemView.context)
+                return@setOnClickListener
+            }
 
-            val intent =
-                Intent(Intent.ACTION_SEND)
-
-            intent.type =
-                "image/*"
-
-            intent.putExtra(
-                Intent.EXTRA_STREAM,
-                Uri.parse(item.imageUri)
-            )
-
-            intent.addFlags(
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-
-            holder.itemView.context.startActivity(
-
-                Intent.createChooser(
-                    intent,
-                    "Share Image"
-                )
-            )
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "image/*"
+            intent.putExtra(Intent.EXTRA_STREAM, uri)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            holder.itemView.context.startActivity(Intent.createChooser(intent, "Share Image"))
         }
 
         holder.openButton.setOnClickListener {
+            val uri = Uri.parse(item.imageUri)
+            if (!doesUriExist(holder.itemView.context, uri)) {
+                ErrorHelper.showFileMissingDialog(holder.itemView.context)
+                return@setOnClickListener
+            }
 
-            val intent =
-                Intent(Intent.ACTION_VIEW)
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.setDataAndType(uri, "image/*")
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            holder.itemView.context.startActivity(intent)
+        }
+    }
 
-            intent.setDataAndType(
-                Uri.parse(item.imageUri),
-                "image/*"
-            )
-
-            intent.addFlags(
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-
-            holder.itemView.context.startActivity(
-                intent
-            )
+    private fun doesUriExist(context: android.content.Context, uri: Uri): Boolean {
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { it.close() }
+            true
+        } catch (e: Exception) {
+            false
         }
     }
 

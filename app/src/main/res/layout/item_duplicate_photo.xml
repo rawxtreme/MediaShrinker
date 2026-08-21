@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="10dp"
+    android:background="@drawable/card_bg"
+    android:layout_margin="4dp">
+
+    <ImageView
+        android:id="@+id/duplicateThumb"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        android:background="#111111" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="14dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/duplicateName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="photo.jpg"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:ellipsize="middle"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/duplicateSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4.2 MB"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            android:layout_marginTop="2dp" />
+
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/duplicateCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/accent_emerald" />
+
+</LinearLayout>

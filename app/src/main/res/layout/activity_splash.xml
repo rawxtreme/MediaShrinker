@@ -8,15 +8,6 @@
     android:background="@drawable/splash_bg_gradient"
     android:gravity="center">
 
-    <!-- Independence Day flag emoji — hidden unless 15th August -->
-    <TextView
-        android:id="@+id/independenceFlagEmoji"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="🇮🇳"
-        android:textSize="64sp"
-        android:layout_marginBottom="12dp"
-        android:visibility="gone" />
 
     <!-- Logo with glow ring -->
     <FrameLayout
@@ -64,17 +55,6 @@
         android:letterSpacing="0.08"
         android:layout_marginBottom="20dp" />
 
-    <!-- Independence Day wish — hidden unless 15th August -->
-    <TextView
-        android:id="@+id/independenceWishText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="🎉 Happy Independence Day! 🎉"
-        android:textColor="#FF9933"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="40dp"
-        android:visibility="gone" />
 
     <!-- Loading dots -->
     <LinearLayout
@@ -132,7 +112,7 @@
         android:id="@+id/splashVersion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="v9.0"
+        android:text="v10.0"
         android:textColor="#3B82F6"
         android:textSize="11sp"
         android:layout_marginTop="80dp"

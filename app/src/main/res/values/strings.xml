@@ -7,4 +7,77 @@
     <string name="shortcut_pdf_long">Create PDF from Photos</string>
     <string name="shortcut_history_short">History</string>
     <string name="shortcut_history_long">Compression History</string>
+
+    <!-- Main Screen -->
+    <string name="mode_eco">✨ Eco</string>
+    <string name="mode_ultra">Ultra</string>
+    <string name="mode_balanced">Bal.</string>
+    <string name="mode_max">Max</string>
+    <string name="advanced_processing">Advanced Processing</string>
+    <string name="plus">+</string>
+    <string name="minus">−</string>
+    <string name="add_watermark">Add Custom Watermark</string>
+    <string name="watermark_hint">Type watermark text&#8230;</string>
+    <string name="batch_rename">Custom Batch Rename</string>
+    <string name="rename_hint">e.g. Vacation_{n}</string>
+    <string name="camera_emoji">📸</string>
+    <string name="empty_state_prompt">Start adding your photo here by clicking SELECT PHOTOS</string>
+    <string name="power_tools">POWER TOOLS</string>
+    <string name="search_emoji">🔍</string>
+    <string name="big_file_hunter">Big File Hunter</string>
+    <string name="magic_cleaner_emoji">✨</string>
+    <string name="magic_cleaner">Magic Cleaner</string>
+
+    <!-- Big File Hunter -->
+    <string name="finding_big_files">Finding photos larger than 5MB...</string>
+    <string name="files_selected_format">%d files selected (%.1f MB)</string>
+    <string name="shrink_all_selected">SHRINK ALL SELECTED</string>
+    <string name="placeholder_image_name">image.jpg</string>
+    <string name="placeholder_size">12.4 MB</string>
+
+    <!-- Filename Prompt -->
+    <string name="name_your_file">Name your file</string>
+    <string name="enter_name_desc">Enter a name for your compressed media</string>
+    <string name="filename_hint">e.g. MyPhoto</string>
+    <string name="char_counter_initial">0/20</string>
+    <string name="dont_show_again">Don\'t show this screen until turn it on</string>
+    <string name="cancel">Cancel</string>
+    <string name="proceed">Proceed</string>
+
+    <!-- Compare Activity -->
+    <string name="before_original">BEFORE (Original)</string>
+    <string name="after_mediashrinker">AFTER (MediaShrinker)</string>
+    <string name="sync_zoom_tip">💡 Pinch or Drag on either image to sync zoom</string>
+
+    <!-- Success Dialog -->
+
+    <!-- Settings -->
+    <string name="show_name_screen">Show Name Screen</string>
+    <string name="show_name_screen_desc">Ask for a filename before starting a task</string>
+    <string name="image_info">Image Info</string>
+    <string name="scroll_down_hint">↓ Scroll down to Compress</string>
+
+    <!-- How to Use - New Features -->
+    <string name="how_eco_title">✨  Eco-Auto Mode</string>
+    <string name="how_eco_desc">Don\'t know which quality to pick? Tap the \'✨ Eco\' button. It automatically analyzes your photo\'s resolution and complexity to find the \'Sweet Spot\'—the smallest possible size with no visible quality loss.</string>
+    <string name="how_hunter_title">🔍  Big File Hunter</string>
+    <string name="how_hunter_desc">Easily find storage-hogging photos. Set a custom size (e.g., 5MB) and the app will scan your entire gallery. Select the \'hogs\' and shrink them all at once to reclaim GBs of space.</string>
+    <string name="how_advanced_title">🖼️  Advanced Processing</string>
+    <string name="how_advanced_desc">• Custom Watermark: Add your name or handle to the corner of every photo.\n• Smart Batch Rename: Use patterns like \'Vacation_{n}\' to save multiple photos sequentially. \n\nNote: If you set a name pattern here AND use the \'Before Compression\' naming screen, the Naming Screen text will take priority. You can turn the naming screen off in Settings if you prefer only using patterns.</string>
+    <string name="how_compare_title">⚖️  Dual-Sync Compare</string>
+    <string name="how_compare_desc">Check quality with pixel-perfect precision. Zoom or pan on either the \'Before\' or \'After\' photo, and the other one mirrors the movement perfectly. It\'s the best way to verify zero quality loss.</string>
+    <string name="magic_cleaner_title">✨ Magic Cleaner</string>
+    <string name="magic_cleaner_desc">Clean your gallery by finding and removing duplicate or nearly identical photos. Reclaim space instantly.</string>
+
+    <!-- Error Reporting -->
+    <string name="file_missing">File Missing</string>
+    <string name="file_missing_desc">It seems this image has been deleted from your gallery or moved to a different location.</string>
+    <string name="report_this_problem">REPORT THIS PROBLEM</string>
+    <string name="troubleshooting_report">Troubleshooting Report</string>
+    <string name="troubleshooting_desc">Please specify the error below. Developer will usually reply within 24 hours.</string>
+    <string name="report_hint">Describe what happened&#8230;</string>
+    <string name="report_tip">💡 Tip: Please attach a screenshot of the error in your email app. For complex issues, send a recording on Instagram (Contact Developer).</string>
+    <string name="send_email">Send Email</string>
+    <string name="report_trouble_settings">Report troubleshooting problem</string>
+    <string name="report_trouble_settings_desc">Found a bug? Tell the developer</string>
 </resources>

@@ -45,20 +45,24 @@ class MainActivity : AppCompatActivity() {
     private lateinit var formatConverterOption: LinearLayout
     private lateinit var metadataRemoverOption: LinearLayout
     private lateinit var analyticsOption: LinearLayout
-    private lateinit var imageInfoOption: TextView
+    private lateinit var bigFileHunterOption: LinearLayout
+    private lateinit var magicCleanerOption: LinearLayout
+    private lateinit var imageInfoOption: LinearLayout
 
     private lateinit var imagePreview: ImageView
+    private lateinit var emptyStateLayout: LinearLayout
     private lateinit var removeImageBtn: TextView
     private lateinit var previewImagesBtn: TextView
     private lateinit var taskCompleteBanner: LinearLayout
     private lateinit var taskCompleteBannerTitle: TextView
     private lateinit var taskCompleteBannerSubtitle: TextView
     private lateinit var taskCompleteBannerClearBtn: TextView
-    private lateinit var firecrackerBackground: FirecrackerView
-    private lateinit var independenceDayFlagBadge: TextView
-    private lateinit var independenceDayStrip: LinearLayout
     private lateinit var updateBanner: LinearLayout
     private lateinit var updateBannerCloseBtn: TextView
+    private lateinit var splashOverlay: View
+    private lateinit var scrollHintLayout: LinearLayout
+    private lateinit var mainScrollView: ScrollView
+    private lateinit var taskCompleteBannerIcon: TextView
     private lateinit var selectImageButton: Button
     private lateinit var compressButton: Button
     private lateinit var shareButton: Button
@@ -78,9 +82,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var formatText: TextView
     private lateinit var qualitySeekBar: SeekBar
     private lateinit var qualityText: TextView
+    private lateinit var ecoModeButton: Button
     private lateinit var ultraModeButton: Button
     private lateinit var balancedModeButton: Button
     private lateinit var maxModeButton: Button
+
+    private lateinit var advancedOptionsHeader: LinearLayout
+    private lateinit var advancedOptionsToggleIcon: TextView
+    private lateinit var advancedOptionsContent: LinearLayout
+    private lateinit var watermarkSwitch: androidx.appcompat.widget.SwitchCompat
+    private lateinit var watermarkInput: EditText
+    private lateinit var batchRenameInput: EditText
 
     private var progressDialog: AlertDialog? = null
     private lateinit var progressBar: ProgressBar
@@ -122,12 +134,14 @@ class MainActivity : AppCompatActivity() {
         handleIncomingShareIntent(intent)
         checkCompletedTaskIntent(intent)
         handleShortcutIntent(intent)
-        // TEMPORARY — remove this line in a future update, see IndependenceDayReceiver.kt
-        IndependenceDayReceiver.scheduleIndependenceDayNotifications(this)
-        // TEMPORARY (cosmetic) — self-deactivates automatically after 15th August
-        applyIndependenceDayThemeIfNeeded()
         // TEMPORARY (update banner) — self-deactivates automatically after 15th August 2026
         applyUpdateBannerIfNeeded()
+        handleHunterIntent(intent)
+
+        // Apply Entrance Animation
+        findViewById<View>(R.id.drawerLayout).startAnimation(
+            android.view.animation.AnimationUtils.loadAnimation(this, R.anim.card_entrance)
+        )
     }
 
     // Fires when the app is ALREADY open and the user taps the completion
@@ -141,6 +155,7 @@ class MainActivity : AppCompatActivity() {
             setIntent(intent)
             checkCompletedTaskIntent(intent)
             handleShortcutIntent(intent)
+            handleHunterIntent(intent)
         }
     }
 
@@ -158,19 +173,23 @@ class MainActivity : AppCompatActivity() {
         settingsOption = findViewById(R.id.settingsOption)
         metadataRemoverOption = findViewById(R.id.metadataRemoverOption)
         analyticsOption = findViewById(R.id.analyticsOption)
+        bigFileHunterOption = findViewById(R.id.bigFileHunterOption)
+        magicCleanerOption = findViewById(R.id.magicCleanerOption)
         imageInfoOption = findViewById(R.id.imageInfoOption)
         imagePreview = findViewById(R.id.imagePreview)
+        emptyStateLayout = findViewById(R.id.emptyStateLayout)
         removeImageBtn = findViewById(R.id.removeImageBtn)
         previewImagesBtn = findViewById(R.id.previewImagesBtn)
         taskCompleteBanner = findViewById(R.id.taskCompleteBanner)
         taskCompleteBannerTitle = findViewById(R.id.taskCompleteBannerTitle)
         taskCompleteBannerSubtitle = findViewById(R.id.taskCompleteBannerSubtitle)
+        taskCompleteBannerIcon = findViewById(R.id.taskCompleteBannerIcon)
         taskCompleteBannerClearBtn = findViewById(R.id.taskCompleteBannerClearBtn)
-        firecrackerBackground = findViewById(R.id.firecrackerBackground)
-        independenceDayFlagBadge = findViewById(R.id.independenceDayFlagBadge)
-        independenceDayStrip = findViewById(R.id.independenceDayStrip)
         updateBanner = findViewById(R.id.updateBanner)
         updateBannerCloseBtn = findViewById(R.id.updateBannerCloseBtn)
+        splashOverlay = findViewById(R.id.splashOverlay)
+        scrollHintLayout = findViewById(R.id.scrollHintLayout)
+        mainScrollView = findViewById(R.id.mainScrollView)
         selectImageButton = findViewById(R.id.selectImageButton)
         compressButton = findViewById(R.id.compressButton)
         shareButton = findViewById(R.id.shareButton)
@@ -192,23 +211,33 @@ class MainActivity : AppCompatActivity() {
         ultraModeButton = findViewById(R.id.ultraModeButton)
         balancedModeButton = findViewById(R.id.balancedModeButton)
         maxModeButton = findViewById(R.id.maxModeButton)
+        ecoModeButton = findViewById(R.id.ecoModeButton)
+
+        advancedOptionsHeader = findViewById(R.id.advancedOptionsHeader)
+        advancedOptionsToggleIcon = findViewById(R.id.advancedOptionsToggleIcon)
+        advancedOptionsContent = findViewById(R.id.advancedOptionsContent)
+        watermarkSwitch = findViewById(R.id.watermarkSwitch)
+        watermarkInput = findViewById(R.id.watermarkInput)
+        batchRenameInput = findViewById(R.id.renameInput)
+
+        // Apply click animations to primary buttons
+        val clickAnimator = android.animation.AnimatorInflater.loadStateListAnimator(this, R.animator.button_click)
+        selectImageButton.stateListAnimator = clickAnimator
+        compressButton.stateListAnimator = clickAnimator
+        shareButton.stateListAnimator = clickAnimator
+        openFolderButton.stateListAnimator = clickAnimator
+        createPdfButton.stateListAnimator = clickAnimator
+        compareButton.stateListAnimator = clickAnimator
+        ecoModeButton.stateListAnimator = clickAnimator
+        ultraModeButton.stateListAnimator = clickAnimator
+        balancedModeButton.stateListAnimator = clickAnimator
+        maxModeButton.stateListAnimator = clickAnimator
 
         updateSaveLocationLabel()
     }
 
     private fun updateSaveLocationLabel() {
         saveFolderText.text = "📁 Save to: $customSavePath  (tap to change)"
-    }
-
-    // TEMPORARY (cosmetic Independence Day theme) — only runs its effects if
-    // today is 15th August; otherwise this is a no-op every other day of the
-    // year, so nothing needs to be manually removed later for it to "turn off".
-    private fun applyIndependenceDayThemeIfNeeded() {
-        if (!IndependenceDayTheme.isIndependenceDay()) return
-
-        independenceDayFlagBadge.visibility = View.VISIBLE
-        independenceDayStrip.visibility = View.VISIBLE
-        firecrackerBackground.start()
     }
 
     // TEMPORARY (update announcement banner) — auto-hides automatically once
@@ -283,6 +312,41 @@ class MainActivity : AppCompatActivity() {
             setMode(40, "Max • 40%")
         }
 
+        ecoModeButton.setOnClickListener {
+            hapticLight()
+            targetSizeInput.setText("")
+            setMode(-1, "✨ Eco • Auto")
+        }
+        
+        attachSplashAndSqueeze(ecoModeButton)
+        attachSplashAndSqueeze(ultraModeButton)
+        attachSplashAndSqueeze(balancedModeButton)
+        attachSplashAndSqueeze(maxModeButton)
+        attachSplashAndSqueeze(selectImageButton)
+        attachSplashAndSqueeze(compressButton)
+        attachSplashAndSqueeze(createPdfButton)
+        attachSplashAndSqueeze(compareButton)
+        attachSplashAndSqueeze(shareButton)
+        attachSplashAndSqueeze(openFolderButton)
+
+        advancedOptionsHeader.setOnClickListener {
+            hapticLight()
+            if (advancedOptionsContent.visibility == View.GONE) {
+                advancedOptionsContent.visibility = View.VISIBLE
+                advancedOptionsToggleIcon.text = "−"
+                advancedOptionsToggleIcon.animate().rotation(180f).setDuration(300).start()
+            } else {
+                advancedOptionsContent.visibility = View.GONE
+                advancedOptionsToggleIcon.text = "+"
+                advancedOptionsToggleIcon.animate().rotation(0f).setDuration(300).start()
+            }
+        }
+
+        watermarkSwitch.setOnCheckedChangeListener { _, isChecked ->
+            hapticLight()
+            watermarkInput.visibility = if (isChecked) View.VISIBLE else View.GONE
+        }
+
         // Drawer
         contactDeveloperOption.setOnClickListener { openUrl("https://www.instagram.com/carryon.aditya") }
         aboutAppOption.setOnClickListener { startAndClose(AboutActivity::class.java) }
@@ -301,6 +365,8 @@ class MainActivity : AppCompatActivity() {
         metadataRemoverOption.setOnClickListener { startAndClose(MetadataRemoverActivity::class.java) }
         buyCoffeeOption.setOnClickListener { startAndClose(DonateActivity::class.java) }
         analyticsOption.setOnClickListener { startAndClose(StorageAnalyticsActivity::class.java) }
+        bigFileHunterOption.setOnClickListener { startAndClose(BigFileHunterActivity::class.java) }
+        magicCleanerOption.setOnClickListener { startAndClose(MagicCleanerActivity::class.java) }
         imageInfoOption.setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
             if (originalImageUri != null) {
@@ -355,40 +421,50 @@ class MainActivity : AppCompatActivity() {
 
             val targetText = targetSizeInput.text.toString()
 
-            if (targetText.isNotEmpty()) {
-                // User entered target KB — use accurate binary search
-                val targetKB = targetText.toIntOrNull()
-                if (targetKB == null || targetKB <= 0) {
-                    Toast.makeText(this, "Enter a valid KB value", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                if (targetKB < 25) {
-                    showTooSmallTargetDialog(targetKB)
-                    return@setOnClickListener
-                }
-                // Validate against original size
-                val uri = selectedImageUris[0]
-                CoroutineScope(Dispatchers.IO).launch {
-                    val bytes = contentResolver.openInputStream(uri)?.readBytes()
-                    val originalKB = (bytes?.size ?: 0) / 1024
-                    withContext(Dispatchers.Main) {
-                        if (targetKB >= originalKB) {
-                            showSizeError(originalKB, targetKB)
-                        } else {
-                            compressAllImages(targetKB, useTargetMode = true)
+            showFilenamePromptIfNeeded { customName ->
+                if (targetText.isNotEmpty()) {
+                    // User entered target KB — use accurate binary search
+                    val targetKB = targetText.toIntOrNull()
+                    if (targetKB == null || targetKB <= 0) {
+                        Toast.makeText(this, "Enter a valid KB value", Toast.LENGTH_SHORT).show()
+                        return@showFilenamePromptIfNeeded
+                    }
+                    if (targetKB < 25) {
+                        showTooSmallTargetDialog(targetKB)
+                        return@showFilenamePromptIfNeeded
+                    }
+                    // Validate against original size
+                    val uri = selectedImageUris[0]
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val bytes = contentResolver.openInputStream(uri)?.readBytes()
+                        val originalKB = (bytes?.size ?: 0) / 1024
+                        withContext(Dispatchers.Main) {
+                            if (targetKB >= originalKB) {
+                                showSizeError(originalKB, targetKB)
+                            } else {
+                                compressAllImages(targetKB, useTargetMode = true, customName = customName)
+                            }
                         }
                     }
+                } else {
+                    // Slider mode — use selectedQuality directly
+                    compressAllImages(0, useTargetMode = false, customName = customName)
                 }
-            } else {
-                // Slider mode — use selectedQuality directly
-                compressAllImages(0, useTargetMode = false)
             }
         }
 
         compareButton.setOnClickListener {
             hapticLight()
-            if (originalImageUri == null || compressedImageUri == null) {
-                Toast.makeText(this, "Compress an image first", Toast.LENGTH_SHORT).show()
+            if (selectedImageUris.isEmpty()) {
+                Toast.makeText(this, "Select an image first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (selectedImageUris.size > 1) {
+                showWarningBanner("Cannot compare with multiple images")
+                return@setOnClickListener
+            }
+            if (compressedImageUri == null) {
+                Toast.makeText(this, "Compress the image first", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             val i = Intent(this, CompareActivity::class.java)
@@ -399,7 +475,9 @@ class MainActivity : AppCompatActivity() {
 
         createPdfButton.setOnClickListener {
             hapticLight()
-            attemptCreatePdf()
+            showFilenamePromptIfNeeded { customName ->
+                attemptCreatePdf(customName)
+            }
         }
 
         openFolderButton.setOnClickListener {
@@ -418,6 +496,34 @@ class MainActivity : AppCompatActivity() {
             shareIntent.putExtra(Intent.EXTRA_STREAM, compressedImageUri)
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             startActivity(Intent.createChooser(shareIntent, "Share Image"))
+        }
+
+        // Toggle scroll hint based on scroll position
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mainScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+                if (scrollY > 100) {
+                    if (scrollHintLayout.visibility == View.VISIBLE) {
+                        scrollHintLayout.animate().alpha(0f).setDuration(300).withEndAction {
+                            scrollHintLayout.visibility = View.GONE
+                        }.start()
+                    }
+                } else if (selectedImageUris.isNotEmpty()) {
+                    if (scrollHintLayout.visibility != View.VISIBLE) {
+                        scrollHintLayout.visibility = View.VISIBLE
+                        scrollHintLayout.alpha = 0f
+                        scrollHintLayout.animate().alpha(1f).setDuration(300).start()
+                        showScrollHint() // Restart animation
+                    }
+                }
+            }
+        }
+
+        scrollHintLayout.setOnClickListener {
+            hapticLight()
+            mainScrollView.smoothScrollTo(0, mainScrollView.getChildAt(0).height)
+            scrollHintLayout.animate().alpha(0f).setDuration(300).withEndAction {
+                scrollHintLayout.visibility = View.GONE
+            }.start()
         }
     }
 
@@ -509,23 +615,40 @@ class MainActivity : AppCompatActivity() {
         hapticMedium()
     }
 
-    private fun compressAllImages(targetKB: Int, useTargetMode: Boolean) {
+    private fun compressAllImages(targetKB: Int, useTargetMode: Boolean, customName: String? = null) {
         val total = selectedImageUris.size
         val hasPng = selectedImageUris.any { contentResolver.getType(it) == "image/png" }
 
         if (hasPng && total == 1 && !useTargetMode) {
-            AlertDialog.Builder(this)
-                .setTitle("PNG Detected")
-                .setMessage("Convert to JPEG for better compression?")
-                .setPositiveButton("YES") { _, _ -> startBatchCompress(targetKB, convertToJpg = true, useTargetMode) }
-                .setNegativeButton("NO") { _, _ -> startBatchCompress(targetKB, convertToJpg = false, useTargetMode) }
-                .show()
+            showConvertJpgDialog(targetKB, useTargetMode, customName)
         } else {
-            startBatchCompress(targetKB, convertToJpg = true, useTargetMode)
+            startBatchCompress(targetKB, convertToJpg = true, useTargetMode, customName)
         }
     }
 
-    private fun startBatchCompress(targetKB: Int, convertToJpg: Boolean, useTargetMode: Boolean) {
+    private fun showConvertJpgDialog(targetKB: Int, useTargetMode: Boolean, customName: String?) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_convert_jpg, null)
+        val dialog = AlertDialog.Builder(this).setView(dialogView).setCancelable(true).create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val yesBtn = dialogView.findViewById<Button>(R.id.convertJpgYesBtn)
+        val noBtn = dialogView.findViewById<Button>(R.id.convertJpgNoBtn)
+
+        attachSplashAndSqueeze(yesBtn)
+        attachSplashAndSqueeze(noBtn)
+
+        yesBtn.setOnClickListener {
+            hapticLight(); dialog.dismiss()
+            startBatchCompress(targetKB, convertToJpg = true, useTargetMode, customName)
+        }
+        noBtn.setOnClickListener {
+            hapticLight(); dialog.dismiss()
+            startBatchCompress(targetKB, convertToJpg = false, useTargetMode, customName)
+        }
+        dialog.show()
+    }
+
+    private fun startBatchCompress(targetKB: Int, convertToJpg: Boolean, useTargetMode: Boolean, customName: String? = null) {
         val total = selectedImageUris.size
         showProgressDialog(total)
         ProcessingService.start(this, "Compressing Photos")
@@ -538,7 +661,7 @@ class MainActivity : AppCompatActivity() {
                 val current = index + 1
                 withContext(Dispatchers.Main) { updateProgress(current, total, "Processing image $current...") }
                 ProcessingService.updateProgress(current, total, "Compressing $current of $total")
-                val result = compressImageAsync(uri, targetKB, convertToJpg, useTargetMode)
+                val result = compressImageAsync(uri, targetKB, convertToJpg, useTargetMode, index, customName)
                 lastSavedKB = result.first
                 lastReducedPercent = result.second
                 withContext(Dispatchers.Main) { updateProgress(current, total, "Image $current done") }
@@ -565,13 +688,32 @@ class MainActivity : AppCompatActivity() {
         imageUri: Uri,
         targetKB: Int,
         convertToJpg: Boolean,
-        useTargetMode: Boolean
+        useTargetMode: Boolean,
+        batchIndex: Int = 0,
+        customName: String? = null
     ): Pair<Int, Int> {
         return try {
             val bytes = contentResolver.openInputStream(imageUri)?.readBytes() ?: return Pair(0, 0)
-            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            var bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
             val originalKB = bytes.size / 1024
             val mimeType = contentResolver.getType(imageUri)
+
+            // 1. Eco-Auto Mode Logic
+            var effectiveQuality = selectedQuality
+            if (selectedQuality == -1 && !useTargetMode) {
+                val pixels = bitmap.width * bitmap.height
+                effectiveQuality = when {
+                    pixels > 12_000_000 -> 70 // > 12MP
+                    pixels > 5_000_000 -> 80  // > 5MP
+                    else -> 90                // Small photos
+                }
+            }
+
+            // 2. Watermark Logic
+            if (watermarkSwitch.isChecked) {
+                val watermarkText = watermarkInput.text.toString().trim().ifEmpty { "MediaShrinker" }
+                bitmap = applyWatermark(bitmap, watermarkText)
+            }
 
             val finalBytes: ByteArray
 
@@ -580,10 +722,10 @@ class MainActivity : AppCompatActivity() {
                 val effectiveTarget = if (originalKB > 25) targetKB.coerceAtLeast(25) else targetKB
                 finalBytes = compressToTargetKB(bitmap, effectiveTarget)
             } else {
-                // Slider quality mode
+                // Slider or Eco quality mode
                 val out = ByteArrayOutputStream()
-                if (convertToJpg) bitmap.compress(Bitmap.CompressFormat.JPEG, selectedQuality, out)
-                else bitmap.compress(Bitmap.CompressFormat.PNG, selectedQuality, out)
+                if (convertToJpg) bitmap.compress(Bitmap.CompressFormat.JPEG, effectiveQuality, out)
+                else bitmap.compress(Bitmap.CompressFormat.PNG, effectiveQuality, out)
                 finalBytes = out.toByteArray()
             }
 
@@ -593,11 +735,20 @@ class MainActivity : AppCompatActivity() {
 
             val ext = if (convertToJpg) ".jpg" else ".png"
             val mime = if (convertToJpg) "image/jpeg" else "image/png"
-            // Readable date/time name instead of a raw 13-digit timestamp —
-            // still unique enough for a batch (down to the millisecond) but
-            // no longer looks like meaningless numbers to the user.
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.getDefault()).format(Date())
-            val filename = "MediaShrinker_$timeStamp$ext"
+            
+            // 3. Batch Rename Logic
+            val customPattern = batchRenameInput.text.toString().trim()
+            val filename = if (!customName.isNullOrBlank()) {
+                // If it's a batch, append index to the custom name
+                val base = if (selectedImageUris.size > 1) "${customName}_${batchIndex + 1}" else customName
+                if (base.lowercase().endsWith(ext)) base else "$base$ext"
+            } else if (customPattern.isNotEmpty()) {
+                val name = customPattern.replace("{n}", (batchIndex + 1).toString())
+                if (name.contains(".")) name else "$name$ext"
+            } else {
+                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.getDefault()).format(Date())
+                "MediaShrinker_$timeStamp$ext"
+            }
 
             val values = ContentValues().apply {
                 put(MediaStore.Images.Media.DISPLAY_NAME, filename)
@@ -625,6 +776,25 @@ class MainActivity : AppCompatActivity() {
 
             Pair(savedKB, reduction)
         } catch (e: Exception) { Pair(0, 0) }
+    }
+
+    private fun applyWatermark(source: Bitmap, text: String): Bitmap {
+        val result = source.copy(source.config, true)
+        val canvas = android.graphics.Canvas(result)
+        val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+        
+        // Dynamic text size based on image width (approx 3% of width)
+        paint.textSize = (source.width * 0.035f).coerceAtLeast(24f)
+        paint.color = android.graphics.Color.WHITE
+        paint.alpha = 180 // Semi-transparent
+        paint.setShadowLayer(2f, 1f, 1f, android.graphics.Color.BLACK)
+        
+        val margin = paint.textSize * 0.8f
+        val x = source.width - paint.measureText(text) - margin
+        val y = source.height - margin
+        
+        canvas.drawText(text, x, y, paint)
+        return result
     }
 
     // =============================================
@@ -868,9 +1038,72 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setMode(quality: Int, label: String) {
-        selectedQuality = quality
-        qualitySeekBar.progress = quality
-        qualityText.text = label
+        // Reset all backgrounds to standard glass
+        ecoModeButton.setBackgroundResource(R.drawable.button_bg)
+        ultraModeButton.setBackgroundResource(R.drawable.button_bg)
+        balancedModeButton.setBackgroundResource(R.drawable.button_bg)
+        maxModeButton.setBackgroundResource(R.drawable.button_mode_selected) // Max starts selected? No, see below
+        
+        // Actually, just set all to button_bg and then highlight the selected one
+        ecoModeButton.setBackgroundResource(R.drawable.button_bg)
+        ultraModeButton.setBackgroundResource(R.drawable.button_bg)
+        balancedModeButton.setBackgroundResource(R.drawable.button_bg)
+        maxModeButton.setBackgroundResource(R.drawable.button_bg)
+
+        if (quality == -1) {
+            // Eco Mode selected
+            selectedQuality = -1
+            qualitySeekBar.progress = 80 // Visual neutral
+            qualitySeekBar.isEnabled = false
+            qualityText.text = label
+            qualityText.alpha = 1.0f
+            ecoModeButton.setBackgroundResource(R.drawable.button_mode_selected)
+        } else {
+            selectedQuality = quality
+            qualitySeekBar.progress = quality
+            qualitySeekBar.isEnabled = true
+            qualityText.text = label
+            qualityText.alpha = 1.0f
+            when (quality) {
+                95 -> ultraModeButton.setBackgroundResource(R.drawable.button_mode_selected)
+                75 -> balancedModeButton.setBackgroundResource(R.drawable.button_mode_selected)
+                40 -> maxModeButton.setBackgroundResource(R.drawable.button_mode_selected)
+            }
+        }
+    }
+
+    private fun attachSplashAndSqueeze(view: View) {
+        // Universal Squeeze
+        val clickAnimator = android.animation.AnimatorInflater.loadStateListAnimator(this, R.animator.button_click)
+        view.stateListAnimator = clickAnimator
+        
+        // Water Splash on Touch
+        view.setOnTouchListener { _, event ->
+            if (event.action == android.view.MotionEvent.ACTION_DOWN) {
+                showWaterSplash(event.rawX, event.rawY)
+            }
+            // Return false so the system handles the state changes (Squeeze) 
+            // and triggers the standard OnClickListener naturally.
+            false 
+        }
+    }
+
+    private fun showWaterSplash(rawX: Float, rawY: Float) {
+        splashOverlay.visibility = View.VISIBLE
+        // Center the 100dp circle on the touch point
+        val offset = (50 * resources.displayMetrics.density).toInt()
+        splashOverlay.x = rawX - offset
+        splashOverlay.y = rawY - offset
+        
+        val anim = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.water_splash)
+        anim.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
+            override fun onAnimationStart(a: android.view.animation.Animation?) {}
+            override fun onAnimationRepeat(a: android.view.animation.Animation?) {}
+            override fun onAnimationEnd(a: android.view.animation.Animation?) {
+                splashOverlay.visibility = View.GONE
+            }
+        })
+        splashOverlay.startAnimation(anim)
     }
 
     private fun openUrl(url: String) {
@@ -1036,13 +1269,58 @@ class MainActivity : AppCompatActivity() {
         }, 3000)
     }
 
+    private fun showWarningBanner(message: String) {
+        taskCompleteBannerTitle.text = "Action Not Allowed"
+        taskCompleteBannerSubtitle.text = message
+        taskCompleteBannerIcon.text = "⚠️"
+        taskCompleteBannerIcon.setBackgroundResource(R.drawable.icon_bg_orange)
+        taskCompleteBannerClearBtn.visibility = View.GONE
+
+        taskCompleteBanner.visibility = View.VISIBLE
+        taskCompleteBanner.translationY = -300f
+        taskCompleteBanner.animate().translationY(0f).setDuration(300).start()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (taskCompleteBanner.visibility == View.VISIBLE) {
+                taskCompleteBanner.animate()
+                    .translationY(-300f)
+                    .setDuration(300)
+                    .withEndAction {
+                        taskCompleteBanner.visibility = View.GONE
+                        // Restore defaults for next time
+                        taskCompleteBannerIcon.text = "✅"
+                        taskCompleteBannerIcon.setBackgroundResource(R.drawable.icon_bg_green)
+                        taskCompleteBannerClearBtn.visibility = View.VISIBLE
+                    }
+                    .start()
+            }
+        }, 3000)
+    }
+
     // Called from onCreate — if this launch came from tapping the completion
     // notification, show the banner fresh right now (instead of relying on
     // whatever happened while the app was in the background).
     private fun checkCompletedTaskIntent(incomingIntent: Intent) {
-        when (incomingIntent.getStringExtra("completed_task")) {
-            "compress" -> showTaskCompleteBanner("Compression Complete", "View in History")
-            "pdf" -> showTaskCompleteBanner("PDF Creation Complete", "View in PDF History")
+        val task = incomingIntent.getStringExtra("completed_task")
+        if (task != null) {
+            when (task) {
+                "compress" -> showTaskCompleteBanner("Compression Complete", "View in History")
+                "pdf" -> showTaskCompleteBanner("PDF Creation Complete", "View in PDF History")
+            }
+            incomingIntent.removeExtra("completed_task")
+        }
+    }
+
+    private fun handleHunterIntent(incomingIntent: Intent) {
+        val uris = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            incomingIntent.getParcelableArrayListExtra("hunter_uris", Uri::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            incomingIntent.getParcelableArrayListExtra<Uri>("hunter_uris")
+        }
+        if (!uris.isNullOrEmpty()) {
+            applyImportedPhotos(uris)
+            incomingIntent.removeExtra("hunter_uris")
         }
     }
 
@@ -1050,7 +1328,7 @@ class MainActivity : AppCompatActivity() {
     // PDF PROGRESS DIALOG (Convert to PDF)
     // =============================================
 
-    private fun showPdfProgressDialogAndCreate() {
+    private fun showPdfProgressDialogAndCreate(customName: String? = null) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_pdf_progress, null)
         val progressBar = dialogView.findViewById<ProgressBar>(R.id.pdfProgressBar)
         val progressText = dialogView.findViewById<TextView>(R.id.pdfProgressText)
@@ -1071,7 +1349,7 @@ class MainActivity : AppCompatActivity() {
         // background thread, so we hop back with runOnUiThread to safely touch views.
         CoroutineScope(Dispatchers.Main).launch {
             val pdfUri = withContext(Dispatchers.IO) {
-                PdfUtils.createPdf(this@MainActivity, selectedImageUris) { current, totalCount ->
+                PdfUtils.createPdf(this@MainActivity, selectedImageUris, customName = customName) { current, totalCount ->
                     runOnUiThread {
                         val percent = (current * 100) / totalCount
                         progressBar.progress = percent
@@ -1125,6 +1403,9 @@ class MainActivity : AppCompatActivity() {
             }
         } else if (requestCode == 200 && resultCode == Activity.RESULT_OK && data != null) {
             val updatedUris = data.getParcelableArrayListExtra<Uri>("updated_uris") ?: arrayListOf()
+            if (updatedUris.size < selectedImageUris.size) {
+                selectPhotosTapCount = 0
+            }
             selectedImageUris.clear()
             selectedImageUris.addAll(updatedUris)
             originalImageUri = selectedImageUris.firstOrNull()
@@ -1140,30 +1421,63 @@ class MainActivity : AppCompatActivity() {
         when {
             selectedImageUris.isEmpty() -> {
                 imagePreview.setImageDrawable(null)
+                emptyStateLayout.visibility = View.VISIBLE
                 resultText.text = "No Image Selected"
                 removeImageBtn.visibility = View.GONE
                 previewImagesBtn.visibility = View.GONE
+                scrollHintLayout.visibility = View.GONE
             }
             selectedImageUris.size == 1 -> {
                 imagePreview.setImageURI(selectedImageUris[0])
+                emptyStateLayout.visibility = View.GONE
                 resultText.text = "1 Image Selected"
                 removeImageBtn.visibility = View.VISIBLE
                 previewImagesBtn.visibility = View.GONE
+                showScrollHint()
             }
             else -> {
                 imagePreview.setImageURI(selectedImageUris[0])
+                emptyStateLayout.visibility = View.GONE
                 resultText.text = "${selectedImageUris.size} Images Selected"
                 removeImageBtn.visibility = View.GONE
                 previewImagesBtn.visibility = View.VISIBLE
+                showScrollHint()
             }
         }
+    }
+
+    private fun showScrollHint() {
+        // If already scrolled down, don't show the hint
+        if (mainScrollView.scrollY > 200) return
+
+        scrollHintLayout.visibility = View.VISIBLE
+        scrollHintLayout.alpha = 1f
+        scrollHintLayout.translationY = 0f
+        
+        // Bounce Animation
+        val bounce = android.view.animation.TranslateAnimation(0f, 0f, 0f, -30f).apply {
+            duration = 600
+            repeatMode = android.view.animation.Animation.REVERSE
+            repeatCount = android.view.animation.Animation.INFINITE
+        }
+        scrollHintLayout.startAnimation(bounce)
+        
+        // Hide after 4 seconds so it doesn't stay forever
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (scrollHintLayout.visibility == View.VISIBLE) {
+                scrollHintLayout.animate().alpha(0f).setDuration(500).withEndAction {
+                    scrollHintLayout.visibility = View.GONE
+                    scrollHintLayout.alpha = 1f
+                }.start()
+            }
+        }, 4000)
     }
 
     // =============================================
     // CAMERA / GALLERY CHOOSER (Select Photos entry point)
     // =============================================
 
-    private fun attemptCreatePdf() {
+    private fun attemptCreatePdf(customName: String? = null) {
         if (selectedImageUris.isEmpty()) {
             Toast.makeText(this, "Select photos first", Toast.LENGTH_SHORT).show()
             return
@@ -1175,7 +1489,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        showPdfProgressDialogAndCreate()
+        showPdfProgressDialogAndCreate(customName)
     }
 
     // =============================================
@@ -1183,15 +1497,19 @@ class MainActivity : AppCompatActivity() {
     // =============================================
 
     private fun handleShortcutIntent(incomingIntent: Intent) {
-        when (incomingIntent.getStringExtra("shortcut_action")) {
-            "compress" -> {
-                pendingShortcutAction = null
-                showPhotoSourceChooser()
+        val action = incomingIntent.getStringExtra("shortcut_action")
+        if (action != null) {
+            when (action) {
+                "compress" -> {
+                    pendingShortcutAction = null
+                    showPhotoSourceChooser()
+                }
+                "pdf" -> {
+                    pendingShortcutAction = "pdf"
+                    showPhotoSourceChooser()
+                }
             }
-            "pdf" -> {
-                pendingShortcutAction = "pdf"
-                showPhotoSourceChooser()
-            }
+            incomingIntent.removeExtra("shortcut_action")
         }
     }
 
@@ -1237,6 +1555,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openCameraCapture() {
+        val maxReselections = 3
+        if (selectPhotosTapCount >= maxReselections) {
+            Toast.makeText(
+                this,
+                "You can only reselect photos up to $maxReselections times. Please continue with your current selection.",
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+        selectPhotosTapCount++
+
         try {
             val photoFile = File(getExternalFilesDir(null), "camera_${System.currentTimeMillis()}.jpg")
             val photoUri = FileProvider.getUriForFile(this, "$packageName.provider", photoFile)
@@ -1299,12 +1628,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleIncomingShareIntent(incomingIntent: Intent) {
+        if (incomingIntent.action == null) return
+        
         when (incomingIntent.action) {
             Intent.ACTION_SEND -> {
                 if (incomingIntent.type?.startsWith("image/") == true) {
                     val uri = incomingIntent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
                     if (uri != null) {
                         applyImportedPhotos(listOf(uri))
+                        incomingIntent.action = null
                     }
                 }
             }
@@ -1313,6 +1645,7 @@ class MainActivity : AppCompatActivity() {
                     val uris = incomingIntent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
                     if (uris != null) {
                         applyImportedPhotos(uris)
+                        incomingIntent.action = null
                     }
                 }
             }
@@ -1402,10 +1735,55 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun showFilenamePromptIfNeeded(onProceed: (String?) -> Unit) {
+        val prefs = getSharedPreferences("MediaShrinkerSettings", MODE_PRIVATE)
+        val showPrompt = prefs.getBoolean("show_name_prompt", true)
+
+        if (!showPrompt) {
+            onProceed(null)
+            return
+        }
+
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_filename_prompt, null)
+        val input = dialogView.findViewById<EditText>(R.id.filenameInput)
+        val counter = dialogView.findViewById<TextView>(R.id.charCounter)
+        val checkbox = dialogView.findViewById<CheckBox>(R.id.dontShowAgainCheckbox)
+        val cancelBtn = dialogView.findViewById<Button>(R.id.filenameCancelBtn)
+        val confirmBtn = dialogView.findViewById<Button>(R.id.filenameConfirmBtn)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        input.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                counter.text = "${s?.length ?: 0}/20"
+            }
+        })
+
+        cancelBtn.setOnClickListener {
+            hapticLight()
+            dialog.dismiss()
+        }
+
+        confirmBtn.setOnClickListener {
+            hapticLight()
+            val name = input.text.toString().trim()
+            if (checkbox.isChecked) {
+                prefs.edit().putBoolean("show_name_prompt", false).apply()
+            }
+            dialog.dismiss()
+            onProceed(if (name.isEmpty()) null else name)
+        }
+
+        dialog.show()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        if (::firecrackerBackground.isInitialized) {
-            firecrackerBackground.stop()
-        }
     }
 }

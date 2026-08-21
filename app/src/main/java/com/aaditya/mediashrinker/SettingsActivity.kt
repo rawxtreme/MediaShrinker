@@ -27,7 +27,9 @@ class SettingsActivity : AppCompatActivity() {
 
         val backButton = findViewById<ImageView>(R.id.backButton)
         val startupVideoSwitch = findViewById<SwitchCompat>(R.id.startupVideoSwitch)
+        val showNameScreenSwitch = findViewById<SwitchCompat>(R.id.showNameScreenSwitch)
         val privacyPolicyRow = findViewById<LinearLayout>(R.id.privacyPolicyRow)
+        val troubleshootingRow = findViewById<LinearLayout>(R.id.troubleshootingRow)
         val howToUseRow = findViewById<LinearLayout>(R.id.howToUseRow)
         val starGithubRow = findViewById<LinearLayout>(R.id.starGithubRow)
         val checkUpdatesRow = findViewById<LinearLayout>(R.id.checkUpdatesRow)
@@ -46,9 +48,20 @@ class SettingsActivity : AppCompatActivity() {
             prefs.edit().putBoolean("show_startup_video", isChecked).apply()
         }
 
+        // --- Show Name Prompt Toggle ---
+        showNameScreenSwitch.isChecked = prefs.getBoolean("show_name_prompt", true)
+        showNameScreenSwitch.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean("show_name_prompt", isChecked).apply()
+        }
+
         // --- Privacy Policy ---
         privacyPolicyRow.setOnClickListener {
             startActivity(Intent(this, PrivacyPolicyActivity::class.java))
+        }
+
+        // --- Troubleshooting ---
+        troubleshootingRow.setOnClickListener {
+            ErrorHelper.showReportTroubleDialog(this)
         }
 
         // --- How to Use ---

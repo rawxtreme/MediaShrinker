@@ -26,11 +26,16 @@ object PdfUtils {
         context: Context,
         imageUris: List<Uri>,
         password: String? = null,
+        customName: String? = null,
         onProgress: ((current: Int, total: Int) -> Unit)? = null
     ): Uri? {
         try {
-            val timeStamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault()).format(java.util.Date())
-            val filename = "MediaShrinker_$timeStamp.pdf"
+            val filename = if (!customName.isNullOrBlank()) {
+                if (customName.lowercase().endsWith(".pdf")) customName else "$customName.pdf"
+            } else {
+                val timeStamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault()).format(java.util.Date())
+                "MediaShrinker_$timeStamp.pdf"
+            }
 
             val values = ContentValues().apply {
                 put(MediaStore.Files.FileColumns.DISPLAY_NAME, filename)

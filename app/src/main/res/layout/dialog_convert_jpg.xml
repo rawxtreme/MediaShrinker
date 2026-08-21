@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="28dp"
+    android:gravity="center"
+    android:background="@drawable/card_bg">
+
+    <TextView
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:text="🖼️"
+        android:textSize="36sp"
+        android:gravity="center"
+        android:background="@drawable/icon_bg_blue"
+        android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PNG Detected"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Convert to JPEG for better compression and smaller file size?"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:layout_marginBottom="28dp" />
+
+    <Button
+        android:id="@+id/convertJpgYesBtn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="YES, CONVERT TO JPG"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_bg"
+        android:stateListAnimator="@null"
+        android:layout_marginBottom="10dp" />
+
+    <Button
+        android:id="@+id/convertJpgNoBtn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="KEEP AS PNG"
+        android:textAllCaps="false"
+        android:textColor="#88FFFFFF"
+        android:background="@drawable/card_bg"
+        android:stateListAnimator="@null" />
+
+</LinearLayout>

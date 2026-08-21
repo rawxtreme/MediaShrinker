@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="28dp"
+    android:gravity="center"
+    android:background="@drawable/card_bg">
+
+    <TextView
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:text="📁"
+        android:textSize="36sp"
+        android:gravity="center"
+        android:background="@drawable/icon_bg_orange"
+        android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/file_missing"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/file_missing_desc"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:layout_marginBottom="28dp" />
+
+    <Button
+        android:id="@+id/reportProblemBtn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/report_this_problem"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_bg"
+        android:layout_marginBottom="10dp" />
+
+    <Button
+        android:id="@+id/missingCancelBtn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/cancel"
+        android:textAllCaps="false"
+        android:textColor="#88FFFFFF"
+        android:background="@drawable/card_bg" />
+
+</LinearLayout>

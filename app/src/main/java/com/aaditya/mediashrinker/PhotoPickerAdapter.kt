@@ -87,8 +87,14 @@ class PhotoPickerAdapter(
 
         val isSelected = selectedUris.contains(uri)
 
-        // Show the blue checkmark badge only if this exact photo is selected
-        holder.checkOverlay.visibility = if (isSelected) View.VISIBLE else View.GONE
+        // Show the selection number instead of just a checkmark
+        if (isSelected) {
+            holder.checkOverlay.visibility = View.VISIBLE
+            val index = selectedUris.indexOf(uri)
+            holder.checkOverlay.text = String.format(java.util.Locale.getDefault(), "%d", index + 1)
+        } else {
+            holder.checkOverlay.visibility = View.GONE
+        }
 
         // If limit is already reached AND this particular photo is NOT selected,
         // dim it out so the user visually understands it can't be tapped right now.
@@ -106,6 +112,8 @@ class PhotoPickerAdapter(
             if (isSelected) {
                 // Tapping an already-selected photo removes it (deselect)
                 selectedUris.remove(uri)
+                // Refresh everything because other selected numbers might change
+                notifyDataSetChanged()
             } else {
                 // Trying to select a NEW photo — check limit BEFORE adding
                 if (selectedUris.size >= maxSelection) {
@@ -117,6 +125,7 @@ class PhotoPickerAdapter(
                     return@setOnClickListener
                 }
                 selectedUris.add(uri)
+                notifyItemChanged(position)
             }
 
             // Tell the Activity how many are selected now (updates the "x / 100" text)
@@ -124,15 +133,10 @@ class PhotoPickerAdapter(
 
             val nowLimitReached = selectedUris.size >= maxSelection
 
-            if (wasLimitReached != nowLimitReached) {
-                // The 100-limit boundary was just crossed (hit it or freed up from it) —
-                // every visible photo's dim state may need to change, so refresh all.
+            if (wasLimitReached != nowLimitReached && !isSelected) {
+                // If limit state changed when ADDING (not removing), refresh all to show/hide dims.
+                // removing already calls notifyDataSetChanged above.
                 notifyDataSetChanged()
-            } else {
-                // Normal case (well under the limit): only this one photo changed.
-                // Refreshing just this item instead of the whole grid is what
-                // actually fixes the lag.
-                notifyItemChanged(position)
             }
         }
     }
@@ -158,7 +162,7 @@ class PhotoPickerAdapter(
             context.contentResolver.openInputStream(uri)?.use {
                 BitmapFactory.decodeStream(it, null, decodeOptions)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

@@ -84,47 +84,40 @@ class PdfHistoryActivity : AppCompatActivity() {
                 uri.lastPathSegment
 
             openButton.setOnClickListener {
+                if (!doesUriExist(this, uri)) {
+                    ErrorHelper.showFileMissingDialog(this)
+                    return@setOnClickListener
+                }
 
-                val intent =
-                    Intent(Intent.ACTION_VIEW)
-
-                intent.setDataAndType(
-                    uri,
-                    "application/pdf"
-                )
-
-                intent.flags =
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.setDataAndType(uri, "application/pdf")
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 startActivity(intent)
             }
 
             shareButton.setOnClickListener {
+                if (!doesUriExist(this, uri)) {
+                    ErrorHelper.showFileMissingDialog(this)
+                    return@setOnClickListener
+                }
 
-                val shareIntent =
-                    Intent(Intent.ACTION_SEND)
-
-                shareIntent.type =
-                    "application/pdf"
-
-                shareIntent.putExtra(
-                    Intent.EXTRA_STREAM,
-                    uri
-                )
-
-                shareIntent.addFlags(
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-
-                startActivity(
-                    Intent.createChooser(
-                        shareIntent,
-                        "Share PDF"
-                    )
-                )
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.type = "application/pdf"
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                startActivity(Intent.createChooser(shareIntent, "Share PDF"))
             }
 
             container.addView(card)
+        }
+    }
+
+    private fun doesUriExist(context: android.content.Context, uri: Uri): Boolean {
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { it.close() }
+            true
+        } catch (_: Exception) {
+            false
         }
     }
 }

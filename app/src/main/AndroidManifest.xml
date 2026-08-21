@@ -68,6 +68,8 @@
         <activity android:name=".StorageAnalyticsActivity" />
         <activity android:name=".ImageInfoActivity" />
         <activity android:name=".PhotoPreviewActivity" />
+        <activity android:name=".BigFileHunterActivity" />
+        <activity android:name=".MagicCleanerActivity" />
         <activity android:name=".CustomPhotoPickerActivity" />
 
         <service
@@ -75,10 +77,6 @@
             android:foregroundServiceType="dataSync"
             android:exported="false" />
 
-        <!-- TEMPORARY — remove along with IndependenceDayReceiver.kt in a future update -->
-        <receiver
-            android:name=".IndependenceDayReceiver"
-            android:exported="false" />
 
     </application>
 

@@ -5,21 +5,51 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#050816">
+    android:background="@color/background_dark">
 
     <!-- ===== MAIN CONTENT ===== -->
     <FrameLayout
+        android:id="@+id/mainContentFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <!-- Independence Day firecracker background — hidden unless 15th August -->
-    <com.aaditya.mediashrinker.FirecrackerView
-        android:id="@+id/firecrackerBackground"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+        <!-- Water Splash Overlay (Programmatic) -->
+        <View
+            android:id="@+id/splashOverlay"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/water_splash_circle"
+            android:visibility="gone" />
+
+        <!-- Scroll Hint -->
+        <LinearLayout
+            android:id="@+id/scrollHintLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="100dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            android:elevation="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/scroll_down_hint"
+                android:textColor="@color/accent_emerald"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:background="@drawable/card_bg"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"/>
+        </LinearLayout>
+
 
     <ScrollView
+        android:id="@+id/mainScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -65,19 +95,11 @@
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/independenceDayFlagBadge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🇮🇳"
-                    android:textSize="20sp"
-                    android:layout_marginRight="8dp"
-                    android:visibility="gone" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="v9.0"
+                    android:text="v10.0"
                     android:textColor="#3B82F6"
                     android:textSize="12sp"
                     android:background="@drawable/card_bg"
@@ -129,37 +151,6 @@
 
             </LinearLayout>
 
-            <!-- Independence Day tricolor strip — hidden unless 15th August -->
-            <LinearLayout
-                android:id="@+id/independenceDayStrip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="14dp"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="5dp"
-                    android:orientation="horizontal">
-
-                    <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="#FF9933" />
-                    <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="#FFFFFF" />
-                    <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="#138808" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="🎉 Happy Independence Day! 🎉"
-                    android:textColor="#FF9933"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp" />
-
-            </LinearLayout>
 
             <!-- IMAGE PREVIEW CARD -->
             <LinearLayout
@@ -180,6 +171,34 @@
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
                         android:background="#0A1020" />
+
+                    <!-- Empty State Layout -->
+                    <LinearLayout
+                        android:id="@+id/emptyStateLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/empty_state_bg"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/camera_emoji"
+                            android:textSize="32sp"
+                            android:layout_marginBottom="12dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/empty_state_prompt"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:lineSpacingExtra="4dp"/>
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/removeImageBtn"
@@ -231,7 +250,7 @@
                 <TextView
                     android:id="@+id/saveFolderText"
                     android:layout_width="match_parent"
-                    android:layout_height="18dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/input_bg"
                     android:gravity="center"
@@ -297,18 +316,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="QUALITY"
-                        android:textColor="#3B82F6"
-                        android:textSize="10sp"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="9sp"
                         android:textStyle="bold"
-                        android:letterSpacing="0.08"
-                        android:layout_marginBottom="6dp" />
+                        android:letterSpacing="0.1"
+                        android:layout_marginBottom="8dp" />
 
                     <TextView
                         android:id="@+id/qualityText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="80%"
-                        android:textColor="#00E5FF"
+                        android:textColor="@color/accent_emerald"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp" />
@@ -324,7 +343,7 @@
 
             </LinearLayout>
 
-            <!-- COMPRESSION MODE BUTTONS — 3 in a row -->
+            <!-- COMPRESSION MODE BUTTONS — 4 in a row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -332,11 +351,25 @@
                 android:layout_marginBottom="12dp">
 
                 <Button
+                    android:id="@+id/ecoModeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="46dp"
+                    android:layout_weight="1.2"
+                    android:text="@string/mode_eco"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/button_bg"
+                    android:layout_marginRight="4dp"
+                    android:stateListAnimator="@null" />
+
+                <Button
                     android:id="@+id/ultraModeButton"
                     android:layout_width="0dp"
                     android:layout_height="46dp"
                     android:layout_weight="1"
-                    android:text="⚡ Ultra"
+                    android:text="@string/mode_ultra"
                     android:textAllCaps="false"
                     android:textStyle="bold"
                     android:textSize="13sp"
@@ -350,12 +383,12 @@
                     android:layout_width="0dp"
                     android:layout_height="46dp"
                     android:layout_weight="1"
-                    android:text="⚖️ Balanced"
+                    android:text="@string/mode_balanced"
                     android:textAllCaps="false"
                     android:textStyle="bold"
                     android:textSize="13sp"
                     android:textColor="#FFFFFF"
-                    android:background="@drawable/pdf_button_bg"
+                    android:background="@drawable/button_bg"
                     android:layout_marginLeft="2dp"
                     android:layout_marginRight="2dp"
                     android:stateListAnimator="@null" />
@@ -365,14 +398,127 @@
                     android:layout_width="0dp"
                     android:layout_height="46dp"
                     android:layout_weight="1"
-                    android:text="🔥 Max"
+                    android:text="@string/mode_max"
                     android:textAllCaps="false"
                     android:textStyle="bold"
                     android:textSize="13sp"
                     android:textColor="#FFFFFF"
-                    android:background="@drawable/compare_button_bg"
+                    android:background="@drawable/button_bg"
                     android:layout_marginLeft="4dp"
                     android:stateListAnimator="@null" />
+
+            </LinearLayout>
+
+            <!-- ADVANCED PROCESSING CARD -->
+            <LinearLayout
+                android:id="@+id/advancedOptionsHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_bg"
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/advanced_processing"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/advancedOptionsToggleIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/plus"
+                        android:textColor="@color/accent_emerald"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/advancedOptionsContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginTop="14dp">
+
+                    <!-- Watermark Toggle -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/add_watermark"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/watermarkSwitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/watermarkInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/input_bg"
+                        android:hint="@string/watermark_hint"
+                        android:inputType="text"
+                        android:padding="10dp"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#44FFFFFF"
+                        android:textSize="13sp"
+                        android:visibility="gone"
+                        android:layout_marginBottom="14dp" />
+
+                    <!-- Batch Rename -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/batch_rename"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            android:layout_marginBottom="8dp" />
+
+                        <EditText
+                            android:id="@+id/renameInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:background="@drawable/input_bg"
+                            android:hint="@string/rename_hint"
+                            android:inputType="text"
+                            android:padding="10dp"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#44FFFFFF"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -412,12 +558,12 @@
                         <TextView
                             android:id="@+id/originalSizeText"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="16dp"
+                            android:layout_marginTop="2dp"
                             android:text="—"
                             android:textColor="#B6C2D9"
                             android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="2dp" />
+                            android:textStyle="bold" />
 
                     </LinearLayout>
 
@@ -765,7 +911,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="v9.0"
+                android:text="v10.0"
                 android:textColor="#4DFFFFFF"
                 android:textSize="12sp"
                 android:layout_gravity="center_horizontal"
@@ -779,6 +925,100 @@
                 android:layout_marginBottom="20dp" />
 
             <!-- Section label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/power_tools"
+                android:textColor="@color/accent_emerald"
+                android:textSize="10sp"
+                android:letterSpacing="0.12"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:id="@+id/bigFileHunterOption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="@string/search_emoji"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_orange" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="@string/big_file_hunter"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/magicCleanerOption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="@string/magic_cleaner_emoji"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_blue" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="@string/magic_cleaner"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#1AFFFFFF"
+                android:layout_marginBottom="16dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -796,6 +1036,8 @@
                 android:gravity="center_vertical"
                 android:padding="12dp"
                 android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginBottom="8dp">
 
                 <TextView
@@ -833,6 +1075,8 @@
                 android:gravity="center_vertical"
                 android:padding="12dp"
                 android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginBottom="8dp">
 
                 <TextView
@@ -870,6 +1114,8 @@
                 android:gravity="center_vertical"
                 android:padding="12dp"
                 android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginBottom="16dp">
 
                 <TextView
@@ -923,6 +1169,8 @@
                 android:gravity="center_vertical"
                 android:padding="12dp"
                 android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginBottom="8dp">
 
                 <TextView
@@ -960,6 +1208,8 @@
                 android:gravity="center_vertical"
                 android:padding="12dp"
                 android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginBottom="8dp">
 
                 <TextView
@@ -997,6 +1247,8 @@
                 android:gravity="center_vertical"
                 android:padding="12dp"
                 android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginBottom="8dp">
 
                 <TextView
@@ -1034,6 +1286,8 @@
                 android:gravity="center_vertical"
                 android:padding="12dp"
                 android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginBottom="8dp">
 
                 <TextView
@@ -1071,6 +1325,8 @@
                 android:gravity="center_vertical"
                 android:padding="12dp"
                 android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginBottom="8dp">
 
                 <TextView
@@ -1108,6 +1364,8 @@
                 android:gravity="center_vertical"
                 android:padding="12dp"
                 android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginBottom="8dp">
 
                 <TextView
@@ -1137,16 +1395,44 @@
 
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/imageInfoOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ℹ️  Image Info"
-                android:textColor="#60A5FA"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_marginBottom="16dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="ℹ️"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:background="@drawable/icon_bg_blue" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="12dp"
+                    android:text="@string/image_info"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#6F7D95"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
 
             <!-- Divider -->
             <View
@@ -1172,6 +1458,8 @@
                 android:gravity="center_vertical"
                 android:padding="12dp"
                 android:background="@drawable/save_option_bg"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginBottom="8dp">
 
                 <TextView
