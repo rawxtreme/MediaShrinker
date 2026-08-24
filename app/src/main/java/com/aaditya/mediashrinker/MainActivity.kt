@@ -421,7 +421,7 @@ class MainActivity : AppCompatActivity() {
 
             val targetText = targetSizeInput.text.toString()
 
-            showFilenamePromptIfNeeded { customName ->
+            showFilenamePromptIfNeeded(isPdf = false) { customName ->
                 if (targetText.isNotEmpty()) {
                     // User entered target KB — use accurate binary search
                     val targetKB = targetText.toIntOrNull()
@@ -475,7 +475,11 @@ class MainActivity : AppCompatActivity() {
 
         createPdfButton.setOnClickListener {
             hapticLight()
-            showFilenamePromptIfNeeded { customName ->
+            if (selectedImageUris.isEmpty()) {
+                Toast.makeText(this, "Select photos first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            showFilenamePromptIfNeeded(isPdf = true) { customName ->
                 attemptCreatePdf(customName)
             }
         }
@@ -1399,7 +1403,9 @@ class MainActivity : AppCompatActivity() {
             updateImageSelectionUI()
             if (pendingShortcutAction == "pdf") {
                 pendingShortcutAction = null
-                attemptCreatePdf()
+                showFilenamePromptIfNeeded(isPdf = true) { customName ->
+                    attemptCreatePdf(customName)
+                }
             }
         } else if (requestCode == 200 && resultCode == Activity.RESULT_OK && data != null) {
             val updatedUris = data.getParcelableArrayListExtra<Uri>("updated_uris") ?: arrayListOf()
@@ -1605,7 +1611,9 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Photo added", Toast.LENGTH_SHORT).show()
             if (pendingShortcutAction == "pdf") {
                 pendingShortcutAction = null
-                attemptCreatePdf()
+                showFilenamePromptIfNeeded(isPdf = true) { customName ->
+                    attemptCreatePdf(customName)
+                }
             }
         }
 
@@ -1735,9 +1743,10 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun showFilenamePromptIfNeeded(onProceed: (String?) -> Unit) {
+    private fun showFilenamePromptIfNeeded(isPdf: Boolean = false, onProceed: (String?) -> Unit) {
         val prefs = getSharedPreferences("MediaShrinkerSettings", MODE_PRIVATE)
-        val showPrompt = prefs.getBoolean("show_name_prompt", true)
+        val prefKey = if (isPdf) "show_pdf_name_prompt" else "show_name_prompt"
+        val showPrompt = prefs.getBoolean(prefKey, true)
 
         if (!showPrompt) {
             onProceed(null)
@@ -1751,6 +1760,12 @@ class MainActivity : AppCompatActivity() {
         val cancelBtn = dialogView.findViewById<Button>(R.id.filenameCancelBtn)
         val confirmBtn = dialogView.findViewById<Button>(R.id.filenameConfirmBtn)
 
+        if (isPdf) {
+            input.hint = getString(R.string.filename_pdf_hint)
+            // Use setFilters to strictly enforce maxLength if needed, 
+            // but maxLength is already in XML. We'll adjust the counter logic.
+        }
+
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
             .setCancelable(true)
@@ -1761,7 +1776,8 @@ class MainActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: android.text.Editable?) {
-                counter.text = "${s?.length ?: 0}/20"
+                val max = if (isPdf) 30 else 20
+                counter.text = "${s?.length ?: 0}/$max"
             }
         })
 
@@ -1774,7 +1790,7 @@ class MainActivity : AppCompatActivity() {
             hapticLight()
             val name = input.text.toString().trim()
             if (checkbox.isChecked) {
-                prefs.edit().putBoolean("show_name_prompt", false).apply()
+                prefs.edit().putBoolean(prefKey, false).apply()
             }
             dialog.dismiss()
             onProceed(if (name.isEmpty()) null else name)

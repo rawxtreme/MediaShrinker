@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#050816"
+    android:background="@color/background_dark"
     android:fillViewport="true">
 
     <LinearLayout
@@ -20,24 +20,25 @@
             android:gravity="center_vertical"
             android:paddingTop="48dp"
             android:paddingBottom="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
 
             <ImageView
                 android:id="@+id/backButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@android:drawable/ic_media_previous"
-                android:tint="#FFFFFF"
+                app:tint="#FFFFFF"
                 android:padding="6dp"
-                android:background="@drawable/card_bg" />
+                android:background="@drawable/card_bg"
+                android:contentDescription="@string/settings_title" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="16dp"
-                android:text="Settings"
+                android:layout_marginStart="16dp"
+                android:text="@string/settings_title"
                 android:textColor="#FFFFFF"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -48,12 +49,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="APP PREFERENCES"
-            android:textColor="#3B82F6"
+            android:text="@string/app_preferences"
+            android:textColor="@color/accent_emerald"
             android:textSize="11sp"
             android:letterSpacing="0.12" />
 
@@ -63,8 +64,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:padding="16dp"
             android:background="@drawable/card_bg">
@@ -78,7 +79,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Startup Video"
+                    android:text="@string/startup_video"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -87,8 +88,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:text="Show intro video when opening the app"
-                    android:textColor="#88FFFFFF"
+                    android:text="@string/startup_video_desc"
+                    android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -97,18 +98,18 @@
                 android:id="@+id/startupVideoSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp" />
+                android:layout_marginStart="12dp" />
 
         </LinearLayout>
 
-        <!-- Show Naming Screen Toggle Row -->
+        <!-- Show Image Naming Screen Toggle Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:padding="16dp"
             android:background="@drawable/card_bg">
@@ -132,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:text="@string/show_name_screen_desc"
-                    android:textColor="#88FFFFFF"
+                    android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -141,7 +142,51 @@
                 android:id="@+id/showNameScreenSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp" />
+                android:layout_marginStart="12dp" />
+
+        </LinearLayout>
+
+        <!-- Show PDF Naming Screen Toggle Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:padding="16dp"
+            android:background="@drawable/card_bg">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/show_pdf_name_screen"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/show_pdf_name_screen_desc"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/showPdfNameScreenSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp" />
 
         </LinearLayout>
 
@@ -149,12 +194,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
-            android:text="INFORMATION"
-            android:textColor="#3B82F6"
+            android:text="@string/information"
+            android:textColor="@color/accent_emerald"
             android:textSize="11sp"
             android:letterSpacing="0.12" />
 
@@ -165,8 +210,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:padding="16dp"
             android:background="@drawable/card_bg"
@@ -182,7 +227,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="?"
+                    android:text="@string/question_mark"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -193,13 +238,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="How to Use the App"
+                    android:text="@string/how_to_use_app"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -208,8 +253,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:text="Step-by-step guide for all features"
-                    android:textColor="#88FFFFFF"
+                    android:text="@string/how_to_use_app_desc"
+                    android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -217,8 +262,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="›"
-                android:textColor="#3B82F6"
+                android:text="@string/chevron"
+                android:textColor="@color/accent_emerald"
                 android:textSize="22sp" />
 
         </LinearLayout>
@@ -230,8 +275,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:padding="16dp"
             android:background="@drawable/card_bg"
@@ -256,13 +301,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Privacy Policy"
+                    android:text="@string/privacy_policy"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -271,8 +316,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:text="How we handle your data"
-                    android:textColor="#88FFFFFF"
+                    android:text="@string/privacy_policy_desc"
+                    android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -280,8 +325,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="›"
-                android:textColor="#3B82F6"
+                android:text="@string/chevron"
+                android:textColor="@color/accent_emerald"
                 android:textSize="22sp" />
 
         </LinearLayout>
@@ -293,8 +338,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:padding="16dp"
             android:background="@drawable/card_bg"
@@ -319,7 +364,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -335,7 +380,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:text="@string/report_trouble_settings_desc"
-                    android:textColor="#88FFFFFF"
+                    android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -343,8 +388,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="›"
-                android:textColor="#3B82F6"
+                android:text="@string/chevron"
+                android:textColor="@color/accent_emerald"
                 android:textSize="22sp" />
 
         </LinearLayout>
@@ -353,12 +398,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
-            android:text="UPDATES"
-            android:textColor="#3B82F6"
+            android:text="@string/updates"
+            android:textColor="@color/accent_emerald"
             android:textSize="11sp"
             android:letterSpacing="0.12" />
 
@@ -369,8 +414,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:padding="16dp"
             android:background="@drawable/card_bg"
@@ -395,13 +440,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Star This Project on GitHub"
+                    android:text="@string/star_github"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -410,8 +455,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:text="Support the project with a star ⭐"
-                    android:textColor="#88FFFFFF"
+                    android:text="@string/star_github_desc"
+                    android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -419,8 +464,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="›"
-                android:textColor="#3B82F6"
+                android:text="@string/chevron"
+                android:textColor="@color/accent_emerald"
                 android:textSize="22sp" />
 
         </LinearLayout>
@@ -432,8 +477,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:padding="16dp"
             android:background="@drawable/card_bg"
@@ -460,13 +505,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Check for Updates"
+                    android:text="@string/check_for_updates"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -475,8 +520,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:text="Tap to check for new version on GitHub"
-                    android:textColor="#88FFFFFF"
+                    android:text="@string/check_for_updates_desc"
+                    android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -484,8 +529,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="›"
-                android:textColor="#3B82F6"
+                android:text="@string/chevron"
+                android:textColor="@color/accent_emerald"
                 android:textSize="22sp" />
 
         </LinearLayout>
@@ -497,8 +542,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:padding="14dp"
             android:visibility="gone"
@@ -508,7 +553,8 @@
                 android:id="@+id/updateStatusIcon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginRight="12dp" />
+                android:layout_marginEnd="12dp"
+                android:contentDescription="@string/check_for_updates" />
 
             <TextView
                 android:id="@+id/updateStatusText"
@@ -528,9 +574,9 @@
             android:layout_gravity="center"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="32dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:text="MediaShrinker v10.0 • Made with ❤️ by Aaditya Shukla"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="@string/made_with_love"
             android:textColor="#44FFFFFF"
             android:textSize="11sp"
             android:gravity="center" />

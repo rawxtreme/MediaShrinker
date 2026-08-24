@@ -54,12 +54,7 @@ class SplashActivity : AppCompatActivity() {
         // Glow ring pulse (continuous)
         startGlowPulse(glowRing)
 
-        // App name fade in (delayed)
-        appName.postDelayed({
-            val fade = AlphaAnimation(0f, 1f).apply { duration = 400; fillAfter = true }
-            appName.startAnimation(fade)
-            appName.alpha = 1f
-        }, 400)
+        // App name (Skipped animation as it is hidden with new logo)
 
         // Tagline fade in (delayed more)
         tagline.postDelayed({

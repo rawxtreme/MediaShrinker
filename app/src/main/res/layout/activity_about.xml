@@ -1,160 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#050816">
+    android:background="@color/background_dark">
+
+    <View
+        android:id="@+id/splashOverlay"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/water_splash_circle"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingBottom="40dp">
 
-        <!-- LOGO -->
-
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/ic_ms"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"/>
-
-        <!-- TITLE -->
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MediaShrinker"
-            android:textColor="#3B82F6"
-            android:textStyle="bold"
-            android:textSize="34sp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="18dp"/>
-
-        <!-- VERSION -->
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Version 10.0"
-            android:textColor="#00E5FF"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"/>
-
-        <!-- ABOUT CARD -->
-
+        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/history_card_bg"
-            android:padding="20dp"
-            android:layout_marginTop="30dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="48dp"
+            android:paddingBottom="20dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+
+            <ImageView
+                android:id="@+id/aboutBackButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_media_previous"
+                app:tint="#FFFFFF"
+                android:padding="6dp"
+                android:background="@drawable/card_bg"
+                android:contentDescription="@string/about_title" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="About App"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:text="@string/about_title"
                 android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:textSize="24sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Thanks for using our App in its initial phase❤️.\n\nPlease note that the viewing video when starting the app will not incur data usage. This App is completely safe and build keeping privacy in the mind. \n\nIf you want to contribute in this app with us, contact Developer Please! \nI truly appreciate you. \n\nCheck How to Use App Option to be familiar with this app. \n\nPlease feel free to ask or report any bugs and glitches happening (if any) in this app to Developer. \n\nGOOD DAY!"
-                android:textColor="#D1D5DB"
-                android:textSize="16sp"
-                android:layout_marginTop="16dp"/>
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
-        <!-- SPECIAL THANKS TO -->
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/history_card_bg"
-            android:padding="20dp"
-            android:layout_marginTop="24dp">
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+
+            <!-- LOGO SECTION -->
+            <ImageView
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:src="@drawable/ic_logo_premium"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SPECIAL THANKS TO"
-                android:textColor="#00FFB7"
-                android:textStyle="bold"
-                android:textSize="24sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="•ARYAN♥️ (@ashhh.aryan) \n•ISHAN♥️ (@itz__ishu_4_u) \n•APURAV♥️ (HE DON'T USE INSTAGRAM️)"
-                android:textColor="#D1D5DB"
-                android:textSize="16sp"
-                android:layout_marginTop="16dp"/>
-
-        </LinearLayout>
-
-        <!-- DEVELOPER -->
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/history_card_bg"
-            android:padding="20dp"
-            android:layout_marginTop="24dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Developer"
-                android:textColor="#FFD700"
-                android:textStyle="bold"
-                android:textSize="24sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Aaditya Shukla 🥂"
-                android:textColor="#FFFFFF"
+                android:text="MediaShrinker"
+                android:textColor="@color/text_primary"
                 android:textStyle="bold"
                 android:textSize="28sp"
-                android:layout_marginTop="16dp"/>
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:letterSpacing="0.02"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Version 10.0"
+                android:textColor="@color/accent_emerald"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"/>
+
+            <!-- ABOUT CARD -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_bg"
+                android:padding="20dp"
+                android:layout_marginTop="32dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/about_app_header"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/about_app_desc"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="5dp"
+                    android:layout_marginTop="12dp"/>
+
+            </LinearLayout>
+
+            <!-- SPECIAL THANKS CARD -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_bg"
+                android:padding="20dp"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/special_thanks_title"
+                    android:textColor="@color/accent_emerald"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/special_thanks_desc"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/contributor_aryan"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="12dp"/>
+
+            </LinearLayout>
+
+            <!-- DEVELOPER CARD -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_bg"
+                android:padding="20dp"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/developer_title"
+                    android:textColor="#FFD700"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aaditya Shukla 🥂"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:textSize="22sp"
+                    android:layout_marginTop="10dp"/>
+
+            </LinearLayout>
+
+            <!-- ACTION BUTTONS -->
+            <Button
+                android:id="@+id/instagramButton"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:text="@string/follow_instagram"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:background="@drawable/button_bg"
+                android:layout_marginTop="32dp"
+                android:stateListAnimator="@null"/>
+
+            <Button
+                android:id="@+id/githubButton"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:text="@string/view_on_github"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:background="@drawable/compare_button_bg"
+                android:layout_marginTop="12dp"
+                android:stateListAnimator="@null"/>
 
         </LinearLayout>
-
-        <!-- BUTTONS -->
-
-        <Button
-            android:id="@+id/instagramButton"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:text="INSTAGRAM"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:background="@drawable/share_button_bg"
-            android:layout_marginTop="30dp"/>
-
-        <Button
-            android:id="@+id/githubButton"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:text="GITHUB"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:background="@drawable/open_button_bg"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="40dp"/>
 
     </LinearLayout>
 
-</ScrollView>
+    </ScrollView>
+
+</FrameLayout>

@@ -25,14 +25,14 @@
         <!-- App logo -->
         <ImageView
             android:id="@+id/splashLogo"
-            android:layout_width="92dp"
-            android:layout_height="92dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_ms" />
+            android:src="@drawable/ic_logo_premium" />
 
     </FrameLayout>
 
-    <!-- App name -->
+    <!-- App name (Hidden because new logo includes name) -->
     <TextView
         android:id="@+id/splashAppName"
         android:layout_width="wrap_content"
@@ -42,7 +42,8 @@
         android:textSize="30sp"
         android:textStyle="bold"
         android:letterSpacing="0.02"
-        android:layout_marginBottom="6dp" />
+        android:layout_marginBottom="6dp"
+        android:visibility="gone" />
 
     <!-- Tagline -->
     <TextView

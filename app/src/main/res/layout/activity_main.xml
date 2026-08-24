@@ -83,7 +83,7 @@
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:layout_marginLeft="12dp"
-                    android:src="@drawable/ic_ms" />
+                    android:src="@drawable/ic_logo_premium" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -892,9 +892,9 @@
 
             <!-- Logo -->
             <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/ic_ms"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_logo_premium"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="10dp" />
 
@@ -906,7 +906,8 @@
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginBottom="4dp"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="wrap_content"

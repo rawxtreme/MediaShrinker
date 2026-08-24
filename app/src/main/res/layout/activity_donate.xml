@@ -1,34 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:background="#0F0F0F"
-    android:padding="24dp">
+    android:background="@color/background_dark"
+    android:fillViewport="true">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Buy Me A Coffee ☕"
-        android:textColor="#FFFFFF"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="24dp"/>
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
 
-    <ImageView
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:src="@drawable/upicode"/>
+        <!-- Back Button row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="32dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Thank you for supporting ❤️"
-        android:textColor="#AAAAAA"
-        android:textSize="16sp"
-        android:layout_marginTop="24dp"/>
+            <ImageView
+                android:id="@+id/donateBackButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_media_previous"
+                app:tint="#FFFFFF"
+                android:padding="6dp"
+                android:background="@drawable/card_bg" />
 
-</LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:text="Support Development"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="☕"
+            android:textSize="64sp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Buy Me A Coffee"
+            android:textColor="@color/accent_emerald"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MediaShrinker is completely free and ad-free. I work on this project alone to provide you with a powerful, aesthetic, and privacy-focused utility tool.\n\nYour support helps me keep the servers running, cover developer fees, and dedicate more time to adding the professional features you love."
+            android:textColor="@color/text_secondary"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:lineSpacingExtra="6dp"
+            android:layout_marginBottom="32dp" />
+
+        <!-- UPI QR Code Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_bg"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center"
+            android:elevation="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scan to Pay via UPI"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="20dp" />
+
+            <ImageView
+                android:id="@+id/upiQrCode"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:src="@drawable/upicode"
+                android:scaleType="fitCenter"
+                android:background="#FFFFFF"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Every small contribution makes a huge difference! ❤️"
+                android:textColor="@color/accent_emerald"
+                android:textSize="12sp"
+                android:textStyle="italic" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="Thank you for being part of this journey."
+            android:textColor="#44FFFFFF"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+</ScrollView>

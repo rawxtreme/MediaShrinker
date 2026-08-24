@@ -39,6 +39,7 @@
     <string name="name_your_file">Name your file</string>
     <string name="enter_name_desc">Enter a name for your compressed media</string>
     <string name="filename_hint">e.g. MyPhoto</string>
+    <string name="filename_pdf_hint">e.g. MyDocument</string>
     <string name="char_counter_initial">0/20</string>
     <string name="dont_show_again">Don\'t show this screen until turn it on</string>
     <string name="cancel">Cancel</string>
@@ -52,8 +53,10 @@
     <!-- Success Dialog -->
 
     <!-- Settings -->
-    <string name="show_name_screen">Show Name Screen</string>
-    <string name="show_name_screen_desc">Ask for a filename before starting a task</string>
+    <string name="show_name_screen">Show Image Name Screen</string>
+    <string name="show_name_screen_desc">Ask for a filename before compressing images</string>
+    <string name="show_pdf_name_screen">Show PDF Name Screen</string>
+    <string name="show_pdf_name_screen_desc">Ask for a filename before creating a PDF</string>
     <string name="image_info">Image Info</string>
     <string name="scroll_down_hint">↓ Scroll down to Compress</string>
 
@@ -80,4 +83,34 @@
     <string name="send_email">Send Email</string>
     <string name="report_trouble_settings">Report troubleshooting problem</string>
     <string name="report_trouble_settings_desc">Found a bug? Tell the developer</string>
+
+    <!-- Settings Activity -->
+    <string name="settings_title">Settings</string>
+    <string name="app_preferences">APP PREFERENCES</string>
+    <string name="startup_video">Startup Video</string>
+    <string name="startup_video_desc">Show intro video when opening the app</string>
+    <string name="information">INFORMATION</string>
+    <string name="how_to_use_app">How to Use the App</string>
+    <string name="how_to_use_app_desc">Step-by-step guide for all features</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_desc">How we handle your data</string>
+    <string name="updates">UPDATES</string>
+    <string name="star_github">Star This Project on GitHub</string>
+    <string name="star_github_desc">Support the project with a star ⭐</string>
+    <string name="check_for_updates">Check for Updates</string>
+    <string name="check_for_updates_desc">Tap to check for new version on GitHub</string>
+    <string name="made_with_love">MediaShrinker v10.0 • Made with ❤️ by Aaditya Shukla</string>
+    <string name="question_mark">\?</string>
+    <string name="chevron">›</string>
+
+    <!-- About Activity -->
+    <string name="about_title">About MediaShrinker</string>
+    <string name="about_app_header">About the App</string>
+    <string name="about_app_desc">Thank you for choosing MediaShrinker ❤️.\n\nMediaShrinker is a high-performance utility built with a focus on privacy and efficiency. Please be assured that viewing the startup video does not consume cellular data. This application is designed to be fully secure, keeping your media processing entirely offline.\n\nIf you are interested in contributing to the project or have feedback, please reach out to the developer. Your support is deeply appreciated.\n\nWe recommend exploring the \'How to Use\' section to familiarize yourself with our advanced features. Please feel free to report any bugs or suggest improvements directly to the development team.\n\nHave a productive day!</string>
+    <string name="special_thanks_title">Special Thanks</string>
+    <string name="special_thanks_desc">Gratitude to those who supported this journey.</string>
+    <string name="developer_title">Lead Developer</string>
+    <string name="follow_instagram">Follow on Instagram</string>
+    <string name="view_on_github">View on GitHub</string>
+    <string name="contributor_aryan">• ARYAN ❤️ (@ashhh.aryan)</string>
 </resources>

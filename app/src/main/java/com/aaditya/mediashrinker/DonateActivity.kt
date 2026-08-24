@@ -10,5 +10,9 @@ class DonateActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_donate)
+        
+        findViewById<android.widget.ImageView>(R.id.donateBackButton).setOnClickListener {
+            finish()
+        }
     }
 }

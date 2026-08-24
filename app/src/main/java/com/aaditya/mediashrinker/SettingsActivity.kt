@@ -28,6 +28,7 @@ class SettingsActivity : AppCompatActivity() {
         val backButton = findViewById<ImageView>(R.id.backButton)
         val startupVideoSwitch = findViewById<SwitchCompat>(R.id.startupVideoSwitch)
         val showNameScreenSwitch = findViewById<SwitchCompat>(R.id.showNameScreenSwitch)
+        val showPdfNameScreenSwitch = findViewById<SwitchCompat>(R.id.showPdfNameScreenSwitch)
         val privacyPolicyRow = findViewById<LinearLayout>(R.id.privacyPolicyRow)
         val troubleshootingRow = findViewById<LinearLayout>(R.id.troubleshootingRow)
         val howToUseRow = findViewById<LinearLayout>(R.id.howToUseRow)
@@ -52,6 +53,12 @@ class SettingsActivity : AppCompatActivity() {
         showNameScreenSwitch.isChecked = prefs.getBoolean("show_name_prompt", true)
         showNameScreenSwitch.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean("show_name_prompt", isChecked).apply()
+        }
+
+        // --- Show PDF Name Prompt Toggle ---
+        showPdfNameScreenSwitch.isChecked = prefs.getBoolean("show_pdf_name_prompt", true)
+        showPdfNameScreenSwitch.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean("show_pdf_name_prompt", isChecked).apply()
         }
 
         // --- Privacy Policy ---
