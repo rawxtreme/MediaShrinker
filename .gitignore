@@ -35,6 +35,10 @@ gradle.properties
 app/release/
 app/debug/
 
+# Tests
+app/src/androidTest/
+app/src/test/
+
 # Logs
 *.log
 
