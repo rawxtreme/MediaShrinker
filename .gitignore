@@ -32,6 +32,8 @@ gradle.properties
 # APK / Bundles
 *.apk
 *.aab
+app/release/
+app/debug/
 
 # Logs
 *.log
