@@ -41,3 +41,6 @@ gradle.properties
 *.temperror.txt
 log.txt
 error.txt
+
+# Planning Artifacts
+.artifacts/
