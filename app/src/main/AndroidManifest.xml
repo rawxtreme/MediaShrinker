@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -18,6 +20,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/AppTheme">
 
         <provider
@@ -56,6 +59,8 @@
         <activity android:name=".UpdateVideoActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".PrivacyPolicyActivity" />
+        <activity android:name=".PatchNotesActivity" />
+        <activity android:name=".TermsOfUseActivity" />
         <activity android:name=".HowToUseActivity" />
         <activity android:name=".HistoryActivity" />
         <activity android:name=".AboutActivity" />
@@ -71,6 +76,11 @@
         <activity android:name=".BigFileHunterActivity" />
         <activity android:name=".MagicCleanerActivity" />
         <activity android:name=".CustomPhotoPickerActivity" />
+        <activity
+            android:name=".InAppCameraActivity"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"
+            android:exported="false" />
 
         <service
             android:name=".ProcessingService"

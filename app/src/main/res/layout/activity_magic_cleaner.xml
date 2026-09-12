@@ -135,6 +135,38 @@
 
         </LinearLayout>
 
+        <!-- Smart select bar -->
+        <LinearLayout
+            android:id="@+id/cleanerSmartSelectBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="10dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/cleanerGroupsFoundText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Duplicates found"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/cleanerAutoSelectBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto-select duplicates"
+                android:textColor="@color/accent_emerald"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:padding="6dp" />
+
+        </LinearLayout>
+
         <!-- Result State -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cleanerRecyclerView"

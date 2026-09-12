@@ -30,6 +30,8 @@ class SettingsActivity : AppCompatActivity() {
         val showNameScreenSwitch = findViewById<SwitchCompat>(R.id.showNameScreenSwitch)
         val showPdfNameScreenSwitch = findViewById<SwitchCompat>(R.id.showPdfNameScreenSwitch)
         val privacyPolicyRow = findViewById<LinearLayout>(R.id.privacyPolicyRow)
+        val patchNotesRow = findViewById<LinearLayout>(R.id.patchNotesRow)
+        val termsOfUseRow = findViewById<LinearLayout>(R.id.termsOfUseRow)
         val troubleshootingRow = findViewById<LinearLayout>(R.id.troubleshootingRow)
         val howToUseRow = findViewById<LinearLayout>(R.id.howToUseRow)
         val starGithubRow = findViewById<LinearLayout>(R.id.starGithubRow)
@@ -64,6 +66,16 @@ class SettingsActivity : AppCompatActivity() {
         // --- Privacy Policy ---
         privacyPolicyRow.setOnClickListener {
             startActivity(Intent(this, PrivacyPolicyActivity::class.java))
+        }
+
+        // --- Patch Notes ---
+        patchNotesRow.setOnClickListener {
+            startActivity(Intent(this, PatchNotesActivity::class.java))
+        }
+
+        // --- Terms of Use ---
+        termsOfUseRow.setOnClickListener {
+            startActivity(Intent(this, TermsOfUseActivity::class.java))
         }
 
         // --- Troubleshooting ---

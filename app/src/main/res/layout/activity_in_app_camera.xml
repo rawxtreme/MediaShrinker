@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/cameraPreview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomControls"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Full-screen white flash used to give tactile "shutter" feedback on capture -->
+    <View
+        android:id="@+id/captureFlashOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#FFFFFF"
+        android:alpha="0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- ===================== TOP BAR ===================== -->
+
+    <ImageView
+        android:id="@+id/cameraCloseBtn"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginStart="18dp"
+        android:padding="9dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        app:tint="#FFFFFF"
+        android:background="@drawable/camera_control_circle_bg"
+        android:contentDescription="Close camera"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/cameraModeBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="6dp"
+        android:text="Multiple Photos"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:background="@drawable/camera_control_circle_bg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/cameraFlashBtn"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="18dp"
+        android:padding="9dp"
+        android:src="@android:drawable/ic_menu_gallery"
+        app:tint="#FFFFFF"
+        android:background="@drawable/camera_control_circle_bg"
+        android:contentDescription="Toggle flash"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- ===================== BOTTOM CONTROLS ===================== -->
+
+    <LinearLayout
+        android:id="@+id/bottomControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#000000"
+        android:paddingBottom="26dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Captured photo thumbnail strip — only shown in Multiple Photos mode -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/capturedThumbStrip"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            android:clipToPadding="false"
+            android:visibility="gone"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/cameraCaptureCountText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="0 photos captured"
+            android:textColor="#94A3B8"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingHorizontal="28dp">
+
+            <ImageView
+                android:id="@+id/cameraFlipBtn"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:src="@android:drawable/ic_menu_rotate"
+                app:tint="#FFFFFF"
+                android:background="@drawable/camera_control_circle_bg"
+                android:contentDescription="Flip camera" />
+
+            <FrameLayout
+                android:id="@+id/shutterButtonFrame"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:layout_centerInParent="true">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/camera_shutter_ring" />
+
+                <View
+                    android:id="@+id/shutterButton"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/camera_shutter_inner"
+                    android:contentDescription="Capture photo" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/cameraDoneBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp"
+                android:text="Done"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:background="@drawable/camera_done_btn_bg"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/cameraHintText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:text="Tap the shutter to capture as many photos as you need"
+            android:textColor="#64748B"
+            android:textSize="11sp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

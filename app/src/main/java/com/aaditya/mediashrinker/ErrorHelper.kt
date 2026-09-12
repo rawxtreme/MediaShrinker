@@ -57,7 +57,7 @@ object ErrorHelper {
         val deviceInfo = """
             Device: ${Build.MANUFACTURER} ${Build.MODEL}
             Android: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})
-            App Version: 10.0
+            App Version: 11.0
             Time: ${SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())}
         """.trimIndent()
 

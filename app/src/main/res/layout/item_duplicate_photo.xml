@@ -45,6 +45,16 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/duplicateMaximizeBtn"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@android:drawable/ic_menu_zoom"
+        android:background="@drawable/card_bg"
+        android:padding="6dp"
+        android:layout_marginRight="8dp"
+        android:contentDescription="Maximize Photo" />
+
     <CheckBox
         android:id="@+id/duplicateCheckbox"
         android:layout_width="wrap_content"

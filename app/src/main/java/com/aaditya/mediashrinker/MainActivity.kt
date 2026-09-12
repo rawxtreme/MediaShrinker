@@ -27,8 +27,7 @@ import android.os.Build
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import androidx.core.content.FileProvider
-import java.io.File
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -102,7 +101,7 @@ class MainActivity : AppCompatActivity() {
     private var selectedQuality = 80
     private var selectedImageUris = mutableListOf<Uri>()
     private var selectPhotosTapCount = 0
-    private var pendingCameraUri: Uri? = null
+
     private var pendingShortcutAction: String? = null
     private var compressedImageUri: Uri? = null
     private var originalImageUri: Uri? = null
@@ -1416,9 +1415,20 @@ class MainActivity : AppCompatActivity() {
             selectedImageUris.addAll(updatedUris)
             originalImageUri = selectedImageUris.firstOrNull()
             updateImageSelectionUI()
-        } else if (requestCode == 300 && resultCode == Activity.RESULT_OK) {
-            pendingCameraUri?.let { uri ->
-                showAddCapturedPhotoDialog(uri)
+        } else if (requestCode == 300 && resultCode == Activity.RESULT_OK && data != null) {
+            val capturedUris = data.getParcelableArrayListExtra<Uri>(InAppCameraActivity.EXTRA_RESULT_URIS) ?: arrayListOf()
+            if (capturedUris.isNotEmpty()) {
+                selectedImageUris.addAll(capturedUris)
+                if (originalImageUri == null) originalImageUri = selectedImageUris.firstOrNull()
+                updateImageSelectionUI()
+                val label = if (capturedUris.size == 1) "Photo added" else "${capturedUris.size} photos added"
+                Toast.makeText(this, label, Toast.LENGTH_SHORT).show()
+                if (pendingShortcutAction == "pdf") {
+                    pendingShortcutAction = null
+                    showFilenamePromptIfNeeded(isPdf = true) { customName ->
+                        attemptCreatePdf(customName)
+                    }
+                }
             }
         }
     }
@@ -1489,7 +1499,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val maxPdfPages = 50
+        val maxPdfPages = 1000
         if (selectedImageUris.size > maxPdfPages) {
             Toast.makeText(this, "You can convert up to $maxPdfPages photos into a PDF at once", Toast.LENGTH_LONG).show()
             return
@@ -1560,64 +1570,54 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, 100)
     }
 
+    // Camera capture no longer has any "max 3 times" cap — that limit only
+    // ever applied to the gallery reselection flow. Instead we ask the user
+    // upfront whether they want to shoot one photo or many, then hand off to
+    // our own in-app camera screen (InAppCameraActivity) — the system camera
+    // app is never opened.
     private fun openCameraCapture() {
-        val maxReselections = 3
-        if (selectPhotosTapCount >= maxReselections) {
-            Toast.makeText(
-                this,
-                "You can only reselect photos up to $maxReselections times. Please continue with your current selection.",
-                Toast.LENGTH_LONG
-            ).show()
+        if (!hasCameraPermission()) {
+            requestCameraPermission()
             return
         }
-        selectPhotosTapCount++
-
-        try {
-            val photoFile = File(getExternalFilesDir(null), "camera_${System.currentTimeMillis()}.jpg")
-            val photoUri = FileProvider.getUriForFile(this, "$packageName.provider", photoFile)
-            pendingCameraUri = photoUri
-
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-            startActivityForResult(intent, 300)
-        } catch (e: Exception) {
-            Toast.makeText(this, "Could not open camera", Toast.LENGTH_SHORT).show()
-        }
+        showCameraModeChooser()
     }
 
-    private fun showAddCapturedPhotoDialog(uri: Uri) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_captured_photo, null)
-        dialogView.findViewById<ImageView>(R.id.capturedPhotoPreview).setImageURI(uri)
+    private fun hasCameraPermission(): Boolean =
+        androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) ==
+            android.content.pm.PackageManager.PERMISSION_GRANTED
 
+    private fun requestCameraPermission() {
+        androidx.core.app.ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 701)
+    }
+
+    private fun showCameraModeChooser() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_camera_mode_chooser, null)
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
-            .setCancelable(false)
+            .setCancelable(true)
             .create()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialogView.findViewById<Button>(R.id.capturedPhotoNoBtn).setOnClickListener {
+        dialogView.findViewById<LinearLayout>(R.id.cameraModeSingleOption).setOnClickListener {
             hapticLight()
             dialog.dismiss()
-            try { contentResolver.delete(uri, null, null) } catch (e: Exception) { }
+            launchInAppCamera(InAppCameraActivity.MODE_SINGLE)
         }
 
-        dialogView.findViewById<Button>(R.id.capturedPhotoYesBtn).setOnClickListener {
+        dialogView.findViewById<LinearLayout>(R.id.cameraModeMultipleOption).setOnClickListener {
             hapticLight()
             dialog.dismiss()
-            selectedImageUris.add(uri)
-            if (originalImageUri == null) originalImageUri = uri
-            updateImageSelectionUI()
-            Toast.makeText(this, "Photo added", Toast.LENGTH_SHORT).show()
-            if (pendingShortcutAction == "pdf") {
-                pendingShortcutAction = null
-                showFilenamePromptIfNeeded(isPdf = true) { customName ->
-                    attemptCreatePdf(customName)
-                }
-            }
+            launchInAppCamera(InAppCameraActivity.MODE_MULTIPLE)
         }
 
         dialog.show()
+    }
+
+    private fun launchInAppCamera(mode: String) {
+        val intent = Intent(this, InAppCameraActivity::class.java)
+        intent.putExtra(InAppCameraActivity.EXTRA_MODE, mode)
+        startActivityForResult(intent, 300)
     }
 
     // =============================================
@@ -1631,6 +1631,17 @@ class MainActivity : AppCompatActivity() {
                 != android.content.pm.PackageManager.PERMISSION_GRANTED
             ) {
                 androidx.core.app.ActivityCompat.requestPermissions(this, arrayOf(permission), 601)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 701) {
+            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                showCameraModeChooser()
+            } else {
+                Toast.makeText(this, "Camera permission is needed to take photos", Toast.LENGTH_LONG).show()
             }
         }
     }

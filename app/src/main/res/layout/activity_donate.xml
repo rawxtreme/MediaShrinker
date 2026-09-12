@@ -61,7 +61,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="MediaShrinker is completely free and ad-free. I work on this project alone to provide you with a powerful, aesthetic, and privacy-focused utility tool.\n\nYour support helps me keep the servers running, cover developer fees, and dedicate more time to adding the professional features you love."
+            android:text="MediaShrinker is completely free and ad-free. I work on this project alone to provide you with a powerful, aesthetic, and privacy-focused utility tool.\n\nYour support will help me to buy a good PC so i can develop more privacy focused high-end apps, cover developer fees, and dedicate more time to adding the professional features you love."
             android:textColor="@color/text_secondary"
             android:textSize="15sp"
             android:gravity="center"
@@ -81,7 +81,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Scan to Pay via UPI"
+                android:text="Scan to Pay via any UPI App"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"

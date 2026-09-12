@@ -1,7 +1,9 @@
 package com.aaditya.mediashrinker
 
 import android.Manifest
+import android.app.RecoverableSecurityException
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -15,6 +17,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -37,12 +40,31 @@ class MagicCleanerActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var backButton: ImageView
     private lateinit var splashOverlay: View
+    private lateinit var smartSelectBar: View
+    private lateinit var groupsFoundText: TextView
+    private lateinit var autoSelectBtn: TextView
 
     private val duplicateGroups = mutableListOf<List<PhotoItem>>()
     private val flatList = mutableListOf<Any>() // Mixture of Header (String) and PhotoItem
     private val selectedPhotos = mutableSetOf<PhotoItem>()
 
+    // Queue used only on Android 10 (API 29), where each deletion needs its
+    // own RecoverableSecurityException consent — see processLegacyDeleteQueue().
+    private val legacyDeleteQueue = ArrayDeque<PhotoItem>()
+    private val legacyDeletedItems = mutableListOf<PhotoItem>()
+    private var legacyFailedCount = 0
+
+    // The exact set we asked the system to delete, so we know which ones to
+    // drop from our lists once the OS confirms the batch delete (API 30+).
+    private var pendingBatchDelete: List<PhotoItem> = emptyList()
+
     data class PhotoItem(val uri: Uri, val name: String, val size: Long, val hash: Long)
+
+    companion object {
+        private const val REQUEST_DELETE_BATCH = 850   // API 30+ MediaStore.createDeleteRequest
+        private const val REQUEST_DELETE_LEGACY = 851  // API 29 RecoverableSecurityException
+        private const val PERMISSION_REQUEST_CODE = 503
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +82,9 @@ class MagicCleanerActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.cleanerProgressBar)
         backButton = findViewById(R.id.cleanerBackButton)
         splashOverlay = findViewById(R.id.splashOverlay)
+        smartSelectBar = findViewById(R.id.cleanerSmartSelectBar)
+        groupsFoundText = findViewById(R.id.cleanerGroupsFoundText)
+        autoSelectBtn = findViewById(R.id.cleanerAutoSelectBtn)
 
         backButton.setOnClickListener { finish() }
 
@@ -75,7 +100,11 @@ class MagicCleanerActivity : AppCompatActivity() {
         }
 
         deleteButton.setOnClickListener {
-            deleteSelectedPhotos()
+            confirmAndDeleteSelectedPhotos()
+        }
+
+        autoSelectBtn.setOnClickListener {
+            autoSelectDuplicates()
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -94,12 +123,12 @@ class MagicCleanerActivity : AppCompatActivity() {
             Manifest.permission.READ_MEDIA_IMAGES
         else
             Manifest.permission.READ_EXTERNAL_STORAGE
-        ActivityCompat.requestPermissions(this, arrayOf(permission), 503)
+        ActivityCompat.requestPermissions(this, arrayOf(permission), PERMISSION_REQUEST_CODE)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 503) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startMagicScan()
             } else {
@@ -110,7 +139,7 @@ class MagicCleanerActivity : AppCompatActivity() {
 
     private fun showPermissionRequiredDialog() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_permission_required, null)
-        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setView(dialogView).setCancelable(false).create()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialogView.findViewById<Button>(R.id.permissionCancelBtn).setOnClickListener { dialog.dismiss() }
@@ -126,12 +155,15 @@ class MagicCleanerActivity : AppCompatActivity() {
     private fun startMagicScan() {
         initialState.visibility = View.GONE
         scanningState.visibility = View.VISIBLE
+        smartSelectBar.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
         progressBar.isIndeterminate = true
+        selectedPhotos.clear()
+        updateSelectionUI()
 
         CoroutineScope(Dispatchers.IO).launch {
             val allPhotos = fetchAllPhotos()
-            
+
             withContext(Dispatchers.Main) {
                 progressBar.isIndeterminate = false
                 progressBar.max = allPhotos.size
@@ -143,7 +175,7 @@ class MagicCleanerActivity : AppCompatActivity() {
                 val uri = pair.first
                 val name = pair.second
                 val size = pair.third
-                
+
                 val hash = generatePHash(uri)
                 if (hash != 0L) {
                     photoItems.add(PhotoItem(uri, name, size, hash))
@@ -157,7 +189,9 @@ class MagicCleanerActivity : AppCompatActivity() {
                 }
             }
 
-            // Group by hash
+            // Group by hash. The source list is already sorted newest-first
+            // (DATE_ADDED DESC), so within each group index 0 is the most
+            // recent copy — that's what auto-select keeps.
             val groups = photoItems.groupBy { it.hash }.values.filter { it.size > 1 }
 
             withContext(Dispatchers.Main) {
@@ -202,11 +236,11 @@ class MagicCleanerActivity : AppCompatActivity() {
                 val bitmap = BitmapFactory.decodeStream(input, null, options) ?: return 0L
                 val small = Bitmap.createScaledBitmap(bitmap, 8, 8, true)
                 bitmap.recycle()
-                
+
                 var total = 0L
                 val pixels = IntArray(64)
                 small.getPixels(pixels, 0, 8, 0, 0, 8, 8)
-                
+
                 for (p in pixels) {
                     val r = (p shr 16) and 0xFF
                     val g = (p shr 8) and 0xFF
@@ -217,7 +251,13 @@ class MagicCleanerActivity : AppCompatActivity() {
                 var hash = 0L
                 for (i in 0 until 64) {
                     val p = pixels[i]
-                    val gray = ((p shr 16) and 0xFF + (p shr 8) and 0xFF + p and 0xFF) / 3
+                    // Bug fix: `and` binds looser than `+` in Kotlin, so the old
+                    // expression `(p shr 16) and 0xFF + (p shr 8) and 0xFF + p and 0xFF`
+                    // was actually evaluating as nonsense masks and producing a
+                    // near-useless brightness value, which made the hash (and so
+                    // the whole duplicate-matching) unreliable. Each channel must
+                    // be masked BEFORE being added together.
+                    val gray = (((p shr 16) and 0xFF) + ((p shr 8) and 0xFF) + (p and 0xFF)) / 3
                     if (gray >= avg) {
                         hash = hash or (1L shl i)
                     }
@@ -239,15 +279,32 @@ class MagicCleanerActivity : AppCompatActivity() {
     private fun showResults() {
         scanningState.visibility = View.GONE
         progressBar.visibility = View.GONE
-        
+
         if (duplicateGroups.isEmpty()) {
             initialState.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+            smartSelectBar.visibility = View.GONE
             findViewById<TextView>(R.id.startScanButton).text = "RESCAN GALLERY"
             Toast.makeText(this, "No duplicates found!", Toast.LENGTH_LONG).show()
         } else {
             recyclerView.visibility = View.VISIBLE
             recyclerView.adapter = CleanerAdapter()
+            smartSelectBar.visibility = View.VISIBLE
+            val totalDupes = duplicateGroups.sumOf { it.size - 1 }
+            groupsFoundText.text = "${duplicateGroups.size} groups • $totalDupes extra copies"
         }
+    }
+
+    // Keeps the newest photo (index 0) in every group and selects the rest —
+    // a one-tap way to clear out duplicates instead of checking each one by hand.
+    private fun autoSelectDuplicates() {
+        selectedPhotos.clear()
+        duplicateGroups.forEach { group ->
+            group.drop(1).forEach { selectedPhotos.add(it) }
+        }
+        recyclerView.adapter?.notifyDataSetChanged()
+        updateSelectionUI()
+        Toast.makeText(this, "${selectedPhotos.size} duplicate copies selected, originals kept", Toast.LENGTH_SHORT).show()
     }
 
     private fun updateSelectionUI() {
@@ -259,16 +316,147 @@ class MagicCleanerActivity : AppCompatActivity() {
         }
     }
 
+    private fun confirmAndDeleteSelectedPhotos() {
+        if (selectedPhotos.isEmpty()) return
+        val count = selectedPhotos.size
+        AlertDialog.Builder(this)
+            .setTitle("Delete $count photo${if (count == 1) "" else "s"}?")
+            .setMessage("These photos will be permanently removed from your gallery. This can't be undone.")
+            .setPositiveButton("Delete") { _, _ -> deleteSelectedPhotos() }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    // Actually deletes through MediaStore so the photos disappear from the
+    // gallery too — no separate "go delete these somewhere else" step needed.
+    // The right API depends on the Android version:
+    //  - API 30+ (R+): one system consent dialog covers the whole batch.
+    //  - API 29 (Q):   scoped storage requires consent per file via
+    //                   RecoverableSecurityException, so we queue them up.
+    //  - API <29:      the app already has full storage access, delete works directly.
     private fun deleteSelectedPhotos() {
-        // In a real app, you'd use MediaStore to delete.
-        // For simplicity, we just remove from UI and toast.
-        val uris = selectedPhotos.map { it.uri }
-        Toast.makeText(this, "Requested deletion of ${uris.size} photos", Toast.LENGTH_SHORT).show()
-        
-        // Refresh scan after deletion simulation
+        val items = selectedPhotos.toList()
+
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                pendingBatchDelete = items
+                try {
+                    val pendingIntent = MediaStore.createDeleteRequest(contentResolver, items.map { it.uri })
+                    startIntentSenderForResult(pendingIntent.intentSender, REQUEST_DELETE_BATCH, null, 0, 0, 0)
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Couldn't start delete: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            else -> {
+                // API < 30: with requestLegacyExternalStorage set in the manifest, Android 10
+                // devices get full legacy storage access too, so a direct delete works here
+                // exactly like it does on API 26-28 — no per-photo consent dialog. The
+                // RecoverableSecurityException branch below only kicks in as a fallback for
+                // the rare OEM/device that still enforces scoped storage on Q.
+                val deletedNow = mutableListOf<PhotoItem>()
+                val needsConsent = mutableListOf<PhotoItem>()
+                items.forEach { item ->
+                    try {
+                        if (contentResolver.delete(item.uri, null, null) > 0) deletedNow.add(item)
+                    } catch (e: RecoverableSecurityException) {
+                        needsConsent.add(item)
+                    } catch (e: Exception) { }
+                }
+                if (needsConsent.isEmpty()) {
+                    onDeletionFinished(deletedNow)
+                } else {
+                    legacyDeleteQueue.clear()
+                    legacyDeleteQueue.addAll(needsConsent)
+                    legacyDeletedItems.clear()
+                    legacyDeletedItems.addAll(deletedNow)
+                    legacyFailedCount = 0
+                    processLegacyDeleteQueue()
+                }
+            }
+        }
+    }
+
+    // Works through legacyDeleteQueue one photo at a time. Each RecoverableSecurityException
+    // pops a system "Allow" dialog for that single file; onActivityResult continues the queue.
+    private fun processLegacyDeleteQueue() {
+        if (legacyDeleteQueue.isEmpty()) {
+            onDeletionFinished(legacyDeletedItems.toList())
+            return
+        }
+        val item = legacyDeleteQueue.first()
+        try {
+            contentResolver.delete(item.uri, null, null)
+            legacyDeleteQueue.removeFirst()
+            legacyDeletedItems.add(item)
+            processLegacyDeleteQueue()
+        } catch (e: RecoverableSecurityException) {
+            try {
+                startIntentSenderForResult(
+                    e.userAction.actionIntent.intentSender, REQUEST_DELETE_LEGACY, null, 0, 0, 0
+                )
+            } catch (sendEx: IntentSender.SendIntentException) {
+                legacyDeleteQueue.removeFirst()
+                legacyFailedCount++
+                processLegacyDeleteQueue()
+            }
+        } catch (e: Exception) {
+            legacyDeleteQueue.removeFirst()
+            legacyFailedCount++
+            processLegacyDeleteQueue()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQUEST_DELETE_BATCH -> {
+                val deletedItems = if (resultCode == RESULT_OK) pendingBatchDelete else emptyList()
+                onDeletionFinished(deletedItems)
+                pendingBatchDelete = emptyList()
+            }
+            REQUEST_DELETE_LEGACY -> {
+                if (resultCode == RESULT_OK && legacyDeleteQueue.isNotEmpty()) {
+                    legacyDeletedItems.add(legacyDeleteQueue.removeFirst())
+                } else if (legacyDeleteQueue.isNotEmpty()) {
+                    legacyDeleteQueue.removeFirst()
+                    legacyFailedCount++
+                }
+                processLegacyDeleteQueue()
+            }
+        }
+    }
+
+    private fun onDeletionFinished(deletedItems: List<PhotoItem>) {
+        // Drop whatever actually got deleted from our in-memory groups/flat list
+        // without needing a full rescan — keeps the UI snappy.
+        if (deletedItems.isNotEmpty()) {
+            val deletedSet = deletedItems.toSet()
+            for (i in duplicateGroups.indices.reversed()) {
+                val remaining = duplicateGroups[i].filterNot { it in deletedSet }
+                if (remaining.size <= 1) {
+                    duplicateGroups.removeAt(i)
+                } else if (remaining.size != duplicateGroups[i].size) {
+                    duplicateGroups[i] = remaining
+                }
+            }
+            buildFlatList()
+        }
+
+        val attemptedCount = deletedItems.size + legacyFailedCount
         selectedPhotos.clear()
         updateSelectionUI()
-        startMagicScan()
+
+        val deletedCount = deletedItems.size
+        val message = when {
+            deletedCount > 0 && legacyFailedCount == 0 -> "$deletedCount photo${if (deletedCount == 1) "" else "s"} deleted"
+            deletedCount > 0 && legacyFailedCount > 0 -> "$deletedCount deleted, $legacyFailedCount couldn't be removed"
+            attemptedCount == 0 -> return // nothing was attempted (e.g. user cancelled batch dialog) — no toast needed beyond default cancel
+            else -> "No photos were deleted"
+        }
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        legacyFailedCount = 0
+
+        showResults()
     }
 
     private fun attachSplashAndSqueeze(view: View) {
@@ -278,7 +466,7 @@ class MagicCleanerActivity : AppCompatActivity() {
             if (event.action == android.view.MotionEvent.ACTION_DOWN) {
                 showWaterSplash(event.rawX, event.rawY)
             }
-            false 
+            false
         }
     }
 
@@ -329,6 +517,8 @@ class MagicCleanerActivity : AppCompatActivity() {
                     updateSelectionUI()
                 }
                 holder.itemView.setOnClickListener { holder.check.isChecked = !holder.check.isChecked }
+                holder.maximizeBtn.setOnClickListener { showEnlargedPreview(item.uri) }
+                holder.thumb.setOnClickListener { showEnlargedPreview(item.uri) }
             }
         }
 
@@ -340,6 +530,24 @@ class MagicCleanerActivity : AppCompatActivity() {
             val name: TextView = v.findViewById(R.id.duplicateName)
             val size: TextView = v.findViewById(R.id.duplicateSize)
             val check: CheckBox = v.findViewById(R.id.duplicateCheckbox)
+            val maximizeBtn: ImageView = v.findViewById(R.id.duplicateMaximizeBtn)
         }
+    }
+
+    private fun showEnlargedPreview(uri: Uri) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_enlarge_photo, null)
+        dialogView.findViewById<ImageView>(R.id.enlargedImageView).setImageURI(uri)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<Button>(R.id.enlargeCloseBtn).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 }

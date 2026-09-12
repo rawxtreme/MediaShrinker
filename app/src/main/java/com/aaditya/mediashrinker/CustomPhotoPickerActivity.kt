@@ -34,7 +34,7 @@ class CustomPhotoPickerActivity : AppCompatActivity() {
     private lateinit var adapter: PhotoPickerAdapter
     private val allPhotoUris = mutableListOf<Uri>()
 
-    private val maxSelection = 100
+    private val maxSelection = 200
     private val permissionRequestCode = 501
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -180,7 +180,7 @@ class CustomPhotoPickerActivity : AppCompatActivity() {
         doneButton.isEnabled = false
         CoroutineScope(Dispatchers.IO).launch {
             val totalBytes = calculateTotalSize(selectedUris)
-            val maxBytes = 2L * 1024 * 1024 * 1024
+            val maxBytes = 5L * 1024 * 1024 * 1024
 
             withContext(Dispatchers.Main) {
                 doneButton.isEnabled = true
@@ -188,7 +188,7 @@ class CustomPhotoPickerActivity : AppCompatActivity() {
                     val totalMB = totalBytes / (1024 * 1024)
                     Toast.makeText(
                         this@CustomPhotoPickerActivity,
-                        "Selected photos total ${totalMB}MB, which exceeds the 2GB limit. Please remove some photos.",
+                        "Selected photos total ${totalMB}MB, which exceeds the 5GB limit. Please remove some photos.",
                         Toast.LENGTH_LONG
                     ).show()
                 } else {
