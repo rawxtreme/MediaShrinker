@@ -87,7 +87,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Version 11.0"
+                android:text="Version 11.1"
                 android:textColor="@color/accent_emerald"
                 android:textStyle="bold"
                 android:textSize="14sp"

@@ -104,7 +104,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="v11.0"
+                    android:text="v11.1"
                     android:textColor="@color/accent_emerald"
                     android:textSize="11sp"
                     android:textStyle="bold"
@@ -910,7 +910,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="v11.0"
+                android:text="v11.1"
                 android:textColor="#4DFFFFFF"
                 android:textSize="12sp"
                 android:layout_gravity="center_horizontal"

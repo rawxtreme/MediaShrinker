@@ -17,9 +17,6 @@ class PhotoPreviewAdapter(
     private val onMarksChanged: (Int) -> Unit
 ) : RecyclerView.Adapter<PhotoPreviewAdapter.ViewHolder>() {
 
-    // When true: cross buttons are hidden, tapping a photo marks/unmarks it for
-    // deletion instead of removing it immediately. Enlarge button still works
-    // in both modes.
     var isIndividualDeleteMode = false
         set(value) {
             field = value
@@ -46,8 +43,7 @@ class PhotoPreviewAdapter(
         val uri = photoList[position]
         holder.imageView.setImageURI(uri)
 
-        // Enlarge works the same in both modes — long-press not needed here,
-        // it's always a visible dedicated button on this screen.
+        
         holder.enlargeBtn.setOnClickListener {
             showEnlargedPreview(holder.itemView.context, uri)
         }
@@ -86,8 +82,6 @@ class PhotoPreviewAdapter(
         }
     }
 
-    // Long-press preview — enlarge is also always available via its button,
-    // this stays as a full-size confirmation view.
     private fun showEnlargedPreview(context: Context, uri: Uri) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_enlarge_photo, null)
         dialogView.findViewById<ImageView>(R.id.enlargedImageView).setImageURI(uri)

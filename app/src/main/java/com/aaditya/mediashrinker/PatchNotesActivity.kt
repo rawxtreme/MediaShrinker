@@ -34,7 +34,7 @@ class PatchNotesActivity : AppCompatActivity() {
 
     private fun buildPatchNotes(): List<PatchNote> = listOf(
         PatchNote(
-            version = "v11.0",
+            version = "v11.1",
             date = "12 Sep 2026",
             title = "In-app camera, real photo deletion & bigger limits",
             isLatest = true,

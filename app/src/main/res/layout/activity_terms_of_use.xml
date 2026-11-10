@@ -62,7 +62,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Last updated: 12 September 2026 — v11.0"
+                android:text="Last updated: 12 September 2026 — v11.1"
                 android:textColor="#88FFFFFF"
                 android:textSize="12sp"
                 android:layout_marginBottom="20dp" />
@@ -79,7 +79,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="By downloading, installing, or using MediaShrinker (v11.0 and any future version), you agree to these Terms of Use. If you do not agree, please do not use the app."
+                android:text="By downloading, installing, or using MediaShrinker (v11.1 and any future version) (Also, if you have used or using old versions of this app), you agreed and accepted these Terms of Use. If you do not agree, please do not use this app. If you are continued to use this app, this means that you have read all the Terms and Privacy Policy of this app and agreed/accepted with the same and agreed/accepted with the conditions that comes with this app as stated in this app briefly."
                 android:textColor="#CCFFFFFF"
                 android:textSize="14sp"
                 android:lineSpacingExtra="4dp"
@@ -187,7 +187,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Modifying or making changes to this app&apos;s code is strictly prohibited. Distribution is only allowed when other users are installing from GitHub or any specific sources where this app is uploaded by the original owner/developer of this app where this app is available to download. If any changes or editing in the app&apos;s code and then distributing is caught, a lawsuit will be initiated on the culprit."
+                android:text="Modifying, decompiling, or redistributing altered builds of this app is strictly prohibited. Please download and share MediaShrinker only through official releases provided directly by the developer (such as GitHub) to ensure app authenticity and security. We kindly request users not to redistribute modified versions. If you have feature requests or improvement ideas, please reach out to the developer directly — great suggestions are gladly welcomed and will be credited in future releases!"
                 android:textColor="#CCFFFFFF"
                 android:textSize="14sp"
                 android:lineSpacingExtra="4dp"
@@ -205,7 +205,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Questions about these Terms can be sent to:\n\n• Instagram: &#64;carryon.aditya\n• scope8xaditya&#64;gmail.com\n• GitHub: github.com/rawxtreme"
+                android:text="Questions about these Terms can be sent to:\n\n• Instagram: &#64;carryon.aditya\n• rawxtreme.helpdesk&#64;outlook.com\n• GitHub: github.com/rawxtreme"
                 android:textColor="#CCFFFFFF"
                 android:textSize="14sp"
                 android:lineSpacingExtra="4dp"

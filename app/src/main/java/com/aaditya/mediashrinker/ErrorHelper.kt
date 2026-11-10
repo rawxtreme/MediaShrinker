@@ -44,7 +44,7 @@ object ErrorHelper {
         dialogView.findViewById<Button>(R.id.reportSendBtn).setOnClickListener {
             val errorMsg = input.text.toString().trim()
             if (errorMsg.isEmpty()) {
-                input.error = "Please describe the error"
+                input.error = "Please describe the error below"
                 return@setOnClickListener
             }
             dialog.dismiss()
@@ -57,7 +57,7 @@ object ErrorHelper {
         val deviceInfo = """
             Device: ${Build.MANUFACTURER} ${Build.MODEL}
             Android: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})
-            App Version: 11.0
+            App Version: 11.1
             Time: ${SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())}
         """.trimIndent()
 
@@ -65,7 +65,7 @@ object ErrorHelper {
 
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf("scope8xaditya@gmail.com"))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf("rawxtreme.helpdesk@outlook.com"))
             putExtra(Intent.EXTRA_SUBJECT, "MediaShrinker - Troubleshooting Report")
             putExtra(Intent.EXTRA_TEXT, body)
         }

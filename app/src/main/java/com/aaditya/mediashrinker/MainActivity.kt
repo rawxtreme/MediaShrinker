@@ -1164,7 +1164,7 @@ class MainActivity : AppCompatActivity() {
 
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf("scope8xaditya@gmail.com"))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf("rawxtreme.helpdesk@outlook.com"))
             putExtra(Intent.EXTRA_SUBJECT, "MediaShrinker - Suggestions / Bug Report")
             putExtra(Intent.EXTRA_TEXT, body)
         }

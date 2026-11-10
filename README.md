@@ -1,6 +1,6 @@
 <div align="center">
 
-# ✨ MediaShrinker v11.0 ✨
+# ✨ MediaShrinker v11.1 ✨
 **The Ultimate Minimalist Media Suite for Android**
 
 *Compress · Organize · Clean · Create*

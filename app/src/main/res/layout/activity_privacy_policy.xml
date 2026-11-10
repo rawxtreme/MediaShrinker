@@ -194,7 +194,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="If you have any questions about this Privacy Policy, you can contact the developer:\n\n• Instagram: &#64;carryon.aditya\n• scope8xaditya&#64;gmail.com\n• GitHub: github.com/rawxtreme"
+                android:text="If you have any questions about this Privacy Policy, you can contact the developer:\n\n• Instagram: &#64;carryon.aditya\n• rawxtreme.helpdesk&#64;outlook.com\n• GitHub: github.com/rawxtreme"
                 android:textColor="#CCFFFFFF"
                 android:textSize="14sp"
                 android:lineSpacingExtra="4dp"
